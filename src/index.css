@@ -1,2 +1,7 @@
+.swipper-button-next,
+.swipper-button-prev {
 
 
+    color: red;
+    border-radius: 50%;
+}

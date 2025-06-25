@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
 
+import React, { useState, useEffect, useCallback, use } from "react";
+import { useDropzone } from "react-dropzone";
 import {
   Box,
   TextField,
@@ -10,24 +10,53 @@ import {
   Modal as MuiModal,
   Backdrop,
   Fade,
-} from '@mui/material';
+} from "@mui/material";
 
-interface ModalProps {
+import type { User } from "../type";
+import { useUser } from "../context/UserContext";
+
+
+
+type UpModalProps = {
+  user: User | null;  // düzenlenecek kullanıcı, yoksa null
   open: boolean;
   onClose: () => void;
-  onSave?: (data: { name: string; image: File | null ,id:number}) => void;
-}
 
-const Modal: React.FC<ModalProps> = ({ open, onSave, onClose }) => {
-  console.log(open);
-  const [text, setText] = useState("");
+};
+
+const UpModal: React.FC<UpModalProps> = ({
+
+
+  user,
+  open,
+  onClose
+
+
+}) => {
+
+
+  const [name, setName] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const { deleteUser, upgrdateUser } = useUser();
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setImage(null);
+      if (typeof user.image === "string") {
+        setPreview(user.image);
+      } else {
+        setPreview(null);
+      }
+    }
+  }, [user]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles && acceptedFiles[0]) {
       const file = acceptedFiles[0];
       setImage(file);
+
       const reader = new FileReader();
       reader.onloadend = () => setPreview(reader.result as string);
       reader.readAsDataURL(file);
@@ -40,16 +69,18 @@ const Modal: React.FC<ModalProps> = ({ open, onSave, onClose }) => {
     multiple: false,
   });
 
-  const handleSave = () => {
-    const id = Date.now() + Math.floor(Math.random() * 1000000);
-    console.log(id)
-    const name = text;
-    if (onSave) onSave({ name, image,id});
+  const handleUpdate = () => {
+    if (!user) return;
+   // console.log(name, image, user.id,'UPLOAD');
+    upgrdateUser({ id: user.id, name, image });
+    onClose();
+  };
+
+  const handleDelete = () => {
+    if (!user) return;
+    deleteUser(user.id);
 
     onClose();
-    setText("");
-    setImage(null);
-    setPreview(null);
   };
 
   return (
@@ -58,9 +89,7 @@ const Modal: React.FC<ModalProps> = ({ open, onSave, onClose }) => {
       onClose={onClose}
       closeAfterTransition
       BackdropComponent={Backdrop}
-      BackdropProps={{
-        timeout: 300,
-      }}
+      BackdropProps={{ timeout: 300 }}
     >
       <Fade in={open}>
         <Box
@@ -79,10 +108,10 @@ const Modal: React.FC<ModalProps> = ({ open, onSave, onClose }) => {
         >
           <TextField
             fullWidth
-            label="Geben Sie den Firmennamen ein"
+            label="User Name"
             variant="outlined"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
 
           <Paper
@@ -104,7 +133,7 @@ const Modal: React.FC<ModalProps> = ({ open, onSave, onClose }) => {
             {preview ? (
               <img
                 src={preview}
-                alt="Yüklenen"
+                alt="Preview"
                 style={{
                   maxHeight: "100%",
                   maxWidth: "100%",
@@ -114,21 +143,24 @@ const Modal: React.FC<ModalProps> = ({ open, onSave, onClose }) => {
             ) : (
               <Typography variant="body2" color="textSecondary">
                 {isDragActive
-                  ? "Lass es los 🫴"
-                  : "Bild per Drag & Drop oder Klick hochladen"}
+                  ? "Drop the image here ..."
+                  : "Drag & drop an image, or click to select one"}
               </Typography>
             )}
           </Paper>
 
-          <Box
-            sx={{ mt: 3, display: "flex", justifyContent: "flex-end", gap: 2 }}
-          >
-            <Button variant="outlined" onClick={onClose}>
-              Abbrechen
+          <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
+            <Button variant="outlined" color="error" onClick={handleDelete}>
+              Delete
             </Button>
-            <Button variant="contained" onClick={handleSave}>
-              Speichern
-            </Button>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <Button variant="outlined" onClick={onClose}>
+                Brechen
+              </Button>
+              <Button variant="contained" onClick={handleUpdate}>
+                Upgrade
+              </Button>
+            </Box>
           </Box>
         </Box>
       </Fade>
@@ -136,4 +168,4 @@ const Modal: React.FC<ModalProps> = ({ open, onSave, onClose }) => {
   );
 };
 
-export default Modal;
+export default UpModal;

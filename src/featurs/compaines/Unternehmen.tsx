@@ -1,44 +1,45 @@
-import { useGetUsersQuery } from "../../app/userApi";
+
 import {
     Box,
     Typography,
-    Avatar,
-    Card,
-    CardContent,
     Button,
+    IconButton,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-import BusinessIcon from "@mui/icons-material/Business";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { useMediaQuery, useTheme } from "@mui/material";
 import "swiper/css";
 import "swiper/css/navigation";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Modal from "../../utils/Modal";
 
+
+
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import Cards from "../../components/Cards";
+import { useUser } from "../../context/UserContext";
 
 
 
 
 function Unternehmen() {
-    const { data, error, isLoading } = useGetUsersQuery();
-    console.log(data)
-    const [modal, setModal] = useState<boolean>(false);
-    const [users, setUsers] = useState();
-    useEffect(() => {
-        if (data) {
-            setUsers(data);
-        }
-    }, [data]); 
 
-    console.log(users);
+
+    const [modal, setModal] = useState<boolean>(false);
+    const { users,setUsers} = useUser()
+    console.log(users,'unternej´hmen');
+
+
+
+
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
-    if (isLoading) return <Typography>Lädt...</Typography>;
-    if (error) return <Typography>Fehler beim Laden.</Typography>;
- 
+    // if (isLoading) return <Typography>Lädt...</Typography>;
+    // if (error) return <Typography>Fehler beim Laden.</Typography>;
+
 
 
     return (
@@ -49,8 +50,8 @@ function Unternehmen() {
                     onClose={() => setModal(false)}
                     onSave={(neue) => {
                         console.log("Gespeicherte Daten:", neue);
-                         setUsers(prev => [...prev, neue]);
-                          setModal(false);
+                        setUsers((prev) => [...prev, neue]);
+                        setModal(false);
                     }}
                 />
             )}
@@ -87,50 +88,84 @@ function Unternehmen() {
                 </Box>
             </Box>
 
-            <Swiper
-                modules={[Navigation]}
-                spaceBetween={20}
-                navigation
-                breakpoints={{
-                    0: { slidesPerView: 1 }, // 0px ve üzeri: 1 slide
-                    600: { slidesPerView: 2 }, // 600px ve üzeri: 2 slide
-                    900: { slidesPerView: 3 }, // 900px ve üzeri: 3 slide
-                    1200: { slidesPerView: 4 }, // 1200px ve üzeri: 4 slide
+            <Box
+                sx={{
+                    position: "relative",
+                    mt: 3,
+                    // border: "1px solid red",
+                    minHeight: 220,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    display: "flex",
+                    px: 4,
+                    // border: "1px solid red",
                 }}
             >
-                {users?.map((user) => (
-                    <SwiperSlide key={user.id}>
-                        <Card
-                            sx={{
-                                minWidth: 160,
-                                textAlign: "center",
-                                py: 2,
-                                px: 1,
-                            }}
-                            elevation={3}
-                        >
-                            <Avatar
-                                src={user.logoUrl || ""}
-                                alt={user.name}
-                                sx={{
-                                    bgcolor: "#1976d2",
-                                    width: 56,
-                                    height: 56,
-                                    margin: "0 auto",
-                                }}
-                            >
-                                {!user.logoUrl && <BusinessIcon />}
-                            </Avatar>
-                            <CardContent>
-                                <Typography variant="subtitle1">{user.name}</Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    {user.email}
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </SwiperSlide>
-                ))}
-            </Swiper>
+                {/* linker blauer Pfeil */}
+                <IconButton
+                    className="custom-swiper-prev"
+                    sx={{
+                        position: "absolute",
+                        top: "50%",
+                        left: 2,
+                        transform: "translateY(-50%)",
+                        zIndex: 10,
+                        backgroundColor: "#1976d2",
+                        color: "white",
+                        "&:hover": {
+                            backgroundColor: "#1565c0",
+                        },
+                    }}
+                >
+                    <ArrowBackIosNewIcon />
+                </IconButton>
+
+                {/* rechter blauer Pfeil */}
+                <IconButton
+                    className="custom-swiper-next"
+                    sx={{
+                        position: "absolute",
+                        top: "50%",
+                        right: 1,
+                        transform: "translateY(-50%)",
+                        zIndex: 10,
+                        backgroundColor: "#1976d2",
+                        color: "white",
+                        "&:hover": {
+                            backgroundColor: "#1565c0",
+                        },
+                    }}
+                >
+                    <ArrowForwardIosIcon />
+                </IconButton>
+
+                {/* SWIPER */}
+                <Swiper
+                    modules={[Navigation]}
+                    spaceBetween={20}
+                    navigation={{
+                        nextEl: ".custom-swiper-next",
+                        prevEl: ".custom-swiper-prev",
+                    }}
+                    breakpoints={{
+                        0: { slidesPerView: 1 },
+                        600: { slidesPerView: 2 },
+                        900: { slidesPerView: 3 },
+                        1000: { slidesPerView: 4 },
+                        1600: { slidesPerView: 5 },
+
+                        1800: { slidesPerView: 6 },
+                    }}
+                >
+                    {users?.map((user) => (
+                        <SwiperSlide key={user.id}>
+                            <Box sx={{ px: "10px", py: "10px" }}>
+                                <Cards user={user} />
+                            </Box>
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
+            </Box>
         </Box>
     );
 }

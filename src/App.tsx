@@ -1,4 +1,6 @@
+import { UserProvider } from "./context/UserContext";
 import Unternehmen from "./featurs/compaines/Unternehmen"
+import AufgabenCategories from "./featurs/tasks/AufgabenCategories";
 
 
 function App() {
@@ -7,7 +9,11 @@ function App() {
 
   return (
     <>
-      <Unternehmen />
+      <UserProvider>
+        <Unternehmen />
+         <AufgabenCategories tasks={["Marketing", "Softwareentwicklung", "Support"]} /> 
+
+      </UserProvider>
     </>
   );
 }
