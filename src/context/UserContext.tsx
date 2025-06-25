@@ -16,6 +16,9 @@ type UpgradeUser = {
 };
 
 
+
+
+
 const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
@@ -29,6 +32,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const deleteUser = (id: number) => {
     setUsers(prev => prev.filter(user => user.id !== id));
   };
+
+  
 
   const upgrdateUser = ({id,name,image}  : UpgradeUser)=>{
   setUsers(prev => {

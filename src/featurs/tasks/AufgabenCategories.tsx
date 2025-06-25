@@ -139,7 +139,7 @@ const AufgabenCategories = ({
           </Grid>
         ))}
       </Grid>
-
+        
       {/* Meilensteine */}
       <Typography variant="h6" gutterBottom>
         Meilensteine
