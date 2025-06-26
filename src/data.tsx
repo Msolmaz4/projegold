@@ -55,14 +55,7 @@ const Users: UserWithTasks[] = [
     },
     description: "Innovatives Unternehmen im Bereich Technologie und Entwicklung.",
     tasks: [
-      {
-        name: "Marketing",
-        milestones: ["1. Meilenstein – Juli 2025", "2. Meilenstein – August 2025"]
-      },
-      {
-        name: "Softwareentwicklung",
-        milestones: ["Beta-Version Release", "Produktlaunch"]
-      }
+   
     ]
   },
   {
@@ -237,14 +230,7 @@ const Users: UserWithTasks[] = [
     },
     description: "Beratungsunternehmen für digitale Transformation.",
     tasks: [
-      {
-        name: "Beratung",
-        milestones: ["Kundenworkshop durchgeführt", "Strategie entwickelt"]
-      },
-      {
-        name: "Implementierung",
-        milestones: ["Softwaredeployment", "Systemintegration"]
-      }
+    
     ]
   },
   {

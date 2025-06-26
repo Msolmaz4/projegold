@@ -18,7 +18,7 @@ import { useState } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import BusinessIcon from "@mui/icons-material/Business";
 import type { User } from "../type";
-
+import Users from "../../data";
 type Props = {
   user: User;
   imageUrl?: string;
@@ -31,6 +31,8 @@ const aufgabengebieteData = [
 ];
 
 const Details = ({ user, imageUrl }: Props) => {
+
+  console.log(Users.id, 'detaildekidata')
   const [tabIndex, setTabIndex] = useState(0);
   const [selectedAufgabe, setSelectedAufgabe] = useState<number | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -67,7 +69,7 @@ const Details = ({ user, imageUrl }: Props) => {
       case 2:
         return (
           <Typography mt={2}>
-           {user.website}
+            {user.website}
           </Typography>
         );
       case 3:
@@ -97,9 +99,15 @@ const Details = ({ user, imageUrl }: Props) => {
         <IconButton onClick={handleMenuOpen}>
           <MoreVertIcon />
         </IconButton>
-        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+        >
           <MenuItem>Bearbeiten</MenuItem>
-          <MenuItem disabled>Löschen</MenuItem>
+          <MenuItem disabled={user?.tasks?.length > 0}>
+            Löschen
+          </MenuItem>
         </Menu>
       </Box>
 
@@ -121,19 +129,22 @@ const Details = ({ user, imageUrl }: Props) => {
         Aufgabengebiete
       </Typography>
       <Grid container spacing={2} mb={4}>
-        {aufgabengebieteData.map((aufgabe) => (
-          <Grid item xs={12} sm={6} md={4} key={aufgabe.id}>
+        {user?.tasks?.map((aufgabe, index) => (
+          <Grid item xs={12} sm={6} md={4} key={index}>
             <Card
-              onClick={() => setSelectedAufgabe(aufgabe.id)}
+              onClick={() => setSelectedAufgabe(index)}
               sx={{
                 cursor: "pointer",
-                border: selectedAufgabe === aufgabe.id ? "2px solid #1976d2" : "1px solid #ccc",
+                border:
+                  selectedAufgabe === index
+                    ? "2px solid #1976d2"
+                    : "1px solid #ccc",
                 "&:hover": { backgroundColor: "#f0f0f0" },
               }}
             >
               <CardContent>
                 <Typography align="center" variant="subtitle1">
-                  {aufgabe.title}
+                  {aufgabe.name}
                 </Typography>
               </CardContent>
             </Card>
@@ -142,16 +153,18 @@ const Details = ({ user, imageUrl }: Props) => {
       </Grid>
 
       {/* Seçilen görev alanının detayları */}
-      {selectedAufgabe && (
-        <Paper elevation={3} sx={{ p: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            {aufgabengebieteData.find((a) => a.id === selectedAufgabe)?.title}
-          </Typography>
-          <Typography>
-            {aufgabengebieteData.find((a) => a.id === selectedAufgabe)?.content}
-          </Typography>
-        </Paper>
-      )}
+      {selectedAufgabe !== null && user?.tasks?.[selectedAufgabe] && (
+  <Paper elevation={3} sx={{ p: 3 }}>
+    <Typography variant="h6" gutterBottom>
+      {user.tasks[selectedAufgabe].name}
+    </Typography>
+    {user.tasks[selectedAufgabe].milestones.map((milestone, idx) => (
+      <Typography key={idx} variant="body1" sx={{ mb: 1 }}>
+        • {milestone}
+      </Typography>
+    ))}
+  </Paper>
+)}
 
       {/* Meilensteine */}
       <Typography variant="h6" mt={6} mb={2}>
