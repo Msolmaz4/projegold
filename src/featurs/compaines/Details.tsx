@@ -18,28 +18,22 @@ import { useState } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import BusinessIcon from "@mui/icons-material/Business";
 import type { User } from "../type";
-import Users from "../../data";
+
 type Props = {
   user: User;
   imageUrl?: string;
 };
 
-const aufgabengebieteData = [
-  { id: 1, title: "Marketing", content: "Details zum Marketing-Aufgabengebiet..." },
-  { id: 2, title: "Softwareentwicklung", content: "Details zum Bereich Softwareentwicklung..." },
-  // Buraya diğer görev alanları eklenebilir
-];
 
 const Details = ({ user, imageUrl }: Props) => {
 
-  console.log(Users.id, 'detaildekidata')
   const [tabIndex, setTabIndex] = useState(0);
   const [selectedAufgabe, setSelectedAufgabe] = useState<number | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
-    setSelectedAufgabe(null); // Tab değişince görev detayları sıfırlanabilir
+    setSelectedAufgabe(null); // Reset selectedAufgabe when switching tabs
   };
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -50,7 +44,6 @@ const Details = ({ user, imageUrl }: Props) => {
     setAnchorEl(null);
   };
 
-  // Tablara göre gösterilecek içerik
   const renderTabContent = () => {
     switch (tabIndex) {
       case 0:
@@ -152,19 +145,19 @@ const Details = ({ user, imageUrl }: Props) => {
         ))}
       </Grid>
 
-      {/* Seçilen görev alanının detayları */}
+      {/* Details zum ausgewählten Aufgabenbereich*/}
       {selectedAufgabe !== null && user?.tasks?.[selectedAufgabe] && (
-  <Paper elevation={3} sx={{ p: 3 }}>
-    <Typography variant="h6" gutterBottom>
-      {user.tasks[selectedAufgabe].name}
-    </Typography>
-    {user.tasks[selectedAufgabe].milestones.map((milestone, idx) => (
-      <Typography key={idx} variant="body1" sx={{ mb: 1 }}>
-        • {milestone}
-      </Typography>
-    ))}
-  </Paper>
-)}
+        <Paper elevation={3} sx={{ p: 3 }}>
+          <Typography variant="h6" gutterBottom>
+            {user.tasks[selectedAufgabe].name}
+          </Typography>
+          {user.tasks[selectedAufgabe].milestones.map((milestone, idx) => (
+            <Typography key={idx} variant="body1" sx={{ mb: 1 }}>
+              • {milestone}
+            </Typography>
+          ))}
+        </Paper>
+      )}
 
       {/* Meilensteine */}
       <Typography variant="h6" mt={6} mb={2}>

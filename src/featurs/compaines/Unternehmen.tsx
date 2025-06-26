@@ -30,7 +30,7 @@ function Unternehmen() {
 
     const [modal, setModal] = useState<boolean>(false);
     const { users,setUsers} = useUser()
-    console.log(users,'unternej´hmen');
+    //console.log(users,'unternej´hmen');
 
 
 

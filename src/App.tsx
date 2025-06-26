@@ -1,19 +1,18 @@
 import { UserProvider } from "./context/UserContext";
 import Unternehmen from "./featurs/compaines/Unternehmen"
-import AufgabenCategories from "./featurs/tasks/AufgabenCategories";
+import KategorieListe from "./featurs/tasks/KategorieListe";
 
 
 function App() {
-  
+
 
 
   return (
     <>
       <UserProvider>
         <Unternehmen />
-         <AufgabenCategories tasks={["Marketing", "Softwareentwicklung", "Support"]} /> 
-
-      </UserProvider>
+        <KategorieListe />
+        </UserProvider>
     </>
   );
 }
