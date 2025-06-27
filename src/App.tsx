@@ -5,6 +5,7 @@ import TaskTable from "./featurs/aufgabe/TaskTable";
 
 import Unternehmen from "./featurs/compaines/Unternehmen"
 import KategorieListe from "./featurs/tasks/KategorieListe";
+import MilestoneOverview from "./featurs/milestones/MilestoneOverview";
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
       </Typography>
       
         <TaskTable/>
+        <MilestoneOverview/>
       </UserProvider>
     </>
   );

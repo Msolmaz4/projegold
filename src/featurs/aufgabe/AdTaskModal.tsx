@@ -11,7 +11,6 @@ import {
   TextField
 } from "@mui/material";
 import { useState } from "react";
-
 import type { Task, KategorieListe, Subkategorie } from '../../types'
 
 
@@ -112,7 +111,7 @@ const AddTaskModal: React.FC<ModalProps> = ({ open, onClose, onSave }) => {
             }
           >
             {newTask.category &&
-              kategorien[newTask.category]?.map((s) => (
+              kategorien[newTask.category]?.map((s:any) => (
                 <MenuItem key={s} value={s}>
                   {s}
                 </MenuItem>
@@ -151,13 +150,13 @@ const AddTaskModal: React.FC<ModalProps> = ({ open, onClose, onSave }) => {
           onChange={(e) => setNewTask({ ...newTask, kosten: +e.target.value })}
         />
         <TextField
-          label="Meilenstein (isteğe bağlı)"
+          label="Meilenstein "
           fullWidth
           value={newTask.milestone || ""}
           onChange={(e) => setNewTask({ ...newTask, milestone: e.target.value })}
         />
         <TextField
-          label="Son Tarih"
+          label="Abgabetermin"
           type="date"
           InputLabelProps={{ shrink: true }}
           value={newTask.dueDate || ""}
