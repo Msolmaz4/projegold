@@ -12,15 +12,16 @@ import {
   Chip,
   IconButton,
   MenuItem,
+  Menu,
   TextField,
   Select,
   FormControl,
   InputLabel,
   Button,
-  Menu,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import AddTaskModal from "./AdTaskModal";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
@@ -33,7 +34,6 @@ import { CSS } from "@dnd-kit/utilities";
 import type { Task } from "../../types";
 import { initialTasks } from "../../data";
 
-// SortableRow props: task + onEdit callback
 function SortableRow({
   task,
   onEdit,
@@ -42,23 +42,27 @@ function SortableRow({
   onEdit: (task: Task) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({
-      id: task.id,
-    });
+    useSortable({ id: task.id });
+
+  const [menuDialogOpen, setMenuDialogOpen] = useState(false);
+  const anchorRef = useRef<HTMLButtonElement | null>(null);
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
 
-  // Menü için state + anchor
-  const [menuDialogOpen, setMenuDialogOpen] = useState(false);
-  const anchorRef = useRef<HTMLButtonElement | null>(null);
-
   const handleMenuOpen = () => setMenuDialogOpen(true);
   const handleMenuClose = () => setMenuDialogOpen(false);
 
   return (
-    <TableRow ref={setNodeRef} style={style} hover {...attributes} {...listeners}>
+    <TableRow ref={setNodeRef} style={style} hover>
+      <TableCell sx={{ width: 40 }}>
+        <IconButton {...attributes} {...listeners}>
+          <DragIndicatorIcon fontSize="small" />
+        </IconButton>
+      </TableCell>
+
       <TableCell
         sx={{
           width: 300,
@@ -69,12 +73,20 @@ function SortableRow({
       >
         {task.name}
       </TableCell>
-      <TableCell sx={{ width: 80, paddingRight: 1 }}>{task.vorarbeit} min</TableCell>
-      <TableCell sx={{ width: 80, paddingRight: 1 }}>{task.umsetzung} min</TableCell>
-      <TableCell sx={{ width: 80, paddingRight: 1 }}>{task.kontrolle} min</TableCell>
+      <TableCell sx={{ width: 80, paddingRight: 1 }}>
+        {task.vorarbeit} min
+      </TableCell>
+      <TableCell sx={{ width: 80, paddingRight: 1 }}>
+        {task.umsetzung} min
+      </TableCell>
+      <TableCell sx={{ width: 80, paddingRight: 1 }}>
+        {task.kontrolle} min
+      </TableCell>
       <TableCell sx={{ width: 80, paddingRight: 1 }}>{task.kosten} €</TableCell>
       <TableCell sx={{ width: 110, paddingRight: 1 }}>
-        {task.dueDate ? new Date(task.dueDate).toLocaleDateString("de-DE") : "—"}
+        {task.dueDate
+          ? new Date(task.dueDate).toLocaleDateString("de-DE")
+          : "—"}
       </TableCell>
       <TableCell sx={{ width: 110, paddingRight: 1 }}>
         <Chip
@@ -98,11 +110,13 @@ function SortableRow({
         <IconButton size="small" onClick={() => onEdit(task)}>
           <EditIcon />
         </IconButton>
-        <IconButton size="small" ref={anchorRef} onClick={handleMenuOpen}>
+        <IconButton
+          size="small"
+          ref={anchorRef}
+          onClick={handleMenuOpen}
+        >
           <MoreVertIcon />
         </IconButton>
-
-        {/* Menü */}
         <Menu
           anchorEl={anchorRef.current}
           open={menuDialogOpen}
@@ -133,10 +147,9 @@ function SortableRow({
 const TaskTable: React.FC = () => {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [firmaFilter, setFirmaFilter] = useState("");
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
-
   const [openDialog, setOpenDialog] = useState(false);
+  const [firmaFilter, setFirmaFilter] = useState("");
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -151,7 +164,9 @@ const TaskTable: React.FC = () => {
   };
 
   const handleSaveEdit = (editedTask: Task) => {
-    setTasks((prev) => prev.map((t) => (t.id === editedTask.id ? editedTask : t)));
+    setTasks((prev) =>
+      prev.map((t) => (t.id === editedTask.id ? editedTask : t))
+    );
     setEditDialogOpen(false);
     setSelectedTask(null);
   };
@@ -175,12 +190,10 @@ const TaskTable: React.FC = () => {
 
     const activeTask = tasks.find((t) => t.id === active.id);
     const overTask = tasks.find((t) => t.id === over.id);
-
     if (!activeTask || !overTask) return;
 
     const oldGroup = `${activeTask.category} > ${activeTask.subcategory}`;
     const newGroup = `${overTask.category} > ${overTask.subcategory}`;
-
     let updatedTasks = [...tasks];
 
     if (oldGroup === newGroup) {
@@ -196,20 +209,17 @@ const TaskTable: React.FC = () => {
       updatedTasks = [...others, ...reordered];
     } else {
       const [newCategory, newSubcategory] = newGroup.split(" > ");
-
-      updatedTasks = updatedTasks.map((t) => {
-        if (t.id === active.id) {
-          return {
-            ...t,
-            category: newCategory,
-            subcategory: newSubcategory,
-            status: "in Bearbeitung",
-          };
-        }
-        return t;
-      });
+      updatedTasks = updatedTasks.map((t) =>
+        t.id === active.id
+          ? {
+              ...t,
+              category: newCategory,
+              subcategory: newSubcategory,
+              status: "in Bearbeitung",
+            }
+          : t
+      );
     }
-
     setTasks(updatedTasks);
   };
 
@@ -279,6 +289,7 @@ const TaskTable: React.FC = () => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
+                    <TableCell sx={{ width: 40 }} />
                     <TableCell>Aufgabe</TableCell>
                     <TableCell>Vorarbeit</TableCell>
                     <TableCell>Umsetzung</TableCell>
