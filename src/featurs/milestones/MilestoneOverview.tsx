@@ -170,7 +170,7 @@ const MilestoneOverview: React.FC = () => {
   return (
     <Paper sx={{ p: 4, width: "%100", mx: "auto", mt: 5 }}>
       <Typography variant="h5" gutterBottom align="center">
-        Meilenstein Übersicht
+        MEILENSTEIN
       </Typography>
 
       <Box display="flex" justifyContent="flex-end" mb={2}>

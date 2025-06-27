@@ -16,13 +16,15 @@ function App() {
     <>
       <UserProvider>
         <Unternehmen />
+        <Typography variant="h4" gutterBottom align="center">
+          AUFGABEKATEGORIEN
+        </Typography>
         <KategorieListe />
         <Typography variant="h4" gutterBottom align="center">
-        Aufgabenübersicht
-      </Typography>
-      
-        <TaskTable/>
-        <MilestoneOverview/>
+          AUFGABEN
+        </Typography>
+        <TaskTable />
+        <MilestoneOverview />
       </UserProvider>
     </>
   );

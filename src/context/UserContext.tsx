@@ -13,8 +13,8 @@ type UpgradeUser = {
   id:number,
   name:string,
   image: File | null | string
-};
-
+}
+ 
 
 
 
@@ -22,7 +22,7 @@ type UpgradeUser = {
 const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const [users, setUsers] = useState<User[]>(Users || []);
+  const [users, setUsers] = useState<User[]>(Users|| []);
 
   useEffect(() => {
     if(Users) setUsers(Users);

@@ -70,10 +70,10 @@ function Unternehmen() {
                             position: "absolute",
                             left: "50%",
                             transform: "translateX(-50%)",
-                            border: "1px solid red",
+                            // border: "1px solid red",
                         }}
                     >
-                        <Typography variant="h5">Unternehmen</Typography>
+                        <Typography variant="h5">UNTERNEHMEN</Typography>
                     </Box>
                 )}
 

@@ -14,7 +14,7 @@ export interface Address {
 export interface Company {
   name: string;
   catchPhrase: string;
-  description: string;
+  description?: string;
   bs: string;
 }
 
@@ -27,7 +27,7 @@ export interface User {
   phone: string;
   website: string;
   company: Company;
-  logoUrl: string;
+  logoUrl?: string;
   image?: File | undefined;
   description?: string;
 }
