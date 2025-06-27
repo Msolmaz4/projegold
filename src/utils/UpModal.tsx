@@ -12,7 +12,7 @@ import {
   Fade,
 } from "@mui/material";
 
-import type { User } from "../type";
+import type { User } from "../types";
 import { useUser } from "../context/UserContext";
 
 

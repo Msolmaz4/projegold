@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import type { User } from "../type";
-import Users from "../data";
+import type { User } from "../types";
+import { Users } from "../data";
 
 type UserContextType = {
   users: User[];

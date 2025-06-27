@@ -12,7 +12,7 @@ import { Navigation } from "swiper/modules";
 import { useMediaQuery, useTheme } from "@mui/material";
 import "swiper/css";
 import "swiper/css/navigation";
-import { use, useEffect, useState } from "react";
+import {  useState } from "react";
 import Modal from "../../utils/Modal";
 
 

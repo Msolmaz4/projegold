@@ -1,8 +1,8 @@
 
 import {  useState } from "react";
 
-import type { User } from '../type'
-import Users from '../data'
+import type { User } from '../types'
+import {Users} from '../data'
 import { useGetUsersQuery } from "../app/userApi";
 
 

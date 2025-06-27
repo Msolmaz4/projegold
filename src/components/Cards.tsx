@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 
 import BusinessIcon from "@mui/icons-material/Business";
-import type { User } from "../type";
+import type { User } from "../types";
 import { useEffect, useState } from "react";
 import Details from "../featurs/compaines/Details";
 

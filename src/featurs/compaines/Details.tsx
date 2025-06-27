@@ -17,7 +17,7 @@ import {
 import { useState } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import BusinessIcon from "@mui/icons-material/Business";
-import type { User } from "../type";
+import type { User } from "../../types";
 
 type Props = {
   user: User;
@@ -56,7 +56,7 @@ const Details = ({ user, imageUrl }: Props) => {
         return (
           <Typography mt={2}>
             {user.company.name}
-            {user.company.description}
+            {user.company?.description}
           </Typography>
         );
       case 2:

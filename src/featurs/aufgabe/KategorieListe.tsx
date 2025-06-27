@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+    
   Box,
   Card,
   CardHeader,
@@ -17,20 +18,47 @@ import {
   List,
   ListItem,
   ListItemText,
-  Grid
+  
 } from '@mui/material';
 import { MoreVert, Add } from '@mui/icons-material';
 import { v4 as uuidv4 } from 'uuid';
-import { Categories } from '../../data'
+import Grid from "@mui/material/Grid";
 import type { Category } from '../../types';
 
 
-const initialCategories: Category[] = Categories
+
+
+const initialCategories: Category[] = [
+  {
+    id: "marketing",
+    name: "Marketing",
+    subcategories: [
+      { id: "seo", name: "SEO" },
+      { id: "google_ads", name: "Google Ads" },
+      { id: "social_media", name: "Social Media" },
+    ],
+  },
+  {
+    id: "vertrieb",
+    name: "Vertrieb",
+    subcategories: [
+      { id: "cold_calls", name: "Cold Calls" },
+      { id: "cold_mails", name: "Cold Mails" },
+      { id: "lead_setting", name: "Leadqualifizierung / Setting" },
+    ],
+  },
+  {
+    id: "fulfillment",
+    name: "Fulfillment",
+    subcategories: [
+      { id: "pf_design", name: "PF Design" },
+      { id: "pdf_programmierung", name: "PDF Programmierung" },
+      { id: "webformula", name: "Webformula" },
+    ],
+  },
+];
 
 const KategorieListe: React.FC = () => {
-
-
-
   const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
@@ -90,19 +118,14 @@ const KategorieListe: React.FC = () => {
   };
 
   const handleAddSub = () => {
-
     if (!newSubName.trim() || !selectedCatId) return;
-    const selectedCat = categories.find(cat => cat.id === selectedCatId)
-    if (selectedCat && selectedCat.subcategories.length >= 4) {
-      alert('Maximal 5Aufgaben pro Kategorie erlaubt')
-    }
     setCategories(prev =>
       prev.map(cat =>
         cat.id === selectedCatId
           ? {
-            ...cat,
-            subcategories: [...cat.subcategories, { id: uuidv4(), name: newSubName.trim() }]
-          }
+              ...cat,
+              subcategories: [...cat.subcategories, { id: uuidv4(), name: newSubName.trim() }]
+            }
           : cat
       )
     );
@@ -187,7 +210,7 @@ const KategorieListe: React.FC = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Unterkategories Dialog */}
+      {/* Unterkategorie Dialog */}
       <Dialog open={subDialogOpen} onClose={() => setSubDialogOpen(false)} fullWidth>
         <DialogTitle>Unterkategorie hinzufügen</DialogTitle>
         <DialogContent>
@@ -211,3 +234,4 @@ const KategorieListe: React.FC = () => {
 };
 
 export default KategorieListe;
+

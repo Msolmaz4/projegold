@@ -1,3 +1,6 @@
+import type { Task } from "./types";
+
+
 interface Address {
   street: string;
   suite: string;
@@ -23,14 +26,14 @@ interface User {
   company: Company;
 }
 
-interface Task {
+interface SimpleTask {
   name: string;
-  milestones: string[];
+  milestones?: string[];
 }
 
 interface UserWithTasks extends User {
   description: string;
-  tasks: Task[];
+  tasks: SimpleTask[];
 }
 
 const Users: UserWithTasks[] = [
@@ -329,8 +332,6 @@ const Users: UserWithTasks[] = [
 ];
 
 
-export default Users;
-
 
 type Subcategory = {
   id: string;
@@ -342,7 +343,7 @@ type Category = {
   name: string;
   subcategories: Subcategory[];
 };
-export const categories: Category[] = [
+export const Categories: Category[] = [
   {
     id: "marketing",
     name: "Marketing",
@@ -371,3 +372,74 @@ export const categories: Category[] = [
     ],
   },
 ];
+
+
+const initialTasks: Task[] = [
+    {
+        id: 1,
+        category: "Marketing",
+        subcategory: "SEO",
+        name: "Backlink auf Wikipedia setzen",
+        vorarbeit: 10,
+        umsetzung: 10,
+        kontrolle: 10,
+        kosten: 300,
+        status: "offen",
+        dueDate: "2025-06-30",
+        firma: "Firma A",
+    },
+    {
+        id: 2,
+        category: "Marketing",
+        subcategory: "SEO",
+        name: "20 Backlinks auf Kundenwebseiten setzen",
+        vorarbeit: 20,
+        umsetzung: 320,
+        kontrolle: 15,
+        kosten: 0,
+        status: "in Bearbeitung",
+        dueDate: "2025-07-05",
+        firma: "Firma B",
+    },
+    {
+        id: 3,
+        category: "Development",
+        subcategory: "Frontend",
+        name: "Landing Page für Produktlaunch erstellen mit sehr langem Text, der auf mehrere Zeilen umbrechen sollte, damit es sichtbar ist",
+        vorarbeit: 15,
+        umsetzung: 120,
+        kontrolle: 20,
+        kosten: 500,
+        status: "offen",
+        dueDate: "2025-07-10",
+        firma: "Firma A",
+    },
+    {
+        id: 4,
+        category: "Development",
+        subcategory: "Backend",
+        name: "API-Endpunkt für Bestellungen implementieren",
+        vorarbeit: 10,
+        umsetzung: 180,
+        kontrolle: 30,
+        kosten: 0,
+        status: "erledigt",
+        dueDate: "2025-07-15",
+        firma: "Firma C",
+    },
+    {
+        id: 5,
+        category: "Design",
+        subcategory: "UX/UI",
+        name: "Benutzerfluss für Checkout optimieren",
+        vorarbeit: 25,
+        umsetzung: 80,
+        kontrolle: 15,
+        kosten: 200,
+        status: "geplant",
+        dueDate: "2025-07-08",
+        firma: "Firma B",
+    },
+];
+
+export { Users, initialTasks };
