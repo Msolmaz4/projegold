@@ -22,7 +22,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
-import AddTaskModal from "./AdTaskModal";
+import AddTaskModal from "./AdTaskModal"; 
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -37,9 +37,11 @@ import { initialTasks } from "../../data";
 function SortableRow({
   task,
   onEdit,
+  onDelete,
 }: {
   task: Task;
   onEdit: (task: Task) => void;
+  onDelete: (task: Task) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: task.id });
@@ -55,6 +57,17 @@ function SortableRow({
   const handleMenuOpen = () => setMenuDialogOpen(true);
   const handleMenuClose = () => setMenuDialogOpen(false);
 
+  const handleDeleteClick = () => {
+    if (task.status !== "erledigt") {
+      alert("Nur Aufgaben mit Status 'erledigt' können gelöscht werden!");
+    } else if (
+      window.confirm(`Möchten Sie die Aufgabe "${task.name}" wirklich löschen?`)
+    ) {
+      onDelete(task);
+    }
+    handleMenuClose();
+  };
+
   return (
     <TableRow ref={setNodeRef} style={style} hover>
       <TableCell sx={{ width: 40 }}>
@@ -62,33 +75,15 @@ function SortableRow({
           <DragIndicatorIcon fontSize="small" />
         </IconButton>
       </TableCell>
-
-      <TableCell
-        sx={{
-          width: 300,
-          whiteSpace: "normal",
-          wordBreak: "break-word",
-          paddingRight: 1,
-        }}
-      >
-        {task.name}
+      <TableCell>{task.name}</TableCell>
+      <TableCell>{task.vorarbeit} min</TableCell>
+      <TableCell>{task.umsetzung} min</TableCell>
+      <TableCell>{task.kontrolle} min</TableCell>
+      <TableCell>{task.kosten} €</TableCell>
+      <TableCell>
+        {task.dueDate ? new Date(task.dueDate).toLocaleDateString("de-DE") : "—"}
       </TableCell>
-      <TableCell sx={{ width: 80, paddingRight: 1 }}>
-        {task.vorarbeit} min
-      </TableCell>
-      <TableCell sx={{ width: 80, paddingRight: 1 }}>
-        {task.umsetzung} min
-      </TableCell>
-      <TableCell sx={{ width: 80, paddingRight: 1 }}>
-        {task.kontrolle} min
-      </TableCell>
-      <TableCell sx={{ width: 80, paddingRight: 1 }}>{task.kosten} €</TableCell>
-      <TableCell sx={{ width: 110, paddingRight: 1 }}>
-        {task.dueDate
-          ? new Date(task.dueDate).toLocaleDateString("de-DE")
-          : "—"}
-      </TableCell>
-      <TableCell sx={{ width: 110, paddingRight: 1 }}>
+      <TableCell>
         <Chip
           size="small"
           label={task.status}
@@ -97,24 +92,18 @@ function SortableRow({
               ? "warning"
               : task.status === "erledigt"
               ? "success"
-              : task.status === "geplant"
-              ? "error"
-              : "info"
+              : task.status === "in Bearbeitung"
+              ? "info"
+              : "default"
           }
         />
       </TableCell>
-      <TableCell sx={{ width: 110, paddingRight: 1 }}>
-        {task.milestone || "—"}
-      </TableCell>
-      <TableCell align="right" sx={{ width: 110 }}>
+      <TableCell>{task.milestone || "—"}</TableCell>
+      <TableCell align="right">
         <IconButton size="small" onClick={() => onEdit(task)}>
           <EditIcon />
         </IconButton>
-        <IconButton
-          size="small"
-          ref={anchorRef}
-          onClick={handleMenuOpen}
-        >
+        <IconButton size="small" ref={anchorRef} onClick={handleMenuOpen}>
           <MoreVertIcon />
         </IconButton>
         <Menu
@@ -130,14 +119,7 @@ function SortableRow({
           >
             Bearbeiten
           </MenuItem>
-          <MenuItem
-            onClick={() => {
-              console.log("Task löschen:", task);
-              handleMenuClose();
-            }}
-          >
-            Löschen
-          </MenuItem>
+          <MenuItem onClick={handleDeleteClick}>Löschen</MenuItem>
         </Menu>
       </TableCell>
     </TableRow>
@@ -147,22 +129,28 @@ function SortableRow({
 const TaskTable: React.FC = () => {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [firmaFilter, setFirmaFilter] = useState("");
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [openDialog, setOpenDialog] = useState(false);
-  const [firmaFilter, setFirmaFilter] = useState("");
-
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
+  // Tüm benzersiz firmalar (boş olmayan)
+  const uniqueFirms = Array.from(new Set(tasks.map((t) => t.firma))).filter(Boolean);
+
+  // Yeni görev ekleme
   const handleAddTask = (newTask: Task) => {
-    setTasks((prev) => [...prev, { ...newTask, id: prev.length + 1 }]);
+    const maxId = tasks.reduce((max, t) => (t.id > max ? t.id : max), 0);
+    setTasks((prev) => [...prev, { ...newTask, id: maxId + 1 }]);
   };
 
+  // Görev düzenleme açma
   const handleEditTask = (task: Task) => {
     setSelectedTask(task);
     setEditDialogOpen(true);
   };
 
+  // Düzenlenen görevi kaydetme
   const handleSaveEdit = (editedTask: Task) => {
     setTasks((prev) =>
       prev.map((t) => (t.id === editedTask.id ? editedTask : t))
@@ -171,6 +159,12 @@ const TaskTable: React.FC = () => {
     setSelectedTask(null);
   };
 
+  // Görev silme
+  const handleDeleteTask = (taskToDelete: Task) => {
+    setTasks((prev) => prev.filter((t) => t.id !== taskToDelete.id));
+  };
+
+  // Filtrelenmiş görevler
   const filteredTasks = tasks.filter(
     (task) =>
       task.name.toLowerCase().includes(search.toLowerCase()) &&
@@ -178,6 +172,7 @@ const TaskTable: React.FC = () => {
       (firmaFilter ? task.firma === firmaFilter : true)
   );
 
+  // Görevleri kategori > alt kategoriye göre grupla
   const grouped = filteredTasks.reduce((acc, task) => {
     const key = `${task.category} > ${task.subcategory}`;
     if (!acc[key]) acc[key] = [];
@@ -185,7 +180,14 @@ const TaskTable: React.FC = () => {
     return acc;
   }, {} as Record<string, Task[]>);
 
-  const onDragEnd = ({ active, over }: any) => {
+  // Sürükle bırak sonrası
+  const onDragEnd = ({
+    active,
+    over,
+  }: {
+    active: { id: number };
+    over: { id: number } | null;
+  }) => {
     if (!over || active.id === over.id) return;
 
     const activeTask = tasks.find((t) => t.id === active.id);
@@ -194,20 +196,25 @@ const TaskTable: React.FC = () => {
 
     const oldGroup = `${activeTask.category} > ${activeTask.subcategory}`;
     const newGroup = `${overTask.category} > ${overTask.subcategory}`;
+
     let updatedTasks = [...tasks];
 
     if (oldGroup === newGroup) {
+      // Aynı grup içindeyse sırayı değiştir
       const groupTasks = tasks.filter(
         (t) => `${t.category} > ${t.subcategory}` === oldGroup
       );
       const oldIndex = groupTasks.findIndex((t) => t.id === active.id);
       const newIndex = groupTasks.findIndex((t) => t.id === over.id);
       const reordered = arrayMove(groupTasks, oldIndex, newIndex);
+
       const others = tasks.filter(
         (t) => `${t.category} > ${t.subcategory}` !== oldGroup
       );
+
       updatedTasks = [...others, ...reordered];
     } else {
+      // Grup değişirse kategori, alt kategori ve durum güncellenir
       const [newCategory, newSubcategory] = newGroup.split(" > ");
       updatedTasks = updatedTasks.map((t) =>
         t.id === active.id
@@ -220,6 +227,7 @@ const TaskTable: React.FC = () => {
           : t
       );
     }
+
     setTasks(updatedTasks);
   };
 
@@ -234,20 +242,22 @@ const TaskTable: React.FC = () => {
             onChange={(e) => setFirmaFilter(e.target.value)}
           >
             <MenuItem value="">Alle Firmen</MenuItem>
-            <MenuItem value="Firma A">Firma A</MenuItem>
-            <MenuItem value="Firma B">Firma B</MenuItem>
-            <MenuItem value="Firma C">Firma C</MenuItem>
+            {uniqueFirms.map((firma) => (
+              <MenuItem key={firma} value={firma}>
+                {firma}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
+
         <TextField
           label="Suche Aufgaben nach..."
-          type="text"
-          variant="outlined"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           size="small"
           fullWidth
         />
+
         <FormControl size="small" sx={{ minWidth: 200 }}>
           <InputLabel>Status</InputLabel>
           <Select
@@ -261,22 +271,29 @@ const TaskTable: React.FC = () => {
             <MenuItem value="erledigt">Erledigt</MenuItem>
           </Select>
         </FormControl>
+
         <Button variant="contained" onClick={() => setOpenDialog(true)}>
           + Aufgabe hinzufügen
         </Button>
       </Box>
 
+      {/* Düzenleme modalı */}
       <AddTaskModal
         open={editDialogOpen}
         onClose={() => setEditDialogOpen(false)}
         onSave={handleSaveEdit}
         existingTask={selectedTask}
+        firmOptions={uniqueFirms}
+        initialTasks={initialTasks}
       />
 
+      {/* Ekleme modalı */}
       <AddTaskModal
         open={openDialog}
         onClose={() => setOpenDialog(false)}
         onSave={handleAddTask}
+        firmOptions={uniqueFirms}
+        initialTasks={initialTasks}
       />
 
       <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
@@ -289,7 +306,7 @@ const TaskTable: React.FC = () => {
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{ width: 40 }} />
+                    <TableCell />
                     <TableCell>Aufgabe</TableCell>
                     <TableCell>Vorarbeit</TableCell>
                     <TableCell>Umsetzung</TableCell>
@@ -297,24 +314,25 @@ const TaskTable: React.FC = () => {
                     <TableCell>Kosten</TableCell>
                     <TableCell>Fällig am</TableCell>
                     <TableCell>Status</TableCell>
-                    <TableCell>Meilenstein</TableCell>
+                    <TableCell>Milestone</TableCell>
                     <TableCell align="right">Aktionen</TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>
-                  <SortableContext
-                    items={groupTasks.map((t) => t.id)}
-                    strategy={verticalListSortingStrategy}
-                  >
+                <SortableContext
+                  items={groupTasks.map((task) => task.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <TableBody>
                     {groupTasks.map((task) => (
                       <SortableRow
                         key={task.id}
                         task={task}
                         onEdit={handleEditTask}
+                        onDelete={handleDeleteTask}
                       />
                     ))}
-                  </SortableContext>
-                </TableBody>
+                  </TableBody>
+                </SortableContext>
               </Table>
             </TableContainer>
           </Box>

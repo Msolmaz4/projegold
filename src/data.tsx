@@ -343,7 +343,7 @@ type Category = {
   name: string;
   subcategories: Subcategory[];
 };
-export const Categories: Category[] = [
+const Categories: Category[] = [
   {
     id: "marketing",
     name: "Marketing",
@@ -442,4 +442,4 @@ const initialTasks: Task[] = [
     },
 ];
 
-export { Users, initialTasks };
+export { Users, initialTasks,Categories };

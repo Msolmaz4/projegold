@@ -21,16 +21,12 @@ import {
 } from '@mui/material';
 import { MoreVert, Add } from '@mui/icons-material';
 import { v4 as uuidv4 } from 'uuid';
-import { Categories } from '../../data'
+import { Categories } from '../../data';
 import type { Category } from '../../types';
 
-
-const initialCategories: Category[] = Categories
+const initialCategories: Category[] = Categories;
 
 const KategorieListe: React.FC = () => {
-
-
-
   const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
@@ -40,6 +36,10 @@ const KategorieListe: React.FC = () => {
   const [selectedCatId, setSelectedCatId] = useState<string | null>(null);
   const [subDialogOpen, setSubDialogOpen] = useState(false);
   const [newSubName, setNewSubName] = useState('');
+
+  const [selectedSubId, setSelectedSubId] = useState<string | null>(null);
+  const [subEditName, setSubEditName] = useState('');
+  const [subEditDialogOpen, setSubEditDialogOpen] = useState(false);
 
   const openMenu = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
     setAnchorEl(e.currentTarget);
@@ -90,25 +90,63 @@ const KategorieListe: React.FC = () => {
   };
 
   const handleAddSub = () => {
-
     if (!newSubName.trim() || !selectedCatId) return;
-    const selectedCat = categories.find(cat => cat.id === selectedCatId)
-    if (selectedCat && selectedCat.subcategories.length >= 4) {
-      alert('Maximal 5Aufgaben pro Kategorie erlaubt')
+    const selectedCat = categories.find(cat => cat.id === selectedCatId);
+    if (selectedCat && selectedCat.subcategories.length >= 5) {
+      alert('Maximal 5 Aufgaben pro Kategorie erlaubt');
+      return;
     }
     setCategories(prev =>
       prev.map(cat =>
         cat.id === selectedCatId
           ? {
-            ...cat,
-            subcategories: [...cat.subcategories, { id: uuidv4(), name: newSubName.trim() }]
-          }
+              ...cat,
+              subcategories: [...cat.subcategories, { id: uuidv4(), name: newSubName.trim() }]
+            }
           : cat
       )
     );
     setNewSubName('');
     setSelectedCatId(null);
     setSubDialogOpen(false);
+  };
+
+  const handleOpenSubEditDialog = (subId: string, name: string) => {
+    setSelectedSubId(subId);
+    setSubEditName(name);
+    setSubEditDialogOpen(true);
+  };
+
+  const handleSaveSubEdit = () => {
+    if (!selectedSubId) return;
+
+    setCategories(prev =>
+      prev.map(cat => ({
+        ...cat,
+        subcategories: cat.subcategories.map(sub =>
+          sub.id === selectedSubId ? { ...sub, name: subEditName } : sub
+        )
+      }))
+    );
+
+    setSubEditDialogOpen(false);
+    setSelectedSubId(null);
+    setSubEditName('');
+  };
+
+  const handleDeleteSub = () => {
+    if (!selectedSubId) return;
+
+    setCategories(prev =>
+      prev.map(cat => ({
+        ...cat,
+        subcategories: cat.subcategories.filter(sub => sub.id !== selectedSubId)
+      }))
+    );
+
+    setSubEditDialogOpen(false);
+    setSelectedSubId(null);
+    setSubEditName('');
   };
 
   return (
@@ -142,9 +180,29 @@ const KategorieListe: React.FC = () => {
                   Unterkategorien:
                 </Typography>
                 <List dense>
-                  {cat.subcategories.map((sub, idx) => (
-                    <ListItem key={idx}>
-                      <ListItemText primary={`• ${sub.name}`} />
+                  {cat.subcategories.map((sub) => (
+                    <ListItem
+                      key={sub.id}
+                      sx={{
+                        cursor: 'pointer',
+                        '&:hover': {
+                          backgroundColor: '#f5f5f5',
+                        }
+                      }}
+                      onClick={() => handleOpenSubEditDialog(sub.id, sub.name)}
+                    >
+                      <ListItemText
+                        primary={`• ${sub.name}`}
+                        primaryTypographyProps={{
+                          fontWeight: 500,
+                          sx: {
+                            '&:hover': {
+                              fontWeight: 700,
+                              textDecoration: 'underline'
+                            }
+                          }
+                        }}
+                      />
                     </ListItem>
                   ))}
                 </List>
@@ -187,7 +245,7 @@ const KategorieListe: React.FC = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Unterkategories Dialog */}
+      {/* Unterkategorie hinzufügen */}
       <Dialog open={subDialogOpen} onClose={() => setSubDialogOpen(false)} fullWidth>
         <DialogTitle>Unterkategorie hinzufügen</DialogTitle>
         <DialogContent>
@@ -203,6 +261,29 @@ const KategorieListe: React.FC = () => {
           <Button onClick={() => setSubDialogOpen(false)}>Abbrechen</Button>
           <Button onClick={handleAddSub} variant="contained">
             Hinzufügen
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Unterkategorie bearbeiten/löschen */}
+      <Dialog open={subEditDialogOpen} onClose={() => setSubEditDialogOpen(false)} fullWidth>
+        <DialogTitle>Unterkategorie bearbeiten</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            fullWidth
+            label="Name"
+            value={subEditName}
+            onChange={(e) => setSubEditName(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteSub} color="error">
+            Löschen
+          </Button>
+          <Button onClick={() => setSubEditDialogOpen(false)}>Abbrechen</Button>
+          <Button onClick={handleSaveSubEdit} variant="contained">
+            Speichern
           </Button>
         </DialogActions>
       </Dialog>
