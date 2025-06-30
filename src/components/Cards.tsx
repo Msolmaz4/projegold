@@ -1,35 +1,46 @@
 import {
+  Box,
   Typography,
   Avatar,
   Card,
   CardContent,
-  Box,
   Modal,
 } from "@mui/material";
 
 import BusinessIcon from "@mui/icons-material/Business";
 import type { User } from "../types";
 import { useEffect, useState } from "react";
-import Details from "../featurs/compaines/Details";
+import Details from "./Details";
+import { useUser } from "../context/UserContext";
 
 type CardsProps = {
   user: User;
 };
 
 const Cards = ({ user }: CardsProps) => {
-  const [imageUr, setImageUr] = useState<string | undefined>(undefined);
+  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
   const [openDetails, setOpenDetails] = useState(false);
+  const { users, setUsers } = useUser();
 
   useEffect(() => {
     if (user.image) {
       const logo = URL.createObjectURL(user.image);
-      setImageUr(logo);
+      setImageUrl(logo);
       return () => URL.revokeObjectURL(logo);
+    } else if (user?.imageURL) {
+      setImageUrl(user?.imageURL);
     }
-  }, [user.image]);
+  }, [user.image, user.imageURL]);
 
   const handleOpen = () => setOpenDetails(true);
   const handleClose = () => setOpenDetails(false);
+
+  // Silme işlemi
+  const handleDelete = (userId: number) => {
+    // users listesinden filtreleyip sil
+    setUsers(users.filter((u) => u.id !== userId));
+    handleClose(); // detay modalını kapat
+  };
 
   return (
     <>
@@ -54,7 +65,7 @@ const Cards = ({ user }: CardsProps) => {
         elevation={0}
       >
         <Avatar
-          src={imageUr || ""}
+          src={imageUrl || ""}
           alt={user.name}
           sx={{
             bgcolor: "#1976d2",
@@ -63,12 +74,12 @@ const Cards = ({ user }: CardsProps) => {
             mb: 1,
           }}
         >
-          {!imageUr && <BusinessIcon />}
+          {!imageUrl && <BusinessIcon />}
         </Avatar>
 
         <CardContent sx={{ p: 1 }}>
           <Typography variant="subtitle1" sx={{ mb: 1 }}>
-            {user.name}
+            {user.company?.name ?? user.name ?? "Kein Name vorhanden"}
           </Typography>
         </CardContent>
       </Card>
@@ -89,7 +100,7 @@ const Cards = ({ user }: CardsProps) => {
             overflowY: "auto",
           }}
         >
-          <Details user={user} imageUrl={imageUr} />
+          <Details user={user} imageUrl={imageUrl} onDelete={handleDelete} />
         </Box>
       </Modal>
     </>

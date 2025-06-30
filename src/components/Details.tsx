@@ -17,23 +17,22 @@ import {
 import { useState } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import BusinessIcon from "@mui/icons-material/Business";
-import type { User } from "../../types";
+import type { User } from "../types";
 
 type Props = {
   user: User;
   imageUrl?: string;
+  onDelete: (userId: number) => void;  // silme fonksiyonu prop olarak al
 };
 
-
-const Details = ({ user, imageUrl }: Props) => {
-
+const Details = ({ user, imageUrl, onDelete }: Props) => {
   const [tabIndex, setTabIndex] = useState(0);
   const [selectedAufgabe, setSelectedAufgabe] = useState<number | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
-    setSelectedAufgabe(null); // Reset selectedAufgabe when switching tabs
+    setSelectedAufgabe(null);
   };
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -44,25 +43,30 @@ const Details = ({ user, imageUrl }: Props) => {
     setAnchorEl(null);
   };
 
+  const handleDelete = () => {
+    onDelete(user.id);
+    handleMenuClose();
+  };
+
   const renderTabContent = () => {
     switch (tabIndex) {
       case 0:
         return (
           <Typography mt={2}>
-            {user.name}
+            {user.company?.name ?? "Keine Unternehmensdaten"}
           </Typography>
         );
       case 1:
         return (
           <Typography mt={2}>
-            {user.company.name}
-            {user.company?.description}
+            {user.company?.name ?? ""}
+            {user.company?.description ?? "Keine Beschreibung verfügbar"}
           </Typography>
         );
       case 2:
         return (
           <Typography mt={2}>
-            {user.website}
+            {user.website ?? "Keine Webseite verfügbar"}
           </Typography>
         );
       case 3:
@@ -78,7 +82,7 @@ const Details = ({ user, imageUrl }: Props) => {
 
   return (
     <Box mt={4} borderTop="1px solid #ddd" pt={4}>
-      {/* Oberer Bereich */}
+      {/* Header */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Box display="flex" alignItems="center" gap={2}>
           <Avatar
@@ -87,18 +91,17 @@ const Details = ({ user, imageUrl }: Props) => {
           >
             {!imageUrl && <BusinessIcon />}
           </Avatar>
-          <Typography variant="h5">{user.name}</Typography>
+          <Typography variant="h5">{user.company?.name ?? "Kein Name"}</Typography>
         </Box>
         <IconButton onClick={handleMenuOpen}>
           <MoreVertIcon />
         </IconButton>
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleMenuClose}
-        >
+        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
           <MenuItem>Bearbeiten</MenuItem>
-          <MenuItem disabled={user?.tasks?.length > 0}>
+          <MenuItem
+            disabled={user?.tasks && user.tasks.length > 0}
+            onClick={handleDelete}
+          >
             Löschen
           </MenuItem>
         </Menu>
@@ -112,38 +115,42 @@ const Details = ({ user, imageUrl }: Props) => {
         <Tab label="Cross-Funktion" />
       </Tabs>
 
-      {/* Tab İçeriği */}
+      {/* Tab Content */}
       <Box mt={2} mb={4} px={2}>
         {renderTabContent()}
       </Box>
 
       {/* Aufgabenbereiche */}
-      <Typography variant="h6" mb={2}>
-        Aufgabengebiete
-      </Typography>
-      <Grid container spacing={2} mb={4}>
-        {user?.tasks?.map((aufgabe, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
-            <Card
-              onClick={() => setSelectedAufgabe(index)}
-              sx={{
-                cursor: "pointer",
-                border:
-                  selectedAufgabe === index
-                    ? "2px solid #1976d2"
-                    : "1px solid #ccc",
-                "&:hover": { backgroundColor: "#f0f0f0" },
-              }}
-            >
-              <CardContent>
-                <Typography align="center" variant="subtitle1">
-                  {aufgabe.name}
-                </Typography>
-              </CardContent>
-            </Card>
+      {user?.tasks && user.tasks.length > 0 && (
+        <>
+          <Typography variant="h6" mb={2}>
+            Aufgabengebiete
+          </Typography>
+          <Grid container spacing={2} mb={4}>
+            {user.tasks.map((aufgabe, index) => (
+              <Grid item xs={12} sm={6} md={4} key={index}>
+                <Card
+                  onClick={() => setSelectedAufgabe(index)}
+                  sx={{
+                    cursor: "pointer",
+                    border:
+                      selectedAufgabe === index
+                        ? "2px solid #1976d2"
+                        : "1px solid #ccc",
+                    "&:hover": { backgroundColor: "#f0f0f0" },
+                  }}
+                >
+                  <CardContent>
+                    <Typography align="center" variant="subtitle1">
+                      {aufgabe.name}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
-        ))}
-      </Grid>
+        </>
+      )}
 
       {/* Details zum ausgewählten Aufgabenbereich*/}
       {selectedAufgabe !== null && user?.tasks?.[selectedAufgabe] && (

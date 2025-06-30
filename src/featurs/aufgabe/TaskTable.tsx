@@ -22,7 +22,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
-import AddTaskModal from "./AdTaskModal"; 
+import AddTaskModal from "./AdTaskModal";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -33,6 +33,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import type { Task } from "../../types";
 import { initialTasks } from "../../data";
+import { useUser } from "../../context/UserContext";
 
 function SortableRow({
   task,
@@ -45,7 +46,6 @@ function SortableRow({
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: task.id });
-
   const [menuDialogOpen, setMenuDialogOpen] = useState(false);
   const anchorRef = useRef<HTMLButtonElement | null>(null);
 
@@ -75,15 +75,26 @@ function SortableRow({
           <DragIndicatorIcon fontSize="small" />
         </IconButton>
       </TableCell>
-      <TableCell>{task.name}</TableCell>
-      <TableCell>{task.vorarbeit} min</TableCell>
-      <TableCell>{task.umsetzung} min</TableCell>
-      <TableCell>{task.kontrolle} min</TableCell>
-      <TableCell>{task.kosten} €</TableCell>
-      <TableCell>
-        {task.dueDate ? new Date(task.dueDate).toLocaleDateString("de-DE") : "—"}
+      <TableCell
+        sx={{
+          maxWidth: 140,
+          whiteSpace: "normal",
+          wordWrap: "break-word",
+          overflowWrap: "break-word",
+        }}
+      >
+        {task.name}
       </TableCell>
-      <TableCell>
+      <TableCell sx={{ whiteSpace: "nowrap" }}>{task.vorarbeit} min</TableCell>
+      <TableCell sx={{ whiteSpace: "nowrap" }}>{task.umsetzung} min</TableCell>
+      <TableCell sx={{ whiteSpace: "nowrap" }}>{task.kontrolle} min</TableCell>
+      <TableCell sx={{ whiteSpace: "nowrap" }}>{task.kosten} €</TableCell>
+      <TableCell sx={{ whiteSpace: "nowrap" }}>
+        {task.dueDate
+          ? new Date(task.dueDate).toLocaleDateString("de-DE")
+          : "—"}
+      </TableCell>
+      <TableCell sx={{ whiteSpace: "nowrap" }}>
         <Chip
           size="small"
           label={task.status}
@@ -98,19 +109,15 @@ function SortableRow({
           }
         />
       </TableCell>
-      <TableCell>{task.milestone || "—"}</TableCell>
-      <TableCell align="right">
+      <TableCell sx={{ whiteSpace: "nowrap" }}>{task.milestone || "—"}</TableCell>
+      <TableCell align="right" sx={{ whiteSpace: "nowrap" }}>
         <IconButton size="small" onClick={() => onEdit(task)}>
           <EditIcon />
         </IconButton>
         <IconButton size="small" ref={anchorRef} onClick={handleMenuOpen}>
           <MoreVertIcon />
         </IconButton>
-        <Menu
-          anchorEl={anchorRef.current}
-          open={menuDialogOpen}
-          onClose={handleMenuClose}
-        >
+        <Menu anchorEl={anchorRef.current} open={menuDialogOpen} onClose={handleMenuClose}>
           <MenuItem
             onClick={() => {
               onEdit(task);
@@ -127,6 +134,7 @@ function SortableRow({
 }
 
 const TaskTable: React.FC = () => {
+  const { categories } = useUser();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [firmaFilter, setFirmaFilter] = useState("");
@@ -135,36 +143,28 @@ const TaskTable: React.FC = () => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
-  // Tüm benzersiz firmalar (boş olmayan)
   const uniqueFirms = Array.from(new Set(tasks.map((t) => t.firma))).filter(Boolean);
 
-  // Yeni görev ekleme
   const handleAddTask = (newTask: Task) => {
     const maxId = tasks.reduce((max, t) => (t.id > max ? t.id : max), 0);
     setTasks((prev) => [...prev, { ...newTask, id: maxId + 1 }]);
   };
 
-  // Görev düzenleme açma
   const handleEditTask = (task: Task) => {
     setSelectedTask(task);
     setEditDialogOpen(true);
   };
 
-  // Düzenlenen görevi kaydetme
   const handleSaveEdit = (editedTask: Task) => {
-    setTasks((prev) =>
-      prev.map((t) => (t.id === editedTask.id ? editedTask : t))
-    );
+    setTasks((prev) => prev.map((t) => (t.id === editedTask.id ? editedTask : t)));
     setEditDialogOpen(false);
     setSelectedTask(null);
   };
 
-  // Görev silme
   const handleDeleteTask = (taskToDelete: Task) => {
     setTasks((prev) => prev.filter((t) => t.id !== taskToDelete.id));
   };
 
-  // Filtrelenmiş görevler
   const filteredTasks = tasks.filter(
     (task) =>
       task.name.toLowerCase().includes(search.toLowerCase()) &&
@@ -172,15 +172,18 @@ const TaskTable: React.FC = () => {
       (firmaFilter ? task.firma === firmaFilter : true)
   );
 
-  // Görevleri kategori > alt kategoriye göre grupla
   const grouped = filteredTasks.reduce((acc, task) => {
-    const key = `${task.category} > ${task.subcategory}`;
+    const catName = categories.find((c) => c.id.toString() === task.category)?.name || task.category;
+    const subName =
+      categories
+        .flatMap((c) => c.subcategories)
+        .find((s) => s.id === task.subcategory)?.name || task.subcategory;
+    const key = `${catName} > ${subName}`;
     if (!acc[key]) acc[key] = [];
     acc[key].push(task);
     return acc;
   }, {} as Record<string, Task[]>);
 
-  // Sürükle bırak sonrası
   const onDragEnd = ({
     active,
     over,
@@ -189,45 +192,38 @@ const TaskTable: React.FC = () => {
     over: { id: number } | null;
   }) => {
     if (!over || active.id === over.id) return;
-
     const activeTask = tasks.find((t) => t.id === active.id);
     const overTask = tasks.find((t) => t.id === over.id);
     if (!activeTask || !overTask) return;
 
-    const oldGroup = `${activeTask.category} > ${activeTask.subcategory}`;
-    const newGroup = `${overTask.category} > ${overTask.subcategory}`;
+    const oldGroup = `${activeTask.category}>${activeTask.subcategory}`;
+    const newGroup = `${overTask.category}>${overTask.subcategory}`;
 
     let updatedTasks = [...tasks];
 
     if (oldGroup === newGroup) {
-      // Aynı grup içindeyse sırayı değiştir
       const groupTasks = tasks.filter(
-        (t) => `${t.category} > ${t.subcategory}` === oldGroup
+        (t) => `${t.category}>${t.subcategory}` === oldGroup
       );
       const oldIndex = groupTasks.findIndex((t) => t.id === active.id);
       const newIndex = groupTasks.findIndex((t) => t.id === over.id);
       const reordered = arrayMove(groupTasks, oldIndex, newIndex);
-
       const others = tasks.filter(
-        (t) => `${t.category} > ${t.subcategory}` !== oldGroup
+        (t) => `${t.category}>${t.subcategory}` !== oldGroup
       );
-
       updatedTasks = [...others, ...reordered];
     } else {
-      // Grup değişirse kategori, alt kategori ve durum güncellenir
-      const [newCategory, newSubcategory] = newGroup.split(" > ");
       updatedTasks = updatedTasks.map((t) =>
         t.id === active.id
           ? {
               ...t,
-              category: newCategory,
-              subcategory: newSubcategory,
+              category: overTask.category,
+              subcategory: overTask.subcategory,
               status: "in Bearbeitung",
             }
           : t
       );
     }
-
     setTasks(updatedTasks);
   };
 
@@ -277,23 +273,18 @@ const TaskTable: React.FC = () => {
         </Button>
       </Box>
 
-      {/* Düzenleme modalı */}
       <AddTaskModal
         open={editDialogOpen}
         onClose={() => setEditDialogOpen(false)}
         onSave={handleSaveEdit}
         existingTask={selectedTask}
         firmOptions={uniqueFirms}
-        initialTasks={initialTasks}
       />
-
-      {/* Ekleme modalı */}
       <AddTaskModal
         open={openDialog}
         onClose={() => setOpenDialog(false)}
         onSave={handleAddTask}
         firmOptions={uniqueFirms}
-        initialTasks={initialTasks}
       />
 
       <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>

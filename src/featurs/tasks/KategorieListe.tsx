@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Card,
@@ -17,30 +17,30 @@ import {
   List,
   ListItem,
   ListItemText,
-  Grid
-} from '@mui/material';
-import { MoreVert, Add } from '@mui/icons-material';
-import { v4 as uuidv4 } from 'uuid';
-import { Categories } from '../../data';
-import type { Category } from '../../types';
-
-const initialCategories: Category[] = Categories;
+  Grid,
+} from "@mui/material";
+import { MoreVert, Add } from "@mui/icons-material";
+import { v4 as uuidv4 } from "uuid";
+import type { Category } from "../../types";
+import { useUser } from "../../context/UserContext";
 
 const KategorieListe: React.FC = () => {
-  const [categories, setCategories] = useState<Category[]>(initialCategories);
+  const { categories, setCategories } = useUser();
+
+  // Local state for dialogs and editing
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
-  const [newName, setNewName] = useState('');
+  const [newName, setNewName] = useState("");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [menuId, setMenuId] = useState<string | null>(null);
   const [selectedCatId, setSelectedCatId] = useState<string | null>(null);
   const [subDialogOpen, setSubDialogOpen] = useState(false);
-  const [newSubName, setNewSubName] = useState('');
-
+  const [newSubName, setNewSubName] = useState("");
   const [selectedSubId, setSelectedSubId] = useState<string | null>(null);
-  const [subEditName, setSubEditName] = useState('');
+  const [subEditName, setSubEditName] = useState("");
   const [subEditDialogOpen, setSubEditDialogOpen] = useState(false);
 
+  // Menü aç/kapa işlemleri
   const openMenu = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
     setAnchorEl(e.currentTarget);
     setMenuId(id);
@@ -51,36 +51,47 @@ const KategorieListe: React.FC = () => {
     setMenuId(null);
   };
 
+  // Kategori kaydet (ekle veya düzenle)
   const handleSaveCategory = () => {
-    if (editId) {
-      setCategories(prev =>
-        prev.map(cat =>
-          cat.id === editId ? { ...cat, name: newName } : cat
-        )
-      );
-    } else {
-      setCategories(prev => [
-        ...prev,
-        { id: uuidv4(), name: newName, subcategories: [] }
-      ]);
+    if (!newName.trim()) {
+      alert("Name darf nicht leer sein");
+      return;
     }
-    setNewName('');
+
+    if (editId) {
+      // Düzenleme
+      const updated = categories.map((cat) =>
+        cat.id === editId ? { ...cat, name: newName } : cat
+      );
+      setCategories(updated);
+    } else {
+      // Yeni kategori ekleme
+      const newCategory: Category = {
+        id: uuidv4(),
+        name: newName.trim(),
+        subcategories: [],
+      };
+      setCategories([...categories, newCategory]);
+    }
+    setNewName("");
     setDialogOpen(false);
     setEditId(null);
   };
 
+  // Kategori sil
   const handleDelete = (id: string) => {
-    const cat = categories.find(c => c.id === id);
+    const cat = categories.find((c) => c.id === id);
     if (cat && cat.subcategories.length > 0) {
       alert("Kategorie kann nicht gelöscht werden – enthält Unterkategorien.");
       return;
     }
-    setCategories(prev => prev.filter(c => c.id !== id));
+    setCategories(categories.filter((c) => c.id !== id));
     closeMenu();
   };
 
+  // Kategori düzenleme başlat
   const handleEdit = (id: string) => {
-    const cat = categories.find(c => c.id === id);
+    const cat = categories.find((c) => c.id === id);
     if (cat) {
       setEditId(id);
       setNewName(cat.name);
@@ -89,88 +100,119 @@ const KategorieListe: React.FC = () => {
     closeMenu();
   };
 
+  // Alt kategori ekleme
   const handleAddSub = () => {
     if (!newSubName.trim() || !selectedCatId) return;
-    const selectedCat = categories.find(cat => cat.id === selectedCatId);
+
+    const selectedCat = categories.find((cat) => cat.id === selectedCatId);
     if (selectedCat && selectedCat.subcategories.length >= 5) {
-      alert('Maximal 5 Aufgaben pro Kategorie erlaubt');
+      alert("Maximal 5 Aufgaben pro Kategorie erlaubt");
       return;
     }
-    setCategories(prev =>
-      prev.map(cat =>
-        cat.id === selectedCatId
-          ? {
-              ...cat,
-              subcategories: [...cat.subcategories, { id: uuidv4(), name: newSubName.trim() }]
-            }
-          : cat
-      )
+
+    const updated = categories.map((cat) =>
+      cat.id === selectedCatId
+        ? {
+            ...cat,
+            subcategories: [
+              ...cat.subcategories,
+              { id: uuidv4(), name: newSubName.trim() },
+            ],
+          }
+        : cat
     );
-    setNewSubName('');
+    setCategories(updated);
+    setNewSubName("");
     setSelectedCatId(null);
     setSubDialogOpen(false);
   };
 
+  // Alt kategori düzenleme dialog aç
   const handleOpenSubEditDialog = (subId: string, name: string) => {
     setSelectedSubId(subId);
     setSubEditName(name);
     setSubEditDialogOpen(true);
   };
 
+  // Alt kategori kaydet (düzenle)
   const handleSaveSubEdit = () => {
     if (!selectedSubId) return;
 
-    setCategories(prev =>
-      prev.map(cat => ({
-        ...cat,
-        subcategories: cat.subcategories.map(sub =>
-          sub.id === selectedSubId ? { ...sub, name: subEditName } : sub
-        )
-      }))
-    );
-
+    const updated = categories.map((cat) => ({
+      ...cat,
+      subcategories: cat.subcategories.map((sub) =>
+        sub.id === selectedSubId ? { ...sub, name: subEditName } : sub
+      ),
+    }));
+    setCategories(updated);
     setSubEditDialogOpen(false);
     setSelectedSubId(null);
-    setSubEditName('');
+    setSubEditName("");
   };
 
+  // Alt kategori sil
   const handleDeleteSub = () => {
     if (!selectedSubId) return;
 
-    setCategories(prev =>
-      prev.map(cat => ({
-        ...cat,
-        subcategories: cat.subcategories.filter(sub => sub.id !== selectedSubId)
-      }))
-    );
-
+    const updated = categories.map((cat) => ({
+      ...cat,
+      subcategories: cat.subcategories.filter((sub) => sub.id !== selectedSubId),
+    }));
+    setCategories(updated);
     setSubEditDialogOpen(false);
     setSelectedSubId(null);
-    setSubEditName('');
+    setSubEditName("");
   };
+
+  // Eğer categories undefined olursa loading göster
+  if (!categories) {
+    return <Typography>Lädt Kategorien...</Typography>;
+  }
 
   return (
     <Box p={2}>
       <Box display="flex" justifyContent="flex-end" mb={2}>
-        <Button variant="contained" startIcon={<Add />} onClick={() => setDialogOpen(true)}>
+        <Button
+          variant="contained"
+          startIcon={<Add />}
+          onClick={() => setDialogOpen(true)}
+        >
           Hinzufügen
         </Button>
       </Box>
 
       <Grid container spacing={2}>
-        {categories.map(cat => (
+        {categories.length === 0 && (
+          <Typography variant="body1" color="textSecondary" m={2}>
+            Keine Kategorien vorhanden.
+          </Typography>
+        )}
+
+        {categories.map((cat) => (
           <Grid item xs={12} md={6} lg={4} key={cat.id}>
             <Card>
               <CardHeader
-                title={<Typography variant="h6">📁 {cat.name}</Typography>}
+                title={
+                  <Typography variant="h6" component="div">
+                    📁 {cat.name}
+                  </Typography>
+                }
                 action={
                   <>
                     <IconButton onClick={(e) => openMenu(e, cat.id)}>
                       <MoreVert />
                     </IconButton>
-                    <Menu anchorEl={anchorEl} open={menuId === cat.id} onClose={closeMenu}>
-                      <MenuItem onClick={() => handleEdit(cat.id)}>Bearbeiten</MenuItem>
-                      <MenuItem onClick={() => handleDelete(cat.id)}>Löschen</MenuItem>
+                    <Menu
+                      anchorEl={anchorEl}
+                      open={menuId === cat.id}
+                      onClose={closeMenu}
+                    >
+                      <MenuItem onClick={() => handleEdit(cat.id)}>
+                        Bearbeiten
+                      </MenuItem>
+                      <MenuItem onClick={() => handleDelete(cat.id)}>
+                        Löschen
+                      </MenuItem>
                     </Menu>
                   </>
                 }
@@ -184,10 +226,10 @@ const KategorieListe: React.FC = () => {
                     <ListItem
                       key={sub.id}
                       sx={{
-                        cursor: 'pointer',
-                        '&:hover': {
-                          backgroundColor: '#f5f5f5',
-                        }
+                        cursor: "pointer",
+                        "&:hover": {
+                          backgroundColor: "#f5f5f5",
+                        },
                       }}
                       onClick={() => handleOpenSubEditDialog(sub.id, sub.name)}
                     >
@@ -196,11 +238,11 @@ const KategorieListe: React.FC = () => {
                         primaryTypographyProps={{
                           fontWeight: 500,
                           sx: {
-                            '&:hover': {
+                            "&:hover": {
                               fontWeight: 700,
-                              textDecoration: 'underline'
-                            }
-                          }
+                              textDecoration: "underline",
+                            },
+                          },
                         }}
                       />
                     </ListItem>
@@ -226,7 +268,9 @@ const KategorieListe: React.FC = () => {
 
       {/* Kategorie Dialog */}
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth>
-        <DialogTitle>{editId ? "Kategorie bearbeiten" : "Neue Kategorie hinzufügen"}</DialogTitle>
+        <DialogTitle>
+          {editId ? "Kategorie bearbeiten" : "Neue Kategorie hinzufügen"}
+        </DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -266,7 +310,11 @@ const KategorieListe: React.FC = () => {
       </Dialog>
 
       {/* Unterkategorie bearbeiten/löschen */}
-      <Dialog open={subEditDialogOpen} onClose={() => setSubEditDialogOpen(false)} fullWidth>
+      <Dialog
+        open={subEditDialogOpen}
+        onClose={() => setSubEditDialogOpen(false)}
+        fullWidth
+      >
         <DialogTitle>Unterkategorie bearbeiten</DialogTitle>
         <DialogContent>
           <TextField

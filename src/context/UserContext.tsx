@@ -1,49 +1,47 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import type { User } from "../types";
-import { Users } from "../data";
+import type { User, Category } from "../types";
+import { Users, Categories as InitialCategories } from "../data";
 
 type UserContextType = {
   users: User[];
   setUsers: React.Dispatch<React.SetStateAction<User[]>>;
   deleteUser: (id: number) => void;
- upgrdateUser: (payload: UpgradeUser) => void;
+  updateUser: (payload: UpgradeUser) => void;
+  categories: Category[];
+  setCategories: React.Dispatch<React.SetStateAction<Category[]>>;
 };
 
 type UpgradeUser = {
-  id:number,
-  name:string,
-  image: File | null | string
-}
- 
-
-
-
+  id: number;
+  name: string;
+  image: File | null | string;
+};
 
 const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const [users, setUsers] = useState<User[]>(Users|| []);
+  const [users, setUsers] = useState<User[]>(Users || []);
+  const [categories, setCategories] = useState<Category[]>(InitialCategories || []);
 
   useEffect(() => {
-    if(Users) setUsers(Users);
-     
+    if (Users) setUsers(Users);
+    if (InitialCategories) setCategories(InitialCategories);
   }, []);
 
   const deleteUser = (id: number) => {
-    setUsers(prev => prev.filter(user => user.id !== id));
+    setUsers((prev) => prev.filter((user) => user.id !== id));
   };
 
-  
-
-  const upgrdateUser = ({id,name,image}  : UpgradeUser)=>{
-  setUsers(prev => {
-    if (!prev) return [];
-    return prev.map(user => (user.id === id ? { ...user, name, image } : user));
-  });
-  }
-
+  const updateUser = ({ id, name, image }: UpgradeUser) => {
+    setUsers((prev) =>
+      prev.map((user) => (user.id === id ? { ...user, name, image } : user))
+    );
+  };
+ console.log(categories,'useContext')
   return (
-    <UserContext.Provider value={{ users, setUsers, deleteUser,upgrdateUser }}>
+    <UserContext.Provider
+      value={{ users, setUsers, deleteUser, updateUser, categories, setCategories }}
+    >
       {children}
     </UserContext.Provider>
   );
@@ -56,4 +54,5 @@ export const useUser = () => {
   }
   return context;
 };
+
 export default UserContext;
