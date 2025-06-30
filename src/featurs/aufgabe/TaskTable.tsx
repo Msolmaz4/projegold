@@ -303,7 +303,7 @@ const TaskTable: React.FC = () => {
                 <TableHead>
                   <TableRow>
                     <TableCell />
-                    <TableCell>Name</TableCell>
+                    <TableCell>Aufgabe</TableCell>
                     <TableCell>Vorarbeit</TableCell>
                     <TableCell>Umsetzung</TableCell>
                     <TableCell>Kontrolle</TableCell>

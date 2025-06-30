@@ -47,16 +47,20 @@ const AddTaskModal: React.FC<ModalProps> = ({
   });
 
 useEffect(() => {
-  console.log("existingTask:", existingTask);
+  if (!open || !categories || categories.length === 0) return;
+
   if (existingTask) {
+    const foundCategory = categories.find(
+      (cat) => cat.name === existingTask.category
+    );
+    const foundSubcategory = foundCategory?.subcategories.find(
+      (sub) => sub.name === existingTask.subcategory
+    );
+
     setTask({
       ...existingTask,
-      category: existingTask.categoryId
-        ? existingTask.categoryId.toString()
-        : existingTask.category || "",
-      subcategory: existingTask.subcategoryId
-        ? existingTask.subcategoryId.toString()
-        : existingTask.subcategory || "",
+      category: foundCategory ? foundCategory.id.toString() : "",
+      subcategory: foundSubcategory ? foundSubcategory.id.toString() : "",
     });
   } else {
     setTask({
@@ -74,7 +78,8 @@ useEffect(() => {
       firma: "",
     });
   }
-}, [existingTask, open]);
+}, [existingTask, open, categories]);
+
 
 console.log("task state:", task);
 
