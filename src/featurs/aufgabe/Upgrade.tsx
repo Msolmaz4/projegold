@@ -78,6 +78,7 @@ useEffect(() => {
       firma: "",
     });
   }
+  console.log(task)
 }, [existingTask, open, categories]);
 
 

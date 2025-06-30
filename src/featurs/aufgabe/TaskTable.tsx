@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Table,
@@ -32,9 +32,9 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { Task } from "../../types";
-import { initialTasks } from "../../data";
 import { useUser } from "../../context/UserContext";
 
+// Task row (sortable)
 function SortableRow({
   task,
   onEdit,
@@ -75,26 +75,19 @@ function SortableRow({
           <DragIndicatorIcon fontSize="small" />
         </IconButton>
       </TableCell>
-      <TableCell
-        sx={{
-          maxWidth: 140,
-          whiteSpace: "normal",
-          wordWrap: "break-word",
-          overflowWrap: "break-word",
-        }}
-      >
+      <TableCell sx={{ maxWidth: 140, whiteSpace: "normal", wordWrap: "break-word" }}>
         {task.name}
       </TableCell>
-      <TableCell sx={{ whiteSpace: "nowrap" }}>{task.vorarbeit} min</TableCell>
-      <TableCell sx={{ whiteSpace: "nowrap" }}>{task.umsetzung} min</TableCell>
-      <TableCell sx={{ whiteSpace: "nowrap" }}>{task.kontrolle} min</TableCell>
-      <TableCell sx={{ whiteSpace: "nowrap" }}>{task.kosten} €</TableCell>
-      <TableCell sx={{ whiteSpace: "nowrap" }}>
+      <TableCell>{task.vorarbeit} min</TableCell>
+      <TableCell>{task.umsetzung} min</TableCell>
+      <TableCell>{task.kontrolle} min</TableCell>
+      <TableCell>{task.kosten} €</TableCell>
+      <TableCell>
         {task.dueDate
           ? new Date(task.dueDate).toLocaleDateString("de-DE")
           : "—"}
       </TableCell>
-      <TableCell sx={{ whiteSpace: "nowrap" }}>
+      <TableCell>
         <Chip
           size="small"
           label={task.status}
@@ -109,8 +102,8 @@ function SortableRow({
           }
         />
       </TableCell>
-      <TableCell sx={{ whiteSpace: "nowrap" }}>{task.milestone || "—"}</TableCell>
-      <TableCell align="right" sx={{ whiteSpace: "nowrap" }}>
+      <TableCell>{task.milestone || "—"}</TableCell>
+      <TableCell align="right">
         <IconButton size="small" onClick={() => onEdit(task)}>
           <EditIcon />
         </IconButton>
@@ -118,12 +111,7 @@ function SortableRow({
           <MoreVertIcon />
         </IconButton>
         <Menu anchorEl={anchorRef.current} open={menuDialogOpen} onClose={handleMenuClose}>
-          <MenuItem
-            onClick={() => {
-              onEdit(task);
-              handleMenuClose();
-            }}
-          >
+          <MenuItem onClick={() => { onEdit(task); handleMenuClose(); }}>
             Bearbeiten
           </MenuItem>
           <MenuItem onClick={handleDeleteClick}>Löschen</MenuItem>
@@ -133,17 +121,37 @@ function SortableRow({
   );
 }
 
+// 🧠 Yardımcı: Users'tan görevleri toplayan fonksiyon
+const extractTasksFromUsers = (users: any[]): Task[] => {
+  let idCounter = 1;
+  return users.flatMap((user) =>
+    user.aufgabe.map((task: any) => ({
+      ...task,
+      id: idCounter++,
+    }))
+  );
+};
+
+// 📦 Ana tablo bileşeni
 const TaskTable: React.FC = () => {
-  const { categories } = useUser();
+  const { categories, users } = useUser();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [firmaFilter, setFirmaFilter] = useState("");
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
-  const uniqueFirms = Array.from(new Set(tasks.map((t) => t.firma))).filter(Boolean);
+  useEffect(() => {
+    const userTasks = extractTasksFromUsers(users);
+    setTasks(userTasks);
+  }, [users]);
+
+  const uniqueFirms = useMemo(
+    () => Array.from(new Set(tasks.map((t) => t.firma))).filter(Boolean),
+    [tasks]
+  );
 
   const handleAddTask = (newTask: Task) => {
     const maxId = tasks.reduce((max, t) => (t.id > max ? t.id : max), 0);
@@ -173,7 +181,8 @@ const TaskTable: React.FC = () => {
   );
 
   const grouped = filteredTasks.reduce((acc, task) => {
-    const catName = categories.find((c) => c.id.toString() === task.category)?.name || task.category;
+    const catName =
+      categories.find((c) => c.id.toString() === task.category)?.name || task.category;
     const subName =
       categories
         .flatMap((c) => c.subcategories)
@@ -273,7 +282,6 @@ const TaskTable: React.FC = () => {
         </Button>
       </Box>
 
-      {/* Düzenleme Modal */}
       <AddTaskModal
         open={editDialogOpen}
         onClose={() => setEditDialogOpen(false)}
@@ -283,7 +291,6 @@ const TaskTable: React.FC = () => {
         initialId={selectedTask ? selectedTask.id : undefined}
       />
 
-      {/* Yeni Görev Modal */}
       <AddTaskModal
         open={openDialog}
         onClose={() => setOpenDialog(false)}

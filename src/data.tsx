@@ -35,8 +35,11 @@ interface Aufgabe {
     | "SEO"
     | "PDF Programmierung"
     | "Webformula"
+    | 'Backend'
+    |  'UX/UI'
     | undefined;
   name: string;
+  firma:string,
 }
 
 interface Address {
@@ -106,10 +109,10 @@ const Users: UserWithTasks[] = [
         category: "Marketing",
         subcategory: "SEO",
         name: "Backlink auf Wikipedia setzen",
+        firma: "Google",
       },
     ],
   },
-
   {
     id: 2,
     name: "Ervin Howell",
@@ -142,10 +145,10 @@ const Users: UserWithTasks[] = [
         category: "Marketing",
         subcategory: "SEO",
         name: "Backlink auf Wikipedia setzen",
+        firma: "JPMorgan Chase",
       },
     ],
   },
-
   {
     id: 3,
     name: "Clementine Bauch",
@@ -178,10 +181,10 @@ const Users: UserWithTasks[] = [
         category: "Marketing",
         subcategory: "SEO",
         name: "Backlink auf Wikipedia setzen",
+        firma: "Siemens",
       },
     ],
   },
-
   {
     id: 4,
     name: "Patricia Lebsack",
@@ -214,10 +217,10 @@ const Users: UserWithTasks[] = [
         category: "Marketing",
         subcategory: "SEO",
         name: "Backlink auf Wikipedia setzen",
+        firma: "DHL",
       },
     ],
   },
-
   {
     id: 5,
     name: "Chelsey Dietrich",
@@ -250,11 +253,10 @@ const Users: UserWithTasks[] = [
         category: "Marketing",
         subcategory: "SEO",
         name: "Backlink auf Wikipedia setzen",
+        firma: "Procter & Gamble",
       },
     ],
   },
-
-  // Son 5 kullanıcı düzenlendi:
   {
     id: 6,
     name: "Dennis Schulist",
@@ -287,10 +289,10 @@ const Users: UserWithTasks[] = [
         category: "Marketing",
         subcategory: "SEO",
         name: "Backlink auf Wikipedia setzen",
+        firma: "Cerner",
       },
     ],
   },
-
   {
     id: 7,
     name: "Kurtis Weissnat",
@@ -323,10 +325,10 @@ const Users: UserWithTasks[] = [
         category: "Marketing",
         subcategory: "SEO",
         name: "Backlink auf Wikipedia setzen",
+        firma: "Accenture",
       },
     ],
   },
-
   {
     id: 8,
     name: "Nicholas Runolfsdottir",
@@ -356,13 +358,13 @@ const Users: UserWithTasks[] = [
         kosten: 315,
         status: "erledigt",
         dueDate: "2025-06-30",
-        category: "Marketing",
-        subcategory: "SEO",
+        category: "Design",
+        subcategory: "UX/UI",
         name: "Backlink auf Wikipedia setzen",
+        firma: "Amazon",
       },
     ],
   },
-
   {
     id: 9,
     name: "Glenna Reichert",
@@ -395,10 +397,10 @@ const Users: UserWithTasks[] = [
         category: "Marketing",
         subcategory: "SEO",
         name: "Backlink auf Wikipedia setzen",
+        firma: "IBM",
       },
     ],
   },
-
   {
     id: 10,
     name: "Clementina DuBuque",
@@ -428,9 +430,10 @@ const Users: UserWithTasks[] = [
         kosten: 320,
         status: "offen",
         dueDate: "2025-06-30",
-        category: "Marketing",
-        subcategory: "SEO",
+        category: "Development",
+        subcategory: "Backend",
         name: "Backlink auf Wikipedia setzen",
+        firma: "Adobe",
       },
     ],
   },
