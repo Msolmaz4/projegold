@@ -1,321 +1,270 @@
-import React, { useState, useRef } from "react";
 import {
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-  Paper,
-  Chip,
-  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
   MenuItem,
-  Menu,
-  TextField,
-  Select,
   FormControl,
   InputLabel,
-  Button,
+  Select,
+  TextField,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
-import AddTaskModal from "./AddTaskModal";
-import { DndContext, closestCenter } from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import { useEffect, useState } from "react";
 import type { Task } from "../../types";
-import { initialTasks } from "../../data";
+import { useUser } from "../../context/UserContext";
 
-function SortableRow({
-  task,
-  onEdit,
-  onDelete,
-}: {
-  task: Task;
-  onEdit: (task: Task) => void;
-  onDelete: (task: Task) => void;
-}) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: task.id });
+type ModalProps = {
+  open: boolean;
+  onClose: () => void;
+  onSave: (task: Task) => void;
+  existingTask?: Task | null;
+  firmOptions?: string[];
+};
 
-  const [menuDialogOpen, setMenuDialogOpen] = useState(false);
-  const anchorRef = useRef<HTMLButtonElement | null>(null);
+const AddTaskModal: React.FC<ModalProps> = ({
+  open,
+  onClose,
+  onSave,
+  existingTask,
+  firmOptions = [],
+}) => {
+  const { categories } = useUser();
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
+  const [task, setTask] = useState<Task>({
+    id: new Date().getTime(),
+    category: "",
+    subcategory: "",
+    name: "",
+    vorarbeit: 0,
+    umsetzung: 0,
+    kontrolle: 0,
+    kosten: 0,
+    status: "offen",
+    milestone: "",
+    dueDate: "",
+    firma: "",
+  });
+
+useEffect(() => {
+  console.log("existingTask:", existingTask);
+  if (existingTask) {
+    setTask({
+      ...existingTask,
+      category: existingTask.categoryId
+        ? existingTask.categoryId.toString()
+        : existingTask.category || "",
+      subcategory: existingTask.subcategoryId
+        ? existingTask.subcategoryId.toString()
+        : existingTask.subcategory || "",
+    });
+  } else {
+    setTask({
+      id: new Date().getTime(),
+      category: "",
+      subcategory: "",
+      name: "",
+      vorarbeit: 0,
+      umsetzung: 0,
+      kontrolle: 0,
+      kosten: 0,
+      status: "offen",
+      milestone: "",
+      dueDate: "",
+      firma: "",
+    });
+  }
+}, [existingTask, open]);
+
+console.log("task state:", task);
+
+
+  const handleChange = (field: keyof Task, value: any) =>
+    setTask((prev) => ({ ...prev, [field]: value }));
+
+  const handleCategoryChange = (categoryId: string) => {
+    setTask((prev) => ({ ...prev, category: categoryId, subcategory: "" }));
   };
 
-  const handleMenuOpen = () => setMenuDialogOpen(true);
-  const handleMenuClose = () => setMenuDialogOpen(false);
-
-  const handleDeleteClick = () => {
-    if (task.status !== "erledigt") {
-      alert("Nur Aufgaben mit Status 'erledigt' können gelöscht werden!");
-    } else if (
-      window.confirm(`Möchten Sie die Aufgabe "${task.name}" wirklich löschen?`)
-    ) {
-      onDelete(task);
-    }
-    handleMenuClose();
-  };
-
-  return (
-    <TableRow ref={setNodeRef} style={style} hover>
-      <TableCell sx={{ width: 40 }}>
-        <IconButton {...attributes} {...listeners}>
-          <DragIndicatorIcon fontSize="small" />
-        </IconButton>
-      </TableCell>
-      <TableCell>{task.name}</TableCell>
-      <TableCell>{task.vorarbeit} min</TableCell>
-      <TableCell>{task.umsetzung} min</TableCell>
-      <TableCell>{task.kontrolle} min</TableCell>
-      <TableCell>{task.kosten} €</TableCell>
-      <TableCell>
-        {task.dueDate ? new Date(task.dueDate).toLocaleDateString("de-DE") : "—"}
-      </TableCell>
-      <TableCell>
-        <Chip
-          size="small"
-          label={task.status}
-          color={
-            task.status === "offen"
-              ? "warning"
-              : task.status === "erledigt"
-              ? "success"
-              : task.status === "in Bearbeitung"
-              ? "info"
-              : "default"
-          }
-        />
-      </TableCell>
-      <TableCell>{task.milestone || "—"}</TableCell>
-      <TableCell align="right">
-        <IconButton size="small" onClick={() => onEdit(task)}>
-          <EditIcon />
-        </IconButton>
-        <IconButton size="small" ref={anchorRef} onClick={handleMenuOpen}>
-          <MoreVertIcon />
-        </IconButton>
-        <Menu
-          anchorEl={anchorRef.current}
-          open={menuDialogOpen}
-          onClose={handleMenuClose}
-        >
-          <MenuItem
-            onClick={() => {
-              onEdit(task);
-              handleMenuClose();
-            }}
-          >
-            Bearbeiten
-          </MenuItem>
-          <MenuItem onClick={handleDeleteClick}>Löschen</MenuItem>
-        </Menu>
-      </TableCell>
-    </TableRow>
-  );
-}
-
-const TaskTable: React.FC = () => {
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [firmaFilter, setFirmaFilter] = useState("");
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-
-  const handleAddTask = (newTask: Task) => {
-    setTasks((prev) => [...prev, { ...newTask, id: prev.length + 1 }]);
-  };
-
-  const handleEditTask = (task: Task) => {
-    setSelectedTask(task);
-    setEditDialogOpen(true);
-  };
-
-  const handleSaveEdit = (editedTask: Task) => {
-    setTasks((prev) =>
-      prev.map((t) => (t.id === editedTask.id ? editedTask : t))
-    );
-    setEditDialogOpen(false);
-    setSelectedTask(null);
-  };
-
-  const handleDeleteTask = (taskToDelete: Task) => {
-    setTasks((prev) => prev.filter((t) => t.id !== taskToDelete.id));
-  };
-
-  const filteredTasks = tasks.filter(
-    (task) =>
-      task.name.toLowerCase().includes(search.toLowerCase()) &&
-      (statusFilter ? task.status === statusFilter : true) &&
-      (firmaFilter ? task.firma === firmaFilter : true)
+  const selectedCategory = categories.find(
+    (cat) => cat.id.toString() === task.category
   );
 
-  const grouped = filteredTasks.reduce((acc, task) => {
-    const key = `${task.category} > ${task.subcategory}`;
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(task);
-    return acc;
-  }, {} as Record<string, Task[]>);
-
-  const onDragEnd = ({ active, over }: any) => {
-    if (!over || active.id === over.id) return;
-
-    const activeTask = tasks.find((t) => t.id === active.id);
-    const overTask = tasks.find((t) => t.id === over.id);
-    if (!activeTask || !overTask) return;
-
-    const oldGroup = `${activeTask.category} > ${activeTask.subcategory}`;
-    const newGroup = `${overTask.category} > ${overTask.subcategory}`;
-    let updatedTasks = [...tasks];
-
-    if (oldGroup === newGroup) {
-      const groupTasks = tasks.filter(
-        (t) => `${t.category} > ${t.subcategory}` === oldGroup
-      );
-      const oldIndex = groupTasks.findIndex((t) => t.id === active.id);
-      const newIndex = groupTasks.findIndex((t) => t.id === over.id);
-      const reordered = arrayMove(groupTasks, oldIndex, newIndex);
-      const others = tasks.filter(
-        (t) => `${t.category} > ${t.subcategory}` !== oldGroup
-      );
-      updatedTasks = [...others, ...reordered];
-    } else {
-      const [newCategory, newSubcategory] = newGroup.split(" > ");
-      updatedTasks = updatedTasks.map((t) =>
-        t.id === active.id
-          ? {
-              ...t,
-              category: newCategory,
-              subcategory: newSubcategory,
-              status: "in Bearbeitung",
-            }
-          : t
-      );
-    }
-    setTasks(updatedTasks);
-  };
-
-  // Dinamik firma listesi
-  const uniqueFirms = Array.from(new Set(tasks.map(t => t.firma).filter(Boolean)));
-
   return (
-    <Box>
-      <Box display="flex" gap={2} mb={2}>
-        <FormControl size="small" sx={{ minWidth: 180 }}>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+      <DialogTitle>{existingTask ? "Aufgabe bearbeiten" : "Neue Aufgabe"}</DialogTitle>
+      <DialogContent
+        sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 1 }}
+      >
+        <FormControl size="small" fullWidth margin="normal">
           <InputLabel>Firma</InputLabel>
           <Select
-            value={firmaFilter}
+            value={task.firma}
             label="Firma"
-            onChange={(e) => setFirmaFilter(e.target.value)}
+            onChange={(e) => handleChange("firma", e.target.value)}
           >
-            <MenuItem value="">Alle</MenuItem>
-            {uniqueFirms.map((firma, idx) => (
-              <MenuItem key={idx} value={firma}>
+            {firmOptions.map((firma) => (
+              <MenuItem key={firma} value={firma}>
                 {firma}
               </MenuItem>
             ))}
           </Select>
         </FormControl>
 
+        <FormControl size="small" fullWidth margin="normal">
+          <InputLabel>Kategorie</InputLabel>
+          <Select
+            value={task.category}
+            label="Kategorie"
+            onChange={(e) => handleCategoryChange(e.target.value)}
+          >
+            {categories.map((cat) => (
+              <MenuItem key={cat.id} value={cat.id.toString()}>
+                {cat.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl size="small" fullWidth margin="normal" disabled={!task.category}>
+          <InputLabel>Subkategorie</InputLabel>
+          <Select
+            value={task.subcategory}
+            label="Subkategorie"
+            onChange={(e) => handleChange("subcategory", e.target.value)}
+          >
+            {selectedCategory?.subcategories.map((sub) => (
+              <MenuItem key={sub.id} value={sub.id.toString()}>
+                {sub.name}
+              </MenuItem>
+            )) || []}
+          </Select>
+        </FormControl>
+
         <TextField
-          label="Suche Aufgaben nach..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          label="Aufgabenname"
+          value={task.name}
+          onChange={(e) => handleChange("name", e.target.value)}
           size="small"
           fullWidth
+          margin="normal"
         />
 
-        <FormControl size="small" sx={{ minWidth: 180 }}>
+        <TextField
+          label="Vorarbeit (Minuten)"
+          type="number"
+          value={task.vorarbeit}
+          onChange={(e) => handleChange("vorarbeit", Number(e.target.value))}
+          size="small"
+          fullWidth
+          margin="normal"
+          inputProps={{ min: 0 }}
+        />
+
+        <TextField
+          label="Umsetzung (Minuten)"
+          type="number"
+          value={task.umsetzung}
+          onChange={(e) => handleChange("umsetzung", Number(e.target.value))}
+          size="small"
+          fullWidth
+          margin="normal"
+          inputProps={{ min: 0 }}
+        />
+
+        <TextField
+          label="Kontrolle (Minuten)"
+          type="number"
+          value={task.kontrolle}
+          onChange={(e) => handleChange("kontrolle", Number(e.target.value))}
+          size="small"
+          fullWidth
+          margin="normal"
+          inputProps={{ min: 0 }}
+        />
+
+        <TextField
+          label="Kosten (€)"
+          type="number"
+          value={task.kosten}
+          onChange={(e) => handleChange("kosten", Number(e.target.value))}
+          size="small"
+          fullWidth
+          margin="normal"
+          inputProps={{ min: 0, step: 0.01 }}
+        />
+
+        <TextField
+          label="Fälligkeitsdatum"
+          type="date"
+          value={task.dueDate ? task.dueDate.split("T")[0] : ""}
+          onChange={(e) => handleChange("dueDate", e.target.value)}
+          size="small"
+          fullWidth
+          InputLabelProps={{ shrink: true }}
+          margin="normal"
+        />
+
+        <FormControl size="small" fullWidth margin="normal">
           <InputLabel>Status</InputLabel>
           <Select
-            value={statusFilter}
+            value={task.status}
             label="Status"
-            onChange={(e) => setStatusFilter(e.target.value)}
+            onChange={(e) => handleChange("status", e.target.value)}
           >
-            <MenuItem value="">Alles</MenuItem>
             <MenuItem value="offen">Offen</MenuItem>
             <MenuItem value="in Bearbeitung">In Bearbeitung</MenuItem>
             <MenuItem value="erledigt">Erledigt</MenuItem>
           </Select>
         </FormControl>
 
-        <Button variant="contained" onClick={() => setOpenDialog(true)}>
-          + Aufgabe hinzufügen
+        <TextField
+          label="Milestone"
+          value={task.milestone}
+          onChange={(e) => handleChange("milestone", e.target.value)}
+          size="small"
+          fullWidth
+          margin="normal"
+        />
+      </DialogContent>
+
+      <DialogActions>
+        <Button onClick={onClose}>Abbrechen</Button>
+        <Button
+          variant="contained"
+          onClick={() => {
+            if (!task.name.trim()) {
+              alert("Bitte geben Sie einen Aufgabennamen ein.");
+              return;
+            }
+
+            const selectedCategory = categories.find(
+              (cat) => cat.id.toString() === task.category
+            );
+            const categoryName = selectedCategory ? selectedCategory.name : "";
+
+            const selectedSubcategory = selectedCategory?.subcategories.find(
+              (sub) => sub.id.toString() === task.subcategory
+            );
+            const subcategoryName = selectedSubcategory ? selectedSubcategory.name : "";
+
+            const taskWithNames = {
+              ...task,
+              categoryId: task.category,
+              category: categoryName,
+              subcategoryId: task.subcategory,
+              subcategory: subcategoryName,
+            };
+
+            onSave(taskWithNames);
+            onClose();
+          }}
+        >
+          {existingTask ? "Speichern" : "Hinzufügen"}
         </Button>
-      </Box>
-
-      <AddTaskModal
-        open={editDialogOpen}
-        onClose={() => setEditDialogOpen(false)}
-        onSave={handleSaveEdit}
-        existingTask={selectedTask}
-      />
-
-      <AddTaskModal
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-        onSave={handleAddTask}
-      />
-
-      <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-        {Object.entries(grouped).map(([group, groupTasks]) => (
-          <Box key={group} mb={4}>
-            <Typography variant="h6" gutterBottom>
-              {group}
-            </Typography>
-            <TableContainer component={Paper}>
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell />
-                    <TableCell>Aufgabe</TableCell>
-                    <TableCell>Vorarbeit</TableCell>
-                    <TableCell>Umsetzung</TableCell>
-                    <TableCell>Kontrolle</TableCell>
-                    <TableCell>Kosten</TableCell>
-                    <TableCell>Fällig am</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Meilenstein</TableCell>
-                    <TableCell align="right">Aktionen</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <SortableContext
-                    items={groupTasks.map((t) => t.id)}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    {groupTasks.map((task) => (
-                      <SortableRow
-                        key={task.id}
-                        task={task}
-                        onEdit={handleEditTask}
-                        onDelete={handleDeleteTask}
-                      />
-                    ))}
-                  </SortableContext>
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </>+
-            </TableContainer>
-          </Box>
-        ))}
-      </DndContext>
-    </Box>
+      </DialogActions>
+    </Dialog>
   );
 };
 
-export default TaskTable;
+export default AddTaskModal;

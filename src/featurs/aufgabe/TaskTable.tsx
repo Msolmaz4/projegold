@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Table,
@@ -47,7 +47,7 @@ function SortableRow({
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: task.id });
   const [menuDialogOpen, setMenuDialogOpen] = useState(false);
-  const anchorRef = useRef<HTMLButtonElement | null>(null);
+  const anchorRef = React.useRef<HTMLButtonElement | null>(null);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -273,18 +273,23 @@ const TaskTable: React.FC = () => {
         </Button>
       </Box>
 
+      {/* Düzenleme Modal */}
       <AddTaskModal
         open={editDialogOpen}
         onClose={() => setEditDialogOpen(false)}
         onSave={handleSaveEdit}
         existingTask={selectedTask}
         firmOptions={uniqueFirms}
+        initialId={selectedTask ? selectedTask.id : undefined}
       />
+
+      {/* Yeni Görev Modal */}
       <AddTaskModal
         open={openDialog}
         onClose={() => setOpenDialog(false)}
         onSave={handleAddTask}
         firmOptions={uniqueFirms}
+        initialId={tasks.reduce((max, t) => (t.id > max ? t.id : max), 0) + 1}
       />
 
       <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
@@ -298,15 +303,15 @@ const TaskTable: React.FC = () => {
                 <TableHead>
                   <TableRow>
                     <TableCell />
-                    <TableCell>Aufgabe</TableCell>
+                    <TableCell>Name</TableCell>
                     <TableCell>Vorarbeit</TableCell>
                     <TableCell>Umsetzung</TableCell>
                     <TableCell>Kontrolle</TableCell>
                     <TableCell>Kosten</TableCell>
-                    <TableCell>Fällig am</TableCell>
+                    <TableCell>Fällig</TableCell>
                     <TableCell>Status</TableCell>
-                    <TableCell>Milestone</TableCell>
-                    <TableCell align="right">Aktionen</TableCell>
+                    <TableCell>Meilenstein</TableCell>
+                    <TableCell />
                   </TableRow>
                 </TableHead>
                 <SortableContext
