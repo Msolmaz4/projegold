@@ -19,7 +19,6 @@ const AddTaskModal: React.FC<ModalProps> = ({
 }) => {
   const { categories } = useUser();
 
-
   const [task, setTask] = useState<Task>({
     id: new Date().getTime(),
     category: "",
@@ -31,6 +30,7 @@ const AddTaskModal: React.FC<ModalProps> = ({
     kosten: 0,
     status: "offen",
     milestone: "",
+    milestoneDate: "",
     dueDate: "",
     firma: "",
   });
@@ -47,6 +47,7 @@ const AddTaskModal: React.FC<ModalProps> = ({
       kosten: 0,
       status: "offen",
       milestone: "",
+      milestoneDate: "",
       dueDate: "",
       firma: "",
     });
@@ -56,12 +57,8 @@ const AddTaskModal: React.FC<ModalProps> = ({
     setTask((prev) => ({ ...prev, [field]: value }));
 
   const handleCategoryChange = (categoryId: string) => {
-
-    console.log(task.category, 'jjjjjjjjjjjjj')
     setTask((prev) => ({ ...prev, category: categoryId, subcategory: "" }));
-  }
-
-
+  };
 
   const selectedCategory = categories.find((cat) => cat.id.toString() === task.category);
 
@@ -70,7 +67,7 @@ const AddTaskModal: React.FC<ModalProps> = ({
       <DialogTitle>{existingTask ? "Aufgabe bearbeiten" : "Neue Aufgabe"}</DialogTitle>
       <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 1 }}>
         <FormControl size="small" fullWidth margin="normal">
-          <InputLabel>Firma</InputLabel>
+          <InputLabel>Firma *</InputLabel>
           <Select
             value={task.firma}
             label="Firma"
@@ -83,7 +80,7 @@ const AddTaskModal: React.FC<ModalProps> = ({
         </FormControl>
 
         <FormControl size="small" fullWidth margin="normal">
-          <InputLabel>Kategorie</InputLabel>
+          <InputLabel>Kategorie *</InputLabel>
           <Select
             value={task.category}
             label="Kategorie"
@@ -96,7 +93,7 @@ const AddTaskModal: React.FC<ModalProps> = ({
         </FormControl>
 
         <FormControl size="small" fullWidth margin="normal" disabled={!task.category}>
-          <InputLabel>Subkategorie</InputLabel>
+          <InputLabel>Subkategorie *</InputLabel>
           <Select
             value={task.subcategory}
             label="Subkategorie"
@@ -109,7 +106,7 @@ const AddTaskModal: React.FC<ModalProps> = ({
         </FormControl>
 
         <TextField
-          label="Aufgabenname"
+          label="Aufgabenname *"
           value={task.name}
           onChange={(e) => handleChange("name", e.target.value)}
           size="small"
@@ -162,7 +159,7 @@ const AddTaskModal: React.FC<ModalProps> = ({
         />
 
         <TextField
-          label="Fälligkeitsdatum"
+          label="Fälligkeitsdatum *"
           type="date"
           value={task.dueDate ? task.dueDate.split("T")[0] : ""}
           onChange={(e) => handleChange("dueDate", e.target.value)}
@@ -170,6 +167,20 @@ const AddTaskModal: React.FC<ModalProps> = ({
           fullWidth
           InputLabelProps={{ shrink: true }}
           margin="normal"
+        />
+
+        <TextField
+          label="Meilenstein Datum *"
+          type="date"
+          value={task.milestoneDate ? task.milestoneDate.split("T")[0] : ""}
+          onChange={(e) => handleChange("milestoneDate", e.target.value)}
+          size="small"
+          fullWidth
+          InputLabelProps={{ shrink: true }}
+          margin="normal"
+          inputProps={{
+            max: task.dueDate ? task.dueDate.split("T")[0] : undefined,
+          }}
         />
 
         <FormControl size="small" fullWidth margin="normal">
@@ -200,8 +211,32 @@ const AddTaskModal: React.FC<ModalProps> = ({
         <Button
           variant="contained"
           onClick={() => {
+            if (!task.firma) {
+              alert("Bitte wählen Sie eine Firma aus.");
+              return;
+            }
+            if (!task.category) {
+              alert("Bitte wählen Sie eine Kategorie aus.");
+              return;
+            }
+            if (!task.subcategory) {
+              alert("Bitte wählen Sie eine Subkategorie aus.");
+              return;
+            }
             if (!task.name.trim()) {
               alert("Bitte geben Sie einen Aufgabennamen ein.");
+              return;
+            }
+            if (!task.dueDate) {
+              alert("Bitte geben Sie ein Fälligkeitsdatum ein.");
+              return;
+            }
+            if (!task.milestoneDate) {
+              alert("Bitte geben Sie ein Meilenstein-Datum ein.");
+              return;
+            }
+            if (new Date(task.milestoneDate) > new Date(task.dueDate)) {
+              alert("Das Meilenstein-Datum darf nicht nach dem Fälligkeitsdatum liegen.");
               return;
             }
 
@@ -222,8 +257,6 @@ const AddTaskModal: React.FC<ModalProps> = ({
               subcategoryId: task.subcategory,
               subcategory: subcategoryName,
             };
-
-            console.log("saveeeee task:", taskWithNames);
 
             onSave(taskWithNames);
             onClose();

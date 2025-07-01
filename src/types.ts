@@ -53,6 +53,7 @@ export interface User {
   aufgabe?: Aufgabe[];
   imageFile?: Blob | MediaSource | null;
   image?: Blob |MediaSource;
+  milestoneDate?: string,
 }
 
 export interface Task {
