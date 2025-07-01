@@ -17,18 +17,25 @@ import {
 import { useState } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import BusinessIcon from "@mui/icons-material/Business";
+import EditUserModal from "./EditUserModal"; // Modal importu
 import type { User } from "../types";
+import { useUser } from "../context/UserContext";
 
 type Props = {
   user: User;
   imageUrl?: string;
   onDelete: (userId: number) => void;
+  onUpdate?: (updatedUser: User) => void; // Yeni prop
 };
 
-const Details = ({ user, imageUrl, onDelete }: Props) => {
+const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
+
   const [tabIndex, setTabIndex] = useState(0);
   const [selectedAufgabe, setSelectedAufgabe] = useState<number | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const [editOpen, setEditOpen] = useState(false);
+  const [editedUser, setEditedUser] = useState<User | null>(null);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
@@ -48,29 +55,19 @@ const Details = ({ user, imageUrl, onDelete }: Props) => {
     handleMenuClose();
   };
 
-  // tasks filtreleniyor: name boş değil ve milestones dolu olanlar
-  const filteredTasks = user.tasks?.filter(
-    (task) => task.name.trim() !== "" && task.milestones.length > 0
-  ) ?? [];
+  const filteredTasks =
+    user.tasks?.filter((task) => task.name.trim() !== "" && task.milestones.length > 0) ?? [];
 
   const renderTabContent = () => {
     switch (tabIndex) {
       case 0:
-        return (
-          <Typography mt={2}>
-            {user.company?.name ?? "Keine Unternehmensdaten"}
-          </Typography>
-        );
+        return <Typography mt={2}>{user.company?.name ?? "Keine Unternehmensdaten"}</Typography>;
       case 1:
         return (
-          <Typography mt={2}>
-            {user.company?.description ?? "Keine Beschreibung verfügbar"}
-          </Typography>
+          <Typography mt={2}>{user.company?.description ?? "Keine Beschreibung verfügbar"}</Typography>
         );
       case 2:
-        return (
-          <Typography mt={2}>{user.website ?? "Keine Webseite verfügbar"}</Typography>
-        );
+        return <Typography mt={2}>{user.website ?? "Keine Webseite verfügbar"}</Typography>;
       case 3:
         return (
           <Typography mt={2}>
@@ -99,7 +96,15 @@ const Details = ({ user, imageUrl, onDelete }: Props) => {
           <MoreVertIcon />
         </IconButton>
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-          <MenuItem>Bearbeiten</MenuItem>
+          <MenuItem
+            onClick={() => {
+              setEditedUser(user);
+              setEditOpen(true);
+              handleMenuClose();
+            }}
+          >
+            Bearbeiten
+          </MenuItem>
           <MenuItem disabled={filteredTasks.length > 0} onClick={handleDelete}>
             Löschen
           </MenuItem>
@@ -133,9 +138,7 @@ const Details = ({ user, imageUrl, onDelete }: Props) => {
                   sx={{
                     cursor: "pointer",
                     border:
-                      selectedAufgabe === index
-                        ? "2px solid #1976d2"
-                        : "1px solid #ccc",
+                      selectedAufgabe === index ? "2px solid #1976d2" : "1px solid #ccc",
                     "&:hover": { backgroundColor: "#f0f0f0" },
                   }}
                 >
@@ -151,7 +154,7 @@ const Details = ({ user, imageUrl, onDelete }: Props) => {
         </>
       )}
 
-      {/* Details zum ausgewählten Aufgabenbereich */}
+      {/* Aufgabenbereich Details */}
       {selectedAufgabe !== null && filteredTasks[selectedAufgabe] && (
         <Paper elevation={3} sx={{ p: 3 }}>
           <Typography variant="h6" gutterBottom>
@@ -165,7 +168,7 @@ const Details = ({ user, imageUrl, onDelete }: Props) => {
         </Paper>
       )}
 
-      {/* Meilensteine (dışarıdan sabit örnek) */}
+      {/* Meilensteine */}
       <Typography variant="h6" mt={6} mb={2}>
         Meilensteine
       </Typography>
@@ -173,6 +176,19 @@ const Details = ({ user, imageUrl, onDelete }: Props) => {
         <ListItem>1. Meilenstein – Juli 2025</ListItem>
         <ListItem>2. Meilenstein – August 2025</ListItem>
       </List>
+
+      {/* EditUserModal */}
+      <EditUserModal
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        user={editedUser}
+        onSave={(updatedUser) => {
+          setEditOpen(false);
+          if (onUpdate) {
+            onUpdate(updatedUser); // Üst komponent'e bildir
+          }
+        }}
+      />
     </Box>
   );
 };

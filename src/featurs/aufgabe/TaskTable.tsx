@@ -150,7 +150,6 @@ const TaskTable: React.FC = () => {
 const handleAddTask = (newTask: Task) => {
   console.log(newTask, "ddddddddddddd");
 
-  // users içindeki ilgili kullanıcıyı bul ve güncelle
   const updatedUsers = users.map((user) => {
     if (user.company?.name === newTask.firma) {
       // aufgabe dizisi yoksa oluştur
@@ -159,23 +158,37 @@ const handleAddTask = (newTask: Task) => {
       // Yeni task'u aufgabe'ye ekle
       newAufgabe.push({
         ...newTask,
-        id: newTask.id, // ya da burada id oluşturabilirsin
+        id: newTask.id, // buraya istersen id oluşturabilirsin
       });
 
-      // tasks içindeki category kontrolü için tasks dizisini de güncelle (önceki işlemin varsa onu da ekle)
-      const categoryExists = user.tasks?.some(
+      // tasks dizisini kopyala
+      let updatedTasks = user.tasks ? [...user.tasks] : [];
+
+      // Aynı category objesini bul
+      const categoryIndex = updatedTasks.findIndex(
         (task: any) => task.name === newTask.category
       );
 
-      let updatedTasks = user.tasks || [];
-      if (!categoryExists) {
-        updatedTasks = [
-          ...updatedTasks,
-          {
-            name: newTask.category,
-            milestones: [newTask.subcategory],
-          },
-        ];
+      if (categoryIndex !== -1) {
+        // Eğer category bulunduysa, subcategory'yi milestones array'ine ekle (varsa ekleme)
+        const milestones = updatedTasks[categoryIndex].milestones || [];
+
+        // Subcategory zaten varsa ekleme, yoksa ekle
+        if (!milestones.includes(newTask.subcategory)) {
+          milestones.push(newTask.subcategory);
+        }
+
+        // Güncelle
+        updatedTasks[categoryIndex] = {
+          ...updatedTasks[categoryIndex],
+          milestones,
+        };
+      } else {
+        // Eğer category yoksa yeni obje ekle
+        updatedTasks.push({
+          name: newTask.category,
+          milestones: [newTask.subcategory],
+        });
       }
 
       return {
@@ -190,10 +203,11 @@ const handleAddTask = (newTask: Task) => {
   // users state'ini güncelle
   setUsers(updatedUsers);
 
-  // id için max bul ve task state'ini güncelle (opsiyonel)
+  // tasks state'ini güncelle (opsiyonel)
   const maxId = tasks.reduce((max, t) => (t.id > max ? t.id : max), 0);
   setTasks((prev) => [...prev, { ...newTask, id: maxId + 1 }]);
 };
+
 
 
 
