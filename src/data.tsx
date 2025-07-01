@@ -58,7 +58,10 @@ interface Company {
   catchPhrase: string;
   bs: string;
 }
-
+interface Task {
+  name: string;
+  milestones: string[];
+}
 interface User {
   id: number |string;
   name: string;
@@ -74,6 +77,7 @@ interface User {
 
 interface UserWithTasks extends User {
   aufgabe?: Aufgabe[];
+    tasks?: Task[];
 }
 
 const Users: UserWithTasks[] = [
@@ -98,6 +102,16 @@ const Users: UserWithTasks[] = [
     },
     description: "Innovatives Unternehmen im Bereich Technologie und Entwicklung.",
     imageURL: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg",
+    tasks: [
+      {
+        name: "Forschung",
+        milestones: ["Labortests abgeschlossen", "Ergebnisse veröffentlicht"]
+      },
+      {
+        name: "Marketing",
+        milestones: ["Kampagnenstart", "Social Media Präsenz erhöht"]
+      }
+    ],
     aufgabe: [
       {
         vorarbeit: 7,
@@ -134,6 +148,16 @@ const Users: UserWithTasks[] = [
     },
     description: "Führender Anbieter von Finanzdienstleistungen.",
     imageURL: "https://www.facebook.com/photo/?fbid=636819001821935&set=a.636818998488602",
+    tasks: [
+      {
+        name: "Forschung",
+        milestones: ["Labortests abgeschlossen", "Ergebnisse veröffentlicht"]
+      },
+      {
+        name: "Marketing",
+        milestones: ["Kampagnenstart", "Social Media Präsenz erhöht"]
+      }
+    ],
     aufgabe: [
       {
         vorarbeit: 8,
@@ -170,6 +194,12 @@ const Users: UserWithTasks[] = [
     },
     description: "Spezialist für nachhaltige Energielösungen.",
     imageURL: "https://upload.wikimedia.org/wikipedia/commons/5/5f/Siemens-logo.svg",
+    tasks: [
+      {
+        name: '',
+        milestones: []
+      }
+    ],
     aufgabe: [
       {
         vorarbeit: 9,
@@ -206,6 +236,12 @@ const Users: UserWithTasks[] = [
     },
     description: "Globaler Dienstleister für Logistik und Transport.",
     imageURL: "https://upload.wikimedia.org/wikipedia/commons/5/5f/Siemens-logo.svg2",
+    tasks: [
+      {
+        name: "",
+        milestones: []
+      }
+    ],
     aufgabe: [
       {
         vorarbeit: 6,
@@ -242,6 +278,12 @@ const Users: UserWithTasks[] = [
     },
     description: "Hersteller von hochwertigen Konsumgütern.",
     imageURL: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=400",
+    tasks: [
+      {
+        name: "",
+        milestones: []
+      }
+    ],
     aufgabe: [
       {
         vorarbeit: 10,
@@ -278,6 +320,12 @@ const Users: UserWithTasks[] = [
     },
     description: "Innovativer Softwareanbieter im Gesundheitsbereich.",
     imageURL: "https://images.unsplash.com/photo-1551836022-4c4c79ecde6d",
+    tasks: [
+      {
+        name: "",
+        milestones: []
+      }
+    ],
     aufgabe: [
       {
         vorarbeit: 8,
@@ -309,18 +357,24 @@ const Users: UserWithTasks[] = [
     website: "kurtis.io",
     company: {
       name: "Accenture",
-      catchPhrase: "Configurable multimedia task-force",
-      bs: "generate enterprise e-tailers",
+      catchPhrase: "Implemented secondary concept",
+      bs: "aggregate real-time technologies",
     },
-    description: "Beratungsunternehmen für digitale Transformation.",
-    imageURL: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=400",
+    description: "Beratung und professionelle Dienstleistungen.",
+    imageURL: "https://upload.wikimedia.org/wikipedia/commons/f/fb/Accenture-Logo.svg",
+    tasks: [
+      {
+        name: "",
+        milestones: []
+      }
+    ],
     aufgabe: [
       {
-        vorarbeit: 7,
+        vorarbeit: 9,
         umsetzung: 7,
-        kontrolle: 9,
-        kosten: 290,
-        status: "Bearbeitung",
+        kontrolle: 8,
+        kosten: 305,
+        status: "offen",
         dueDate: "2025-06-30",
         category: "Marketing",
         subcategory: "SEO",
@@ -331,7 +385,7 @@ const Users: UserWithTasks[] = [
   },
   {
     id: 8,
-    name: "Nicholas Runolfsdottir",
+    name: "Nicholas Runolfsdottir V",
     username: "Maxime",
     email: "nicholas@example.com",
     address: {
@@ -342,26 +396,32 @@ const Users: UserWithTasks[] = [
       geo: { lat: "-14.3990", lng: "-120.7677" },
     },
     phone: "586.493.6943",
-    website: "nicholas.com",
+    website: "nicholas.biz",
     company: {
-      name: "Amazon",
-      catchPhrase: "Implemented secondary concept",
-      bs: "e-enable extensible e-tailers",
+      name: "Intel",
+      catchPhrase: "Centralized empowering task-force",
+      bs: "target end-to-end models",
     },
-    description: "Führend in eCommerce und Onlinehandel.",
-    imageURL: "https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?w=400",
+    description: "Führender Chip-Hersteller weltweit.",
+    imageURL: "https://upload.wikimedia.org/wikipedia/commons/c/c9/Intel_logo_(2006-2020).svg",
+    tasks: [
+      {
+        name: "",
+        milestones: []
+      }
+    ],
     aufgabe: [
       {
-        vorarbeit: 10,
+        vorarbeit: 7,
         umsetzung: 8,
-        kontrolle: 7,
+        kontrolle: 9,
         kosten: 315,
-        status: "erledigt",
+        status: "offen",
         dueDate: "2025-06-30",
-        category: "Design",
-        subcategory: "UX/UI",
+        category: "Marketing",
+        subcategory: "SEO",
         name: "Backlink auf Wikipedia setzen",
-        firma: "Amazon",
+        firma: "Intel",
       },
     ],
   },
@@ -378,26 +438,32 @@ const Users: UserWithTasks[] = [
       geo: { lat: "24.6463", lng: "-168.8889" },
     },
     phone: "(775)976-6794",
-    website: "glenna.biz",
+    website: "glenna.org",
     company: {
-      name: "IBM",
-      catchPhrase: "Switchable contextually-based project",
-      bs: "aggregate real-time technologies",
+      name: "Bayer",
+      catchPhrase: "User-centric fault-tolerant solution",
+      bs: "revolutionize end-to-end systems",
     },
-    description: "Spezialist für Cloud-Infrastrukturen.",
-    imageURL: "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?w=400",
+    description: "Pharmaunternehmen mit globaler Reichweite.",
+    imageURL: "https://upload.wikimedia.org/wikipedia/commons/9/99/Bayer_logo.svg",
+    tasks: [
+      {
+        name: "",
+        milestones: []
+      }
+    ],
     aufgabe: [
       {
-        vorarbeit: 9,
-        umsetzung: 10,
-        kontrolle: 9,
-        kosten: 300,
-        status: "geplant",
+        vorarbeit: 10,
+        umsetzung: 7,
+        kontrolle: 8,
+        kosten: 310,
+        status: "offen",
         dueDate: "2025-06-30",
         category: "Marketing",
         subcategory: "SEO",
         name: "Backlink auf Wikipedia setzen",
-        firma: "IBM",
+        firma: "Bayer",
       },
     ],
   },
@@ -414,26 +480,32 @@ const Users: UserWithTasks[] = [
       geo: { lat: "-38.2386", lng: "57.2232" },
     },
     phone: "024-648-3804",
-    website: "clementina.net",
+    website: "clementina.biz",
     company: {
-      name: "Adobe",
-      catchPhrase: "Centralized empowering task-force",
-      bs: "target end-to-end models",
+      name: "BMW",
+      catchPhrase: "User-centric fault-tolerant solution",
+      bs: "revolutionize end-to-end systems",
     },
-    description: "Innovative Agentur für digitale Medien und Design.",
-    imageURL: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400",
+    description: "Premium Autohersteller mit Fokus auf Innovation.",
+    imageURL: "https://upload.wikimedia.org/wikipedia/commons/4/44/BMW_logo.svg",
+    tasks: [
+      {
+        name: "",
+        milestones: []
+      }
+    ],
     aufgabe: [
       {
         vorarbeit: 8,
-        umsetzung: 10,
-        kontrolle: 10,
+        umsetzung: 7,
+        kontrolle: 9,
         kosten: 320,
         status: "offen",
         dueDate: "2025-06-30",
-        category: "Development",
-        subcategory: "Backend",
+        category: "Marketing",
+        subcategory: "SEO",
         name: "Backlink auf Wikipedia setzen",
-        firma: "Adobe",
+        firma: "BMW",
       },
     ],
   },

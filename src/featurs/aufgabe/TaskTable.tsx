@@ -117,7 +117,7 @@ function SortableRow({ task, onEdit, onDelete }: { task: Task; onEdit: (task: Ta
 }
 
 const TaskTable: React.FC = () => {
-  const { categories, users } = useUser();
+  const { categories, users ,setUsers} = useUser();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [firmaFilter, setFirmaFilter] = useState("");
@@ -130,7 +130,7 @@ const TaskTable: React.FC = () => {
     const userTasks = extractTasksFromUsers(users);
     setTasks(userTasks);
   }, [users]);
-  console.log("tasks", users);
+  //console.log("tasks", users);
 
  const uniqueFirms = useMemo(() => {
   // Tüm görevlerdeki firmaları topla
@@ -147,10 +147,55 @@ const TaskTable: React.FC = () => {
   return Array.from(new Set([...taskFirms, ...userFirms]));
 }, [tasks, users]);
 
-  const handleAddTask = (newTask: Task) => {
-    const maxId = tasks.reduce((max, t) => (t.id > max ? t.id : max), 0);
-    setTasks((prev) => [...prev, { ...newTask, id: maxId + 1 }]);
-  };
+const handleAddTask = (newTask: Task) => {
+  console.log(newTask, "ddddddddddddd");
+
+  // users içindeki ilgili kullanıcıyı bul ve güncelle
+  const updatedUsers = users.map((user) => {
+    if (user.company?.name === newTask.firma) {
+      // aufgabe dizisi yoksa oluştur
+      const newAufgabe = user.aufgabe ? [...user.aufgabe] : [];
+
+      // Yeni task'u aufgabe'ye ekle
+      newAufgabe.push({
+        ...newTask,
+        id: newTask.id, // ya da burada id oluşturabilirsin
+      });
+
+      // tasks içindeki category kontrolü için tasks dizisini de güncelle (önceki işlemin varsa onu da ekle)
+      const categoryExists = user.tasks?.some(
+        (task: any) => task.name === newTask.category
+      );
+
+      let updatedTasks = user.tasks || [];
+      if (!categoryExists) {
+        updatedTasks = [
+          ...updatedTasks,
+          {
+            name: newTask.category,
+            milestones: [newTask.subcategory],
+          },
+        ];
+      }
+
+      return {
+        ...user,
+        aufgabe: newAufgabe,
+        tasks: updatedTasks,
+      };
+    }
+    return user;
+  });
+
+  // users state'ini güncelle
+  setUsers(updatedUsers);
+
+  // id için max bul ve task state'ini güncelle (opsiyonel)
+  const maxId = tasks.reduce((max, t) => (t.id > max ? t.id : max), 0);
+  setTasks((prev) => [...prev, { ...newTask, id: maxId + 1 }]);
+};
+
+
 
   const handleEditTask = (task: Task) => {
     setSelectedTask(task);

@@ -22,7 +22,7 @@ import type { User } from "../types";
 type Props = {
   user: User;
   imageUrl?: string;
-  onDelete: (userId: number) => void;  // silme fonksiyonu prop olarak al
+  onDelete: (userId: number) => void;
 };
 
 const Details = ({ user, imageUrl, onDelete }: Props) => {
@@ -48,6 +48,11 @@ const Details = ({ user, imageUrl, onDelete }: Props) => {
     handleMenuClose();
   };
 
+  // tasks filtreleniyor: name boş değil ve milestones dolu olanlar
+  const filteredTasks = user.tasks?.filter(
+    (task) => task.name.trim() !== "" && task.milestones.length > 0
+  ) ?? [];
+
   const renderTabContent = () => {
     switch (tabIndex) {
       case 0:
@@ -59,15 +64,12 @@ const Details = ({ user, imageUrl, onDelete }: Props) => {
       case 1:
         return (
           <Typography mt={2}>
-            {user.company?.name ?? ""}
             {user.company?.description ?? "Keine Beschreibung verfügbar"}
           </Typography>
         );
       case 2:
         return (
-          <Typography mt={2}>
-            {user.website ?? "Keine Webseite verfügbar"}
-          </Typography>
+          <Typography mt={2}>{user.website ?? "Keine Webseite verfügbar"}</Typography>
         );
       case 3:
         return (
@@ -98,10 +100,7 @@ const Details = ({ user, imageUrl, onDelete }: Props) => {
         </IconButton>
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
           <MenuItem>Bearbeiten</MenuItem>
-          <MenuItem
-            disabled={user?.tasks && user.tasks.length > 0}
-            onClick={handleDelete}
-          >
+          <MenuItem disabled={filteredTasks.length > 0} onClick={handleDelete}>
             Löschen
           </MenuItem>
         </Menu>
@@ -121,13 +120,13 @@ const Details = ({ user, imageUrl, onDelete }: Props) => {
       </Box>
 
       {/* Aufgabenbereiche */}
-      {user?.tasks && user.tasks.length > 0 && (
+      {filteredTasks.length > 0 && (
         <>
           <Typography variant="h6" mb={2}>
             Aufgabengebiete
           </Typography>
           <Grid container spacing={2} mb={4}>
-            {user.tasks.map((aufgabe, index) => (
+            {filteredTasks.map((aufgabe, index) => (
               <Grid item xs={12} sm={6} md={4} key={index}>
                 <Card
                   onClick={() => setSelectedAufgabe(index)}
@@ -152,13 +151,13 @@ const Details = ({ user, imageUrl, onDelete }: Props) => {
         </>
       )}
 
-      {/* Details zum ausgewählten Aufgabenbereich*/}
-      {selectedAufgabe !== null && user?.tasks?.[selectedAufgabe] && (
+      {/* Details zum ausgewählten Aufgabenbereich */}
+      {selectedAufgabe !== null && filteredTasks[selectedAufgabe] && (
         <Paper elevation={3} sx={{ p: 3 }}>
           <Typography variant="h6" gutterBottom>
-            {user.tasks[selectedAufgabe].name}
+            {filteredTasks[selectedAufgabe].name}
           </Typography>
-          {user.tasks[selectedAufgabe].milestones.map((milestone, idx) => (
+          {filteredTasks[selectedAufgabe].milestones.map((milestone, idx) => (
             <Typography key={idx} variant="body1" sx={{ mb: 1 }}>
               • {milestone}
             </Typography>
@@ -166,7 +165,7 @@ const Details = ({ user, imageUrl, onDelete }: Props) => {
         </Paper>
       )}
 
-      {/* Meilensteine */}
+      {/* Meilensteine (dışarıdan sabit örnek) */}
       <Typography variant="h6" mt={6} mb={2}>
         Meilensteine
       </Typography>

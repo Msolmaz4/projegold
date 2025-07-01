@@ -17,7 +17,8 @@ type ModalProps = {
 const AddTaskModal: React.FC<ModalProps> = ({
   open, onClose, onSave, existingTask, firmOptions = [],
 }) => {
-  const { categories } = useUser();
+  const { categories} = useUser();
+  
 
   const [task, setTask] = useState<Task>({
     id: new Date().getTime(),
