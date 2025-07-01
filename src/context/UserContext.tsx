@@ -14,7 +14,8 @@ type UserContextType = {
 type UpgradeUser = {
   id: number;
   name: string;
-  image: File | null | string;
+  imageFile?: Blob | MediaSource | null;
+  image?: Blob |MediaSource;
 };
 
 const UserContext = createContext<UserContextType | null>(null);

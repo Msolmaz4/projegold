@@ -185,7 +185,7 @@ const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
         onSave={(updatedUser) => {
           setEditOpen(false);
           if (onUpdate) {
-            onUpdate(updatedUser); // Üst komponent'e bildir
+            onUpdate(updatedUser); 
           }
         }}
       />

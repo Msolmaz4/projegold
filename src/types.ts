@@ -69,7 +69,14 @@ export interface Task {
   dueDate?: string;
   firma?: string;
   tasks?: string[] | undefined;
-  milestones?: string[];
+  milestones?: {
+  title?: string;
+  date?: string; 
+}[]
+
+
+
+
 };
 
 export type KategorieListe =
@@ -107,3 +114,4 @@ export interface Subcategory  {
   id: string;
   name: string;
 };
+// -----------------------EDITUSERMODAL:TSX----------------------

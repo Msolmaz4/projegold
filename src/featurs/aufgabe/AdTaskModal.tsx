@@ -223,7 +223,7 @@ const AddTaskModal: React.FC<ModalProps> = ({
               subcategory: subcategoryName,
             };
 
-            console.log("Kaydedilen task:", taskWithNames);
+            console.log("saveeeee task:", taskWithNames);
 
             onSave(taskWithNames);
             onClose();

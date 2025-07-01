@@ -11,29 +11,9 @@ import {
     Typography,
 } from "@mui/material";
 import { useUser } from "../context/UserContext";
+import type { User } from '../types'
 
-type User = {
-    id: number;
-    name: string;
-    username: string;
-    email: string;
-    phone: string;
-    website: string;
-    description: string;
-    imageURL: string;
-    company: {
-        name: string;
-        catchPhrase: string;
-        bs: string;
-    };
-    address: {
-        street: string;
-        suite: string;
-        city: string;
-        zipcode: string;
-        geo: { lat: string; lng: string };
-    };
-};
+
 
 type EditUserModalProps = {
     open: boolean;
@@ -41,6 +21,7 @@ type EditUserModalProps = {
     user?: User | null;
     onSave: (updatedUser: User) => void;
 };
+
 
 const EditUserModal: React.FC<EditUserModalProps> = ({ open, onClose, user, onSave }) => {
     const [formData, setFormData] = useState<User | null>(null);
