@@ -5,9 +5,6 @@ import {
   LinearProgress,
   Paper,
   Stack,
-  IconButton,
-  Menu,
-  MenuItem,
   Button,
   Dialog,
   DialogTitle,
@@ -15,159 +12,58 @@ import {
   DialogActions,
   Collapse,
 } from "@mui/material";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { useUser } from "../../context/UserContext";
+import type { Aufgabe ,User} from  '../../types'
 
-type Task = {
-  id: number;
-  name: string;
-  vorarbeit: number;
-  umsetzung: number;
-  kontrolle: number;
-  status: "offen" | "erledigt" | "in Bearbeitung";
-  milestone: string;
-};
 
-type Milestone = {
-  id: number;
-  name: string;
-  description: string;
-  tasks: Task[];
-};
-
-type Company = {
-  id: number;
-  name: string;
-  logo: string;
-  milestones: Milestone[];
-};
-
-const companiesData: Company[] = [
-  {
-    id: 1,
-    name: "Formilo",
-    logo: "/logos/formilo.png",
-    milestones: [
-      {
-        id: 23,
-        name: "Meilenstein 23",
-        description: "Traffic verdoppeln",
-        tasks: [
-          {
-            id: 1,
-            name: "Backlink setzen",
-            vorarbeit: 10,
-            umsetzung: 20,
-            kontrolle: 10,
-            status: "erledigt",
-            milestone: "Meilenstein 23",
-          },
-          {
-            id: 2,
-            name: "Retargeting starten",
-            vorarbeit: 30,
-            umsetzung: 40,
-            kontrolle: 20,
-            status: "offen",
-            milestone: "Meilenstein 23",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: "Goldweiss",
-    logo: "/logos/goldweiss.png",
-    milestones: [
-      {
-        id: 23,
-        name: "Meilenstein 23",
-        description: "Traffic verdoppeln",
-        tasks: [
-          {
-            id: 3,
-            name: "SEO Audit",
-            vorarbeit: 20,
-            umsetzung: 20,
-            kontrolle: 10,
-            status: "offen",
-            milestone: "Meilenstein 23",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 3,
-    name: "Perlit",
-    logo: "/logos/perlit.png",
-    milestones: [
-      {
-        id: 23,
-        name: "Meilenstein 23",
-        description: "Traffic verdoppeln",
-        tasks: [
-          {
-            id: 4,
-            name: "Ad Campaign",
-            vorarbeit: 10,
-            umsetzung: 10,
-            kontrolle: 5,
-            status: "erledigt",
-            milestone: "Meilenstein 23",
-          },
-        ],
-      },
-    ],
-  },
-];
-
-// Görev ilerlemesi hesaplama
-const calculateProgress = (tasks: Task[]) => {
-  let total = 0;
-  let done = 0;
-  let remaining = { vorarbeit: 0, umsetzung: 0, kontrolle: 0 };
-
-  tasks.forEach((task) => {
-    const sum = task.vorarbeit + task.umsetzung + task.kontrolle;
-    total += sum;
-    if (task.status === "erledigt") {
-      done += sum;
-    } else {
-      remaining.vorarbeit += task.vorarbeit;
-      remaining.umsetzung += task.umsetzung;
-      remaining.kontrolle += task.kontrolle;
-    }
-  });
-
-  const progressPercent = total === 0 ? 0 : (done / total) * 100;
-  return { progressPercent, remaining };
-};
 
 const MilestoneOverview: React.FC = () => {
-  const [milestoneId, setMilestoneId] = useState(23);
+  const { users  } = useUser();
   const [expandedCompanies, setExpandedCompanies] = useState<Set<number>>(new Set());
-  const [selectedCompanies, setSelectedCompanies] = useState<Company[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [selectDialogOpen, setSelectDialogOpen] = useState(false);
+
   const handleAddClick = () => setSelectDialogOpen(true);
-  const handleCompanySelect = (companyId: number) => {
-    const company = companiesData.find((c) => c.id === companyId);
-    if (company && !selectedCompanies.find((c) => c.id === company.id)) {
-      setSelectedCompanies([company, ...selectedCompanies]);
+
+  const handleUserSelect = (userId: number) => {
+    const user = users.find((u) => u.id === userId);
+    if (user && !selectedUsers.find((u) => u.id === user.id)) {
+      setSelectedUsers([user, ...selectedUsers]);
     }
     setSelectDialogOpen(false);
   };
 
-  const toggleCompany = (companyId: number) => {
+  const toggleUser = (userId: number) => {
     const newSet = new Set(expandedCompanies);
-    if (newSet.has(companyId)) newSet.delete(companyId);
-    else newSet.add(companyId);
+    if (newSet.has(userId)) newSet.delete(userId);
+    else newSet.add(userId);
     setExpandedCompanies(newSet);
   };
 
+  const calculateProgress = (aufgabeList: Aufgabe[]) => {
+    let total = 0;
+    let done = 0;
+    let remaining = { vorarbeit: 0, umsetzung: 0, kontrolle: 0 };
+
+    aufgabeList.forEach((task) => {
+      const sum = task.vorarbeit + task.umsetzung + task.kontrolle;
+      total += sum;
+      if (task.status.toLowerCase() === "erledigt") {
+        done += sum;
+      } else {
+        remaining.vorarbeit += task.vorarbeit;
+        remaining.umsetzung += task.umsetzung;
+        remaining.kontrolle += task.kontrolle;
+      }
+    });
+
+    const progressPercent = total === 0 ? 0 : (done / total) * 100;
+    return { progressPercent, remaining };
+  };
+
   return (
-    <Paper sx={{ p: 4, width: "%100", mx: "auto", mt: 5 }}>
-      <Typography variant="h5" gutterBottom align="center">
+    <Paper sx={{ p: 4, mx: "auto", mt: 5 }}>
+      <Typography variant="h5" align="center" gutterBottom>
         MEILENSTEIN
       </Typography>
 
@@ -177,41 +73,18 @@ const MilestoneOverview: React.FC = () => {
         </Button>
       </Box>
 
-      <Box mb={3}>
-        <label>
-          Meilenstein wählen:&nbsp;
-          <select
-            value={milestoneId}
-            onChange={(e) => {
-              setMilestoneId(Number(e.target.value));
-              setExpandedCompanies(new Set());
-            }}
-          >
-            {[21, 22, 23].map((id) => (
-              <option key={id} value={id}>
-                Meilenstein {id}
-              </option>
-            ))}
-          </select>
-        </label>
-      </Box>
-
-      {selectedCompanies.length === 0 && (
+      {selectedUsers.length === 0 && (
         <Typography align="center" color="textSecondary">
           Noch keine Firmen hinzugefügt.
         </Typography>
       )}
 
-      {selectedCompanies.map((company) => {
-        const tasks = company.milestones
-          .flatMap((m) => m.tasks)
-          .filter((t) => t.milestone === `Meilenstein ${milestoneId}`);
-
-        const { progressPercent, remaining } = calculateProgress(tasks);
+      {selectedUsers.map((user) => {
+        const { progressPercent, remaining } = calculateProgress(user.aufgabe);
 
         return (
           <Box
-            key={company.id}
+            key={user.id}
             sx={{
               mb: 3,
               border: "1px solid #ccc",
@@ -219,19 +92,12 @@ const MilestoneOverview: React.FC = () => {
               p: 2,
               cursor: "pointer",
             }}
-            onClick={() => toggleCompany(company.id)}
+            onClick={() => toggleUser(user.id)}
           >
             <Stack direction="row" spacing={2} alignItems="center">
-              <Box
-                sx={{
-                  width: 160,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                }}
-              >
-                <img src={company.logo} alt={company.name} width={30} />
-                <Typography fontWeight="bold">{company.name}</Typography>
+              <Box sx={{ width: 160, display: "flex", alignItems: "center", gap: 1 }}>
+                <img src={user.imageURL} alt={user.name} width={30} />
+                <Typography fontWeight="bold">{user.company.name}</Typography>
               </Box>
               <Box sx={{ flexGrow: 1 }}>
                 <LinearProgress
@@ -241,29 +107,69 @@ const MilestoneOverview: React.FC = () => {
                 />
               </Box>
               <Box sx={{ width: 50, textAlign: "right" }}>
-                <Typography variant="body2">
-                  {progressPercent.toFixed(0)}%
-                </Typography>
+                <Typography variant="body2">{progressPercent.toFixed(0)}%</Typography>
               </Box>
-              <Box sx={{ width: 60, textAlign: "right" }}>
+
+              <Box
+                sx={{
+                  width: 60,
+                  textAlign: "center",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  sx={{ textTransform: "lowercase", fontSize: 10, mb: 0.5 }}
+                >
+                  vorarbeit
+                </Typography>
                 <Typography variant="caption">{remaining.vorarbeit}</Typography>
               </Box>
-              <Box sx={{ width: 60, textAlign: "right" }}>
+
+              <Box
+                sx={{
+                  width: 60,
+                  textAlign: "center",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  sx={{ textTransform: "lowercase", fontSize: 10, mb: 0.5 }}
+                >
+                  umsetzung
+                </Typography>
                 <Typography variant="caption">{remaining.umsetzung}</Typography>
               </Box>
-              <Box sx={{ width: 60, textAlign: "right" }}>
+
+              <Box
+                sx={{
+                  width: 60,
+                  textAlign: "center",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  sx={{ textTransform: "lowercase", fontSize: 10, mb: 0.5 }}
+                >
+                  kontrolle
+                </Typography>
                 <Typography variant="caption">{remaining.kontrolle}</Typography>
               </Box>
             </Stack>
 
-            <Collapse in={expandedCompanies.has(company.id)}>
+            <Collapse in={expandedCompanies.has(user.id)}>
               <Box mt={2} pl={4}>
-                {tasks.length === 0 ? (
+                {user.aufgabe.length === 0 ? (
                   <Typography variant="body2">Keine Aufgaben.</Typography>
                 ) : (
-                  tasks.map((task) => (
+                  user.aufgabe.map((task, idx) => (
                     <Box
-                      key={task.id}
+                      key={idx}
                       sx={{
                         p: 1,
                         borderBottom: "1px solid #eee",
@@ -275,11 +181,11 @@ const MilestoneOverview: React.FC = () => {
                       <Typography
                         variant="caption"
                         color={
-                          task.status === "erledigt"
+                          task.status.toLowerCase() === "erledigt"
                             ? "green"
-                            : task.status === "in Bearbeitung"
-                              ? "orange"
-                              : "red"
+                            : task.status.toLowerCase() === "bearbeitung"
+                            ? "orange"
+                            : "red"
                         }
                       >
                         {task.status}
@@ -293,16 +199,13 @@ const MilestoneOverview: React.FC = () => {
         );
       })}
 
-      {/* Firma seçimi */}
-      <Dialog
-        open={selectDialogOpen}
-        onClose={() => setSelectDialogOpen(false)}
-      >
+      {/* Firma / User Seçimi */}
+      <Dialog open={selectDialogOpen} onClose={() => setSelectDialogOpen(false)}>
         <DialogTitle>Firma auswählen</DialogTitle>
         <DialogContent dividers>
-          {companiesData.map((company) => (
+          {users.map((user) => (
             <Box
-              key={company.id}
+              key={user.id}
               sx={{
                 p: 1,
                 mb: 1,
@@ -311,11 +214,11 @@ const MilestoneOverview: React.FC = () => {
                 cursor: "pointer",
                 "&:hover": { backgroundColor: "#eee" },
               }}
-              onClick={() => handleCompanySelect(company.id)}
+              onClick={() => handleUserSelect(user.id)}
             >
               <Stack direction="row" spacing={1} alignItems="center">
-                <img src={company.logo} alt={company.name} width={30} />
-                <Typography>{company.name}</Typography>
+                <img src={user.imageURL} alt={user.name} width={30} />
+                <Typography>{user.company.name}</Typography>
               </Stack>
             </Box>
           ))}

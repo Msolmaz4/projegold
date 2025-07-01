@@ -17,9 +17,29 @@ export interface Company {
   description?: string;
   bs: string;
 }
+interface Aufgabe {
+  vorarbeit?: number | undefined;
+  umsetzung?: number | undefined;
+  kontrolle?: number | undefined;
+  kosten?: number | undefined;
+  status?: "offen" | "Bearbeitung" | "erledigt" | "geplant" | undefined;
+  dueDate?: string | undefined;
+  category?: "Marketing" | "Development" | "Design" | "Fulfillment" | undefined;
+  subcategory?:
+  | "Google Ads"
+  | "Social Media"
+  | "SEO"
+  | "PDF Programmierung"
+  | "Webformula"
+  | 'Backend'
+  | 'UX/UI'
+  | undefined;
+  name: string;
+  firma: string,
+}
 
 export interface User {
-  id: number;
+  id: number | string;
   name: string;
   username: string;
   email: string;
@@ -27,11 +47,13 @@ export interface User {
   phone: string;
   website: string;
   company: Company;
-  logoUrl?: string;
-  image?: File | undefined;
   description?: string;
+  imageURL?: string | undefined;
+  tasks?: Task[];
+  aufgabe?: Aufgabe[];
+  imageFile?: Blob | MediaSource | null;
+  image?: Blob |MediaSource;
 }
-
 
 export interface Task {
   id: number;

@@ -8,10 +8,11 @@ import {
 } from "@mui/material";
 
 import BusinessIcon from "@mui/icons-material/Business";
-import type { User } from "../types";
+import type { User  } from "../types";
 import { useEffect, useState } from "react";
 import Details from "./Details";
 import { useUser } from "../context/UserContext";
+
 
 type CardsProps = {
   user: User;
