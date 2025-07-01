@@ -15,7 +15,16 @@ interface Company {
   bs: string;
 }
 
+type Subcategory = {
+  id: string;
+  name: string;
+};
 
+type Category = {
+  id: string | number | undefined;
+  name: string;
+  subcategories: Subcategory[];
+};
 interface SimpleTask {
   id?: number | undefined
   name: string;
@@ -30,16 +39,16 @@ interface Aufgabe {
   dueDate?: string | undefined;
   category?: "Marketing" | "Development" | "Design" | "Fulfillment" | undefined;
   subcategory?:
-    | "Google Ads"
-    | "Social Media"
-    | "SEO"
-    | "PDF Programmierung"
-    | "Webformula"
-    | 'Backend'
-    |  'UX/UI'
-    | undefined;
+  | "Google Ads"
+  | "Social Media"
+  | "SEO"
+  | "PDF Programmierung"
+  | "Webformula"
+  | 'Backend'
+  | 'UX/UI'
+  | undefined;
   name: string;
-  firma:string,
+  firma: string,
 }
 
 interface Address {
@@ -63,7 +72,7 @@ interface Task {
   milestones: string[];
 }
 interface User {
-  id: number |string;
+  id: number | string;
   name: string;
   username: string;
   email: string;
@@ -72,12 +81,15 @@ interface User {
   website: string;
   company: Company;
   description?: string;
-  imageURL?: string;
+  imageURL?: string | undefined;
+  tasks?: Task[];
+  aufgabe?: Aufgabe[];
+  image?: string | undefined;
 }
 
 interface UserWithTasks extends User {
   aufgabe?: Aufgabe[];
-    tasks?: Task[];
+  tasks?: Task[];
 }
 
 const Users: UserWithTasks[] = [
@@ -512,22 +524,6 @@ const Users: UserWithTasks[] = [
 ];
 
 
-
-
-
-
-
-
-type Subcategory = {
-  id: string;
-  name: string;
-};
-
-type Category = {
-  id: string | number | undefined;
-  name: string;
-  subcategories: Subcategory[];
-};
 const Categories: Category[] = [
   {
     id: 1,

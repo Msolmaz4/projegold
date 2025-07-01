@@ -46,43 +46,43 @@ const AddTaskModal: React.FC<ModalProps> = ({
     firma: "",
   });
 
-useEffect(() => {
-  if (!open || !categories || categories.length === 0) return;
+  useEffect(() => {
+    if (!open || !categories || categories.length === 0) return;
 
-  if (existingTask) {
-    const foundCategory = categories.find(
-      (cat) => cat.name === existingTask.category
-    );
-    const foundSubcategory = foundCategory?.subcategories.find(
-      (sub) => sub.name === existingTask.subcategory
-    );
+    if (existingTask) {
+      const foundCategory = categories.find(
+        (cat) => cat.name === existingTask.category
+      );
+      const foundSubcategory = foundCategory?.subcategories.find(
+        (sub) => sub.name === existingTask.subcategory
+      );
 
-    setTask({
-      ...existingTask,
-      category: foundCategory ? foundCategory.id.toString() : "",
-      subcategory: foundSubcategory ? foundSubcategory.id.toString() : "",
-    });
-  } else {
-    setTask({
-      id: new Date().getTime(),
-      category: "",
-      subcategory: "",
-      name: "",
-      vorarbeit: 0,
-      umsetzung: 0,
-      kontrolle: 0,
-      kosten: 0,
-      status: "offen",
-      milestone: "",
-      dueDate: "",
-      firma: "",
-    });
-  }
-  console.log(task)
-}, [existingTask, open, categories]);
+      setTask({
+        ...existingTask,
+        category: foundCategory ? foundCategory.id.toString() : "",
+        subcategory: foundSubcategory ? foundSubcategory.id.toString() : "",
+      });
+    } else {
+      setTask({
+        id: new Date().getTime(),
+        category: "",
+        subcategory: "",
+        name: "",
+        vorarbeit: 0,
+        umsetzung: 0,
+        kontrolle: 0,
+        kosten: 0,
+        status: "offen",
+        milestone: "",
+        dueDate: "",
+        firma: "",
+      });
+    }
+    console.log(task)
+  }, [existingTask, open, categories]);
 
 
-console.log("task state:", task);
+  console.log("task state:", task);
 
 
   const handleChange = (field: keyof Task, value: any) =>

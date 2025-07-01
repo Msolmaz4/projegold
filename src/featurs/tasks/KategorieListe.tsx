@@ -40,7 +40,7 @@ const KategorieListe: React.FC = () => {
   const [subEditName, setSubEditName] = useState("");
   const [subEditDialogOpen, setSubEditDialogOpen] = useState(false);
 
-  // Menü aç/kapa işlemleri
+
   const openMenu = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
     setAnchorEl(e.currentTarget);
     setMenuId(id);
@@ -51,7 +51,7 @@ const KategorieListe: React.FC = () => {
     setMenuId(null);
   };
 
-  // Kategori kaydet (ekle veya düzenle)
+  // Kategori ADDDD
   const handleSaveCategory = () => {
     if (!newName.trim()) {
       alert("Name darf nicht leer sein");
@@ -59,13 +59,13 @@ const KategorieListe: React.FC = () => {
     }
 
     if (editId) {
-      // Düzenleme
+
       const updated = categories.map((cat) =>
         cat.id === editId ? { ...cat, name: newName } : cat
       );
       setCategories(updated);
     } else {
-      // Yeni kategori ekleme
+
       const newCategory: Category = {
         id: uuidv4(),
         name: newName.trim(),
@@ -78,7 +78,6 @@ const KategorieListe: React.FC = () => {
     setEditId(null);
   };
 
-  // Kategori sil
   const handleDelete = (id: string) => {
     const cat = categories.find((c) => c.id === id);
     if (cat && cat.subcategories.length > 0) {
@@ -88,8 +87,6 @@ const KategorieListe: React.FC = () => {
     setCategories(categories.filter((c) => c.id !== id));
     closeMenu();
   };
-
-  // Kategori düzenleme başlat
   const handleEdit = (id: string) => {
     const cat = categories.find((c) => c.id === id);
     if (cat) {
@@ -100,7 +97,7 @@ const KategorieListe: React.FC = () => {
     closeMenu();
   };
 
-  // Alt kategori ekleme
+
   const handleAddSub = () => {
     if (!newSubName.trim() || !selectedCatId) return;
 
@@ -113,12 +110,12 @@ const KategorieListe: React.FC = () => {
     const updated = categories.map((cat) =>
       cat.id === selectedCatId
         ? {
-            ...cat,
-            subcategories: [
-              ...cat.subcategories,
-              { id: uuidv4(), name: newSubName.trim() },
-            ],
-          }
+          ...cat,
+          subcategories: [
+            ...cat.subcategories,
+            { id: uuidv4(), name: newSubName.trim() },
+          ],
+        }
         : cat
     );
     setCategories(updated);
@@ -127,14 +124,12 @@ const KategorieListe: React.FC = () => {
     setSubDialogOpen(false);
   };
 
-  // Alt kategori düzenleme dialog aç
   const handleOpenSubEditDialog = (subId: string, name: string) => {
     setSelectedSubId(subId);
     setSubEditName(name);
     setSubEditDialogOpen(true);
   };
 
-  // Alt kategori kaydet (düzenle)
   const handleSaveSubEdit = () => {
     if (!selectedSubId) return;
 
@@ -150,7 +145,6 @@ const KategorieListe: React.FC = () => {
     setSubEditName("");
   };
 
-  // Alt kategori sil
   const handleDeleteSub = () => {
     if (!selectedSubId) return;
 
@@ -164,7 +158,7 @@ const KategorieListe: React.FC = () => {
     setSubEditName("");
   };
 
-  // Eğer categories undefined olursa loading göster
+
   if (!categories) {
     return <Typography>Lädt Kategorien...</Typography>;
   }

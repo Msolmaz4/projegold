@@ -20,12 +20,12 @@ interface ModalProps {
   onSave?: (data: { name: string; image: File | null; id: number }) => void;
 }
 
-const Modal: React.FC<ModalProps> = ({ open, onSave, onClose }) => {
+const Modal: React.FC<ModalProps> = ({ open, onClose }) => {
   const [text, setText] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const { users,setUsers} =useUser()
-  console.log(users,'modaldayiz')
+  const { users, setUsers } = useUser()
+  console.log(users, 'modaldayiz')
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles && acceptedFiles[0]) {
@@ -43,42 +43,41 @@ const Modal: React.FC<ModalProps> = ({ open, onSave, onClose }) => {
     multiple: false,
   });
 
- 
-const handleSave = () => {
-  const id = Date.now() + Math.floor(Math.random() * 1000000);
-  const name = text;
 
-  const newUser = {
-    id,
-    name,
-    username: '',
-    email: '',
-    address: {
-      street: '',
-      suite: '',
-      city: '',
-      zipcode: '',
-      geo: { lat: '', lng: '' },
-    },
-    phone: '',
-    website: '',
-    company: {
-      name: name || '',
-      catchPhrase: '',
-      bs: '',
-    },
-    description: '',
-    imageURL: preview || '',
-    aufgabe: [],
+  const handleSave = () => {
+    const id = Date.now() + Math.floor(Math.random() * 1000000);
+    const name = text;
+
+    const newUser = {
+      id,
+      name,
+      username: '',
+      email: '',
+      address: {
+        street: '',
+        suite: '',
+        city: '',
+        zipcode: '',
+        geo: { lat: '', lng: '' },
+      },
+      phone: '',
+      website: '',
+      company: {
+        name: name || '',
+        catchPhrase: '',
+        bs: '',
+      },
+      description: '',
+      imageURL: preview || '',
+      aufgabe: [],
+    };
+
+    setUsers((prev) => [...prev, newUser]);
+    onClose();
+    setText('');
+    setImage(null);
+    setPreview(null);
   };
-
-  setUsers((prev) => [...prev, newUser]); // kullanıcıyı ekle
-
-  onClose();
-  setText('');
-  setImage(null);
-  setPreview(null);
-};
 
   return (
     <MuiModal

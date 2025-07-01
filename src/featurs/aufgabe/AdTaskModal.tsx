@@ -17,8 +17,8 @@ type ModalProps = {
 const AddTaskModal: React.FC<ModalProps> = ({
   open, onClose, onSave, existingTask, firmOptions = [],
 }) => {
-  const { categories} = useUser();
-  
+  const { categories } = useUser();
+
 
   const [task, setTask] = useState<Task>({
     id: new Date().getTime(),
@@ -57,11 +57,11 @@ const AddTaskModal: React.FC<ModalProps> = ({
 
   const handleCategoryChange = (categoryId: string) => {
 
-    console.log(task.category,'jjjjjjjjjjjjj')
+    console.log(task.category, 'jjjjjjjjjjjjj')
     setTask((prev) => ({ ...prev, category: categoryId, subcategory: "" }));
   }
-    
-    
+
+
 
   const selectedCategory = categories.find((cat) => cat.id.toString() === task.category);
 

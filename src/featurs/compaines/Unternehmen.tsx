@@ -12,7 +12,7 @@ import { Navigation } from "swiper/modules";
 import { useMediaQuery, useTheme } from "@mui/material";
 import "swiper/css";
 import "swiper/css/navigation";
-import {  useState } from "react";
+import { useState } from "react";
 import Modal from "../../utils/Modal";
 
 
@@ -26,22 +26,13 @@ import { useUser } from "../../context/UserContext";
 
 
 function Unternehmen() {
-
-
     const [modal, setModal] = useState<boolean>(false);
-    const { users,setUsers} = useUser()
+    const { users, setUsers } = useUser()
     //console.log(users,'unternej´hmen');
-
-
-
-
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
     // if (isLoading) return <Typography>Lädt...</Typography>;
     // if (error) return <Typography>Fehler beim Laden.</Typography>;
-
-
-
     return (
         <Box sx={{ mt: 4 }}>
             {modal && (

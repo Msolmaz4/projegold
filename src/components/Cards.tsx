@@ -35,11 +35,11 @@ const Cards = ({ user }: CardsProps) => {
   const handleOpen = () => setOpenDetails(true);
   const handleClose = () => setOpenDetails(false);
 
-  // Silme işlemi
+  // DELETE
   const handleDelete = (userId: number) => {
-    // users listesinden filtreleyip sil
+
     setUsers(users.filter((u) => u.id !== userId));
-    handleClose(); // detay modalını kapat
+    handleClose();
   };
 
   return (

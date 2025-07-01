@@ -34,7 +34,7 @@ import { CSS } from "@dnd-kit/utilities";
 import type { Task } from "../../types";
 import { useUser } from "../../context/UserContext";
 
-// 🧠 Hata düzeltildi: .aufgabe undefined olabilir
+//DIKKAT 
 const extractTasksFromUsers = (users: any[]): Task[] => {
   let idCounter = 1;
   return users?.flatMap((user) =>
@@ -90,10 +90,10 @@ function SortableRow({ task, onEdit, onDelete }: { task: Task; onEdit: (task: Ta
             task.status === "offen"
               ? "warning"
               : task.status === "erledigt"
-              ? "success"
-              : task.status === "in Bearbeitung"
-              ? "info"
-              : "default"
+                ? "success"
+                : task.status === "in Bearbeitung"
+                  ? "info"
+                  : "default"
           }
         />
       </TableCell>
@@ -117,7 +117,7 @@ function SortableRow({ task, onEdit, onDelete }: { task: Task; onEdit: (task: Ta
 }
 
 const TaskTable: React.FC = () => {
-  const { categories, users ,setUsers} = useUser();
+  const { categories, users, setUsers } = useUser();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [firmaFilter, setFirmaFilter] = useState("");
@@ -132,81 +132,79 @@ const TaskTable: React.FC = () => {
   }, [users]);
   //console.log("tasks", users);
 
- const uniqueFirms = useMemo(() => {
-  // Tüm görevlerdeki firmaları topla
-  const taskFirms = tasks
-    .filter((t): t is Task => !!t && !!t.firma)
-    .map((t) => t.firma);
+  const uniqueFirms = useMemo(() => {
 
-  // Kullanıcı verilerinden firmaları topla
-  const userFirms = users
-    .filter((u) => u?.company?.name)
-    .map((u) => u.company.name);
+    const taskFirms = tasks
+      .filter((t): t is Task => !!t && !!t.firma)
+      .map((t) => t.firma);
 
-  // Görevli + görev olmayan tüm firmaları tekilleştir
-  return Array.from(new Set([...taskFirms, ...userFirms]));
-}, [tasks, users]);
 
-const handleAddTask = (newTask: Task) => {
-  console.log(newTask, "ddddddddddddd");
+    const userFirms = users
+      .filter((u) => u?.company?.name)
+      .map((u) => u.company.name);
 
-  const updatedUsers = users.map((user) => {
-    if (user.company?.name === newTask.firma) {
-      // aufgabe dizisi yoksa oluştur
-      const newAufgabe = user.aufgabe ? [...user.aufgabe] : [];
 
-      // Yeni task'u aufgabe'ye ekle
-      newAufgabe.push({
-        ...newTask,
-        id: newTask.id, // buraya istersen id oluşturabilirsin
-      });
+    return Array.from(new Set([...taskFirms, ...userFirms]));
+  }, [tasks, users]);
 
-      // tasks dizisini kopyala
-      let updatedTasks = user.tasks ? [...user.tasks] : [];
+  const handleAddTask = (newTask: Task) => {
+    console.log(newTask, "ddddddddddddd");
 
-      // Aynı category objesini bul
-      const categoryIndex = updatedTasks.findIndex(
-        (task: any) => task.name === newTask.category
-      );
+    const updatedUsers = users.map((user) => {
+      if (user.company?.name === newTask.firma) {
 
-      if (categoryIndex !== -1) {
-        // Eğer category bulunduysa, subcategory'yi milestones array'ine ekle (varsa ekleme)
-        const milestones = updatedTasks[categoryIndex].milestones || [];
+        const newAufgabe = user.aufgabe ? [...user.aufgabe] : [];
 
-        // Subcategory zaten varsa ekleme, yoksa ekle
-        if (!milestones.includes(newTask.subcategory)) {
-          milestones.push(newTask.subcategory);
+
+        newAufgabe.push({
+          ...newTask,
+          id: newTask.id,
+        });
+
+        let updatedTasks = user.tasks ? [...user.tasks] : [];
+
+        // Aynı category objesini bul
+        const categoryIndex = updatedTasks.findIndex(
+          (task: any) => task.name === newTask.category
+        );
+
+        if (categoryIndex !== -1) {
+
+          const milestones = updatedTasks[categoryIndex].milestones || [];
+
+
+          if (!milestones.includes(newTask.subcategory)) {
+            milestones.push(newTask.subcategory);
+          }
+
+
+          updatedTasks[categoryIndex] = {
+            ...updatedTasks[categoryIndex],
+            milestones,
+          };
+        } else {
+
+          updatedTasks.push({
+            name: newTask.category,
+            milestones: [newTask.subcategory],
+          });
         }
 
-        // Güncelle
-        updatedTasks[categoryIndex] = {
-          ...updatedTasks[categoryIndex],
-          milestones,
+        return {
+          ...user,
+          aufgabe: newAufgabe,
+          tasks: updatedTasks,
         };
-      } else {
-        // Eğer category yoksa yeni obje ekle
-        updatedTasks.push({
-          name: newTask.category,
-          milestones: [newTask.subcategory],
-        });
       }
+      return user;
+    });
 
-      return {
-        ...user,
-        aufgabe: newAufgabe,
-        tasks: updatedTasks,
-      };
-    }
-    return user;
-  });
 
-  // users state'ini güncelle
-  setUsers(updatedUsers);
+    setUsers(updatedUsers);
 
-  // tasks state'ini güncelle (opsiyonel)
-  const maxId = tasks.reduce((max, t) => (t.id > max ? t.id : max), 0);
-  setTasks((prev) => [...prev, { ...newTask, id: maxId + 1 }]);
-};
+    const maxId = tasks.reduce((max, t) => (t.id > max ? t.id : max), 0);
+    setTasks((prev) => [...prev, { ...newTask, id: maxId + 1 }]);
+  };
 
 
 

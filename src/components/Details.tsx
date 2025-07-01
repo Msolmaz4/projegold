@@ -17,15 +17,15 @@ import {
 import { useState } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import BusinessIcon from "@mui/icons-material/Business";
-import EditUserModal from "./EditUserModal"; // Modal importu
+import EditUserModal from "./EditUserModal";
 import type { User } from "../types";
-import { useUser } from "../context/UserContext";
+
 
 type Props = {
   user: User;
   imageUrl?: string;
   onDelete: (userId: number) => void;
-  onUpdate?: (updatedUser: User) => void; // Yeni prop
+  onUpdate?: (updatedUser: User) => void;
 };
 
 const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {

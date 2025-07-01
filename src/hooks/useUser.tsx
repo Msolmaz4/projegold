@@ -1,8 +1,8 @@
 
-import {  useState } from "react";
+import { useState } from "react";
 
 import type { User } from '../types'
-import {Users} from '../data'
+import { Users } from '../data'
 import { useGetUsersQuery } from "../app/userApi";
 
 
@@ -17,7 +17,7 @@ export const useUser = () => {
         console.log(id, "delerusecontext");
 
         const newData = users?.filter((user) => user.id !== id);
-        setUsers(newData); 
+        setUsers(newData);
     };
 
 

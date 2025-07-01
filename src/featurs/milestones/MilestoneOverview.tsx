@@ -149,9 +149,7 @@ const MilestoneOverview: React.FC = () => {
   const [expandedCompanies, setExpandedCompanies] = useState<Set<number>>(new Set());
   const [selectedCompanies, setSelectedCompanies] = useState<Company[]>([]);
   const [selectDialogOpen, setSelectDialogOpen] = useState(false);
-
   const handleAddClick = () => setSelectDialogOpen(true);
-
   const handleCompanySelect = (companyId: number) => {
     const company = companiesData.find((c) => c.id === companyId);
     if (company && !selectedCompanies.find((c) => c.id === company.id)) {
@@ -280,8 +278,8 @@ const MilestoneOverview: React.FC = () => {
                           task.status === "erledigt"
                             ? "green"
                             : task.status === "in Bearbeitung"
-                            ? "orange"
-                            : "red"
+                              ? "orange"
+                              : "red"
                         }
                       >
                         {task.status}
