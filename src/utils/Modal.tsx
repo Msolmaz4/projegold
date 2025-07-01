@@ -25,7 +25,7 @@ const Modal: React.FC<ModalProps> = ({ open, onClose }) => {
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const { users, setUsers } = useUser()
-  console.log(users, 'modaldayiz')
+  console.log(image,users, 'modaldayiz')
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles && acceptedFiles[0]) {

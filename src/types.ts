@@ -17,7 +17,7 @@ export interface Company {
   description?: string;
   bs: string;
 }
-interface Aufgabe {
+export interface Aufgabe {
   vorarbeit?: number | undefined;
   umsetzung?: number | undefined;
   kontrolle?: number | undefined;
@@ -56,15 +56,15 @@ export interface User {
 }
 
 export interface Task {
-  id: number;
-  category: KategorieListe | "" |string;
-  subcategory: string| Subkategorie | "";
+  id?: number;
+  category?: KategorieListe | "" |string;
+  subcategory?: string| Subkategorie | "";
   name?: string;
-  vorarbeit: number;
-  umsetzung: number;
-  kontrolle: number;
-  kosten: number;
-  status: "offen" | "in Bearbeitung" | "erledigt" | "geplant";
+  vorarbeit?: number;
+  umsetzung?: number;
+  kontrolle?: number;
+  kosten?: number;
+  status?: "offen" | "in Bearbeitung" | "erledigt" | "geplant";
   milestone?: string;
   dueDate?: string;
   firma?: string;
@@ -98,7 +98,7 @@ export type Subkategorie =
 
 
 export interface Category  {
-  id: string;
+   id: string | number | undefined;
   name: string;
   subcategories: Subcategory[];
 };
