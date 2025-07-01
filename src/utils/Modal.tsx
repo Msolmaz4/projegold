@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 
+
 import {
   Box,
   TextField,
@@ -11,18 +12,20 @@ import {
   Backdrop,
   Fade,
 } from '@mui/material';
+import { useUser } from '../context/UserContext';
 
 interface ModalProps {
   open: boolean;
   onClose: () => void;
-  onSave?: (data: { name: string; image: File | null ,id:number}) => void;
+  onSave?: (data: { name: string; image: File | null; id: number }) => void;
 }
 
 const Modal: React.FC<ModalProps> = ({ open, onSave, onClose }) => {
-  console.log(open);
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const { users,setUsers} =useUser()
+  console.log(users,'modaldayiz')
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles && acceptedFiles[0]) {
@@ -36,21 +39,46 @@ const Modal: React.FC<ModalProps> = ({ open, onSave, onClose }) => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { "image/*": [] },
+    accept: { 'image/*': [] },
     multiple: false,
   });
 
-  const handleSave = () => {
-    const id = Date.now() + Math.floor(Math.random() * 1000000);
-    console.log(id)
-    const name = text;
-    if (onSave) onSave({ name, image,id});
+ 
+const handleSave = () => {
+  const id = Date.now() + Math.floor(Math.random() * 1000000);
+  const name = text;
 
-    onClose();
-    setText("");
-    setImage(null);
-    setPreview(null);
+  const newUser = {
+    id,
+    name,
+    username: '',
+    email: '',
+    address: {
+      street: '',
+      suite: '',
+      city: '',
+      zipcode: '',
+      geo: { lat: '', lng: '' },
+    },
+    phone: '',
+    website: '',
+    company: {
+      name: name || '',
+      catchPhrase: '',
+      bs: '',
+    },
+    description: '',
+    imageURL: preview || '',
+    aufgabe: [],
   };
+
+  setUsers((prev) => [...prev, newUser]); // kullanıcıyı ekle
+
+  onClose();
+  setText('');
+  setImage(null);
+  setPreview(null);
+};
 
   return (
     <MuiModal
@@ -58,23 +86,21 @@ const Modal: React.FC<ModalProps> = ({ open, onSave, onClose }) => {
       onClose={onClose}
       closeAfterTransition
       BackdropComponent={Backdrop}
-      BackdropProps={{
-        timeout: 300,
-      }}
+      BackdropProps={{ timeout: 300 }}
     >
       <Fade in={open}>
         <Box
           sx={{
-            position: "absolute" as const,
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            bgcolor: "background.paper",
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            bgcolor: 'background.paper',
             boxShadow: 24,
             borderRadius: 2,
             p: 4,
             width: 500,
-            maxWidth: "90%",
+            maxWidth: '90%',
           }}
         >
           <TextField
@@ -90,13 +116,13 @@ const Modal: React.FC<ModalProps> = ({ open, onSave, onClose }) => {
             sx={{
               mt: 2,
               height: 200,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderStyle: "dashed",
-              bgcolor: isDragActive ? "#f0f0f0" : "#fafafa",
-              cursor: "pointer",
-              textAlign: "center",
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderStyle: 'dashed',
+              bgcolor: isDragActive ? '#f0f0f0' : '#fafafa',
+              cursor: 'pointer',
+              textAlign: 'center',
             }}
             {...getRootProps()}
           >
@@ -104,25 +130,23 @@ const Modal: React.FC<ModalProps> = ({ open, onSave, onClose }) => {
             {preview ? (
               <img
                 src={preview}
-                alt="Yüklenen"
+                alt="Preview"
                 style={{
-                  maxHeight: "100%",
-                  maxWidth: "100%",
-                  objectFit: "contain",
+                  maxHeight: '100%',
+                  maxWidth: '100%',
+                  objectFit: 'contain',
                 }}
               />
             ) : (
               <Typography variant="body2" color="textSecondary">
                 {isDragActive
-                  ? "Lass es los 🫴"
-                  : "Bild per Drag & Drop oder Klick hochladen"}
+                  ? 'Lass es los 🫴'
+                  : 'Bild per Drag & Drop oder Klick hochladen'}
               </Typography>
             )}
           </Paper>
 
-          <Box
-            sx={{ mt: 3, display: "flex", justifyContent: "flex-end", gap: 2 }}
-          >
+          <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
             <Button variant="outlined" onClick={onClose}>
               Abbrechen
             </Button>

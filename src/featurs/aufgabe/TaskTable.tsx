@@ -34,18 +34,19 @@ import { CSS } from "@dnd-kit/utilities";
 import type { Task } from "../../types";
 import { useUser } from "../../context/UserContext";
 
-// Task row (sortable)
-function SortableRow({
-  task,
-  onEdit,
-  onDelete,
-}: {
-  task: Task;
-  onEdit: (task: Task) => void;
-  onDelete: (task: Task) => void;
-}) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: task.id });
+// 🧠 Hata düzeltildi: .aufgabe undefined olabilir
+const extractTasksFromUsers = (users: any[]): Task[] => {
+  let idCounter = 1;
+  return users?.flatMap((user) =>
+    user?.aufgabe?.map((task: any) => ({
+      ...task,
+      id: idCounter++,
+    })) || []
+  );
+};
+
+function SortableRow({ task, onEdit, onDelete }: { task: Task; onEdit: (task: Task) => void; onDelete: (task: Task) => void }) {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: task.id });
   const [menuDialogOpen, setMenuDialogOpen] = useState(false);
   const anchorRef = React.useRef<HTMLButtonElement | null>(null);
 
@@ -60,9 +61,7 @@ function SortableRow({
   const handleDeleteClick = () => {
     if (task.status !== "erledigt") {
       alert("Nur Aufgaben mit Status 'erledigt' können gelöscht werden!");
-    } else if (
-      window.confirm(`Möchten Sie die Aufgabe "${task.name}" wirklich löschen?`)
-    ) {
+    } else if (window.confirm(`Möchten Sie die Aufgabe "${task.name}" wirklich löschen?`)) {
       onDelete(task);
     }
     handleMenuClose();
@@ -82,11 +81,7 @@ function SortableRow({
       <TableCell>{task.umsetzung} min</TableCell>
       <TableCell>{task.kontrolle} min</TableCell>
       <TableCell>{task.kosten} €</TableCell>
-      <TableCell>
-        {task.dueDate
-          ? new Date(task.dueDate).toLocaleDateString("de-DE")
-          : "—"}
-      </TableCell>
+      <TableCell>{task.dueDate ? new Date(task.dueDate).toLocaleDateString("de-DE") : "—"}</TableCell>
       <TableCell>
         <Chip
           size="small"
@@ -121,18 +116,6 @@ function SortableRow({
   );
 }
 
-// 🧠 Yardımcı: Users'tan görevleri toplayan fonksiyon
-const extractTasksFromUsers = (users: any[]): Task[] => {
-  let idCounter = 1;
-  return users.flatMap((user) =>
-    user.aufgabe.map((task: any) => ({
-      ...task,
-      id: idCounter++,
-    }))
-  );
-};
-
-// 📦 Ana tablo bileşeni
 const TaskTable: React.FC = () => {
   const { categories, users } = useUser();
   const [search, setSearch] = useState("");
@@ -147,11 +130,22 @@ const TaskTable: React.FC = () => {
     const userTasks = extractTasksFromUsers(users);
     setTasks(userTasks);
   }, [users]);
+  console.log("tasks", users);
 
-  const uniqueFirms = useMemo(
-    () => Array.from(new Set(tasks.map((t) => t.firma))).filter(Boolean),
-    [tasks]
-  );
+ const uniqueFirms = useMemo(() => {
+  // Tüm görevlerdeki firmaları topla
+  const taskFirms = tasks
+    .filter((t): t is Task => !!t && !!t.firma)
+    .map((t) => t.firma);
+
+  // Kullanıcı verilerinden firmaları topla
+  const userFirms = users
+    .filter((u) => u?.company?.name)
+    .map((u) => u.company.name);
+
+  // Görevli + görev olmayan tüm firmaları tekilleştir
+  return Array.from(new Set([...taskFirms, ...userFirms]));
+}, [tasks, users]);
 
   const handleAddTask = (newTask: Task) => {
     const maxId = tasks.reduce((max, t) => (t.id > max ? t.id : max), 0);
@@ -181,25 +175,15 @@ const TaskTable: React.FC = () => {
   );
 
   const grouped = filteredTasks.reduce((acc, task) => {
-    const catName =
-      categories.find((c) => c.id.toString() === task.category)?.name || task.category;
-    const subName =
-      categories
-        .flatMap((c) => c.subcategories)
-        .find((s) => s.id === task.subcategory)?.name || task.subcategory;
+    const catName = categories.find((c) => c.id.toString() === task.category)?.name || task.category;
+    const subName = categories.flatMap((c) => c.subcategories).find((s) => s.id === task.subcategory)?.name || task.subcategory;
     const key = `${catName} > ${subName}`;
     if (!acc[key]) acc[key] = [];
     acc[key].push(task);
     return acc;
   }, {} as Record<string, Task[]>);
 
-  const onDragEnd = ({
-    active,
-    over,
-  }: {
-    active: { id: number };
-    over: { id: number } | null;
-  }) => {
+  const onDragEnd = ({ active, over }: { active: { id: number }; over: { id: number } | null }) => {
     if (!over || active.id === over.id) return;
     const activeTask = tasks.find((t) => t.id === active.id);
     const overTask = tasks.find((t) => t.id === over.id);
@@ -211,25 +195,16 @@ const TaskTable: React.FC = () => {
     let updatedTasks = [...tasks];
 
     if (oldGroup === newGroup) {
-      const groupTasks = tasks.filter(
-        (t) => `${t.category}>${t.subcategory}` === oldGroup
-      );
+      const groupTasks = tasks.filter((t) => `${t.category}>${t.subcategory}` === oldGroup);
       const oldIndex = groupTasks.findIndex((t) => t.id === active.id);
       const newIndex = groupTasks.findIndex((t) => t.id === over.id);
       const reordered = arrayMove(groupTasks, oldIndex, newIndex);
-      const others = tasks.filter(
-        (t) => `${t.category}>${t.subcategory}` !== oldGroup
-      );
+      const others = tasks.filter((t) => `${t.category}>${t.subcategory}` !== oldGroup);
       updatedTasks = [...others, ...reordered];
     } else {
       updatedTasks = updatedTasks.map((t) =>
         t.id === active.id
-          ? {
-              ...t,
-              category: overTask.category,
-              subcategory: overTask.subcategory,
-              status: "in Bearbeitung",
-            }
+          ? { ...t, category: overTask.category, subcategory: overTask.subcategory, status: "in Bearbeitung" }
           : t
       );
     }
@@ -241,11 +216,7 @@ const TaskTable: React.FC = () => {
       <Box display="flex" gap={2} mb={2}>
         <FormControl size="small" sx={{ minWidth: 200 }}>
           <InputLabel>Firma</InputLabel>
-          <Select
-            value={firmaFilter}
-            label="Firma"
-            onChange={(e) => setFirmaFilter(e.target.value)}
-          >
+          <Select value={firmaFilter} label="Firma" onChange={(e) => setFirmaFilter(e.target.value)}>
             <MenuItem value="">Alle Firmen</MenuItem>
             {uniqueFirms.map((firma) => (
               <MenuItem key={firma} value={firma}>
@@ -265,11 +236,7 @@ const TaskTable: React.FC = () => {
 
         <FormControl size="small" sx={{ minWidth: 200 }}>
           <InputLabel>Status</InputLabel>
-          <Select
-            value={statusFilter}
-            label="Status"
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
+          <Select value={statusFilter} label="Status" onChange={(e) => setStatusFilter(e.target.value)}>
             <MenuItem value="">Alles</MenuItem>
             <MenuItem value="offen">Offen</MenuItem>
             <MenuItem value="in Bearbeitung">In Bearbeitung</MenuItem>
@@ -321,18 +288,10 @@ const TaskTable: React.FC = () => {
                     <TableCell />
                   </TableRow>
                 </TableHead>
-                <SortableContext
-                  items={groupTasks.map((task) => task.id)}
-                  strategy={verticalListSortingStrategy}
-                >
+                <SortableContext items={groupTasks.map((task) => task.id)} strategy={verticalListSortingStrategy}>
                   <TableBody>
                     {groupTasks.map((task) => (
-                      <SortableRow
-                        key={task.id}
-                        task={task}
-                        onEdit={handleEditTask}
-                        onDelete={handleDeleteTask}
-                      />
+                      <SortableRow key={task.id} task={task} onEdit={handleEditTask} onDelete={handleDeleteTask} />
                     ))}
                   </TableBody>
                 </SortableContext>

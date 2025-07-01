@@ -37,7 +37,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       prev.map((user) => (user.id === id ? { ...user, name, image } : user))
     );
   };
- console.log(categories,'useContext')
+ console.log("usersContext", users);
   return (
     <UserContext.Provider
       value={{ users, setUsers, deleteUser, updateUser, categories, setCategories }}
