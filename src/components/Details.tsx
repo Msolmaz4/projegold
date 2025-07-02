@@ -7,8 +7,6 @@ import {
   Grid,
   Card,
   CardContent,
-  List,
-  ListItem,
   IconButton,
   Menu,
   MenuItem,
@@ -19,7 +17,9 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import BusinessIcon from "@mui/icons-material/Business";
 import EditUserModal from "./EditUserModal";
 import type { User } from "../types";
-
+import dayjs from "dayjs";
+import "dayjs/locale/de";
+dayjs.locale("de");
 
 type Props = {
   user: User;
@@ -29,11 +29,9 @@ type Props = {
 };
 
 const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
-
   const [tabIndex, setTabIndex] = useState(0);
   const [selectedAufgabe, setSelectedAufgabe] = useState<number | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
   const [editOpen, setEditOpen] = useState(false);
   const [editedUser, setEditedUser] = useState<User | null>(null);
 
@@ -154,28 +152,44 @@ const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
         </>
       )}
 
-      {/* Aufgabenbereich Details */}
+      {/* Aufgabenbereich Details mit Meilensteinen */}
       {selectedAufgabe !== null && filteredTasks[selectedAufgabe] && (
-        <Paper elevation={3} sx={{ p: 3 }}>
+        <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
           <Typography variant="h6" gutterBottom>
-            {filteredTasks[selectedAufgabe].name}
+            📍 Meilensteine
           </Typography>
-          {filteredTasks[selectedAufgabe].milestones.map((milestone, idx) => (
-            <Typography key={idx} variant="body1" sx={{ mb: 1 }}>
-              • {milestone}
-            </Typography>
-          ))}
+          {filteredTasks[selectedAufgabe].milestones.map((milestone: any, idx: number) => {
+            const today = dayjs();
+            const date = dayjs(milestone.date ?? milestone);
+            let icon = "🚀";
+            let color = "#607d8b";
+
+            if (date.isValid()) {
+              if (date.isBefore(today, "day")) {
+                icon = "✔";
+                color = "#d32f2f";
+              } else if (date.isSame(today, "day")) {
+                icon = "🚧";
+                color = "#f57c00";
+              }
+            }
+
+            if (typeof milestone === "object" && milestone !== null) {
+              return (
+                <Typography key={idx} variant="body1" sx={{ mb: 1, color }}>
+                  {icon} {milestone.title} – {date.isValid() ? date.format("DD.MM.YYYY") : ""}
+                </Typography>
+              );
+            }
+
+            return (
+              <Typography key={idx} variant="body1" sx={{ mb: 1, color }}>
+                {icon} {milestone}
+              </Typography>
+            );
+          })}
         </Paper>
       )}
-
-      {/* Meilensteine */}
-      <Typography variant="h6" mt={6} mb={2}>
-        Meilensteine
-      </Typography>
-      <List>
-        <ListItem>1. Meilenstein – Juli 2025</ListItem>
-        <ListItem>2. Meilenstein – August 2025</ListItem>
-      </List>
 
       {/* EditUserModal */}
       <EditUserModal
@@ -185,7 +199,7 @@ const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
         onSave={(updatedUser) => {
           setEditOpen(false);
           if (onUpdate) {
-            onUpdate(updatedUser); 
+            onUpdate(updatedUser);
           }
         }}
       />
