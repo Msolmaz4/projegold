@@ -133,6 +133,8 @@ const TaskTable: React.FC = () => {
     setTasks(userTasks);
   }, [users]);
 
+  console.log(tasks, 'tasktable')
+
   const uniqueFirms = useMemo(() => {
     const taskFirms = tasks.filter((t): t is Task => !!t && !!t.firma).map((t) => t.firma);
     const userFirms = users.filter((u) => u?.company?.name).map((u) => u.company.name);
@@ -140,27 +142,55 @@ const TaskTable: React.FC = () => {
   }, [tasks, users]);
 
   const handleAddTask = (newTask: Task) => {
+    console.log(newTask);
+
     const updatedUsers = users.map((user) => {
       if (user.company?.name === newTask.firma) {
+        // Aufgabes (tasks with status etc.)
         const newAufgabe = user.aufgabe ? [...user.aufgabe] : [];
         newAufgabe.push({ ...newTask, id: newTask.id });
 
+        // Güncellenmiş tasks
         let updatedTasks = user.tasks ? [...user.tasks] : [];
 
+        // category = yeni task category adı
         const categoryIndex = updatedTasks.findIndex((task: any) => task.name === newTask.category);
+
+        // Yeni milestone objesi
+        const newMilestone = {
+          title: newTask.name,
+          fallig: newTask.milestoneDate,
+          meilenstein: newTask.milestoneDate,
+          id: newTask.id,
+          completed: false,
+          status: newTask.status,
+          category: newTask.category,
+
+          firma: newTask.firma,
+        };
+
         if (categoryIndex !== -1) {
+          // Mevcut task bulundu, milestones array'ine ekle (aynı başlık yoksa)
           const milestones = updatedTasks[categoryIndex].milestones || [];
-          if (!milestones.includes(newTask.subcategory)) {
-            milestones.push(newTask.subcategory);
+
+          // Aynı başlıklı milestone varsa ekleme
+          const exists = milestones.some(
+            (m: any) => m.title === newMilestone.title && m.fallig === newMilestone.fallig
+          );
+
+          if (!exists) {
+            milestones.push(newMilestone);
           }
+
           updatedTasks[categoryIndex] = {
             ...updatedTasks[categoryIndex],
             milestones,
           };
         } else {
+          // Yeni task oluştur, milestones içinde yeni milestone var
           updatedTasks.push({
             name: newTask.category,
-            milestones: [newTask.subcategory],
+            milestones: [newMilestone],
           });
         }
 
@@ -174,6 +204,8 @@ const TaskTable: React.FC = () => {
     });
 
     setUsers(updatedUsers);
+
+    // tasks state güncellemesi (istersen)
     const maxId = tasks.reduce((max, t) => (t.id > max ? t.id : max), 0);
     setTasks((prev) => [...prev, { ...newTask, id: maxId + 1 }]);
   };
@@ -289,8 +321,8 @@ const TaskTable: React.FC = () => {
         onClose={() => setOpenDialog(false)}
         onSave={handleAddTask}
         firmOptions={uniqueFirms}
-        initialId={tasks.reduce((max, t) => (t.id > max ? t.id : max), 0) + 1}
       />
+
 
       <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
         {Object.entries(grouped).map(([group, groupTasks]) => (

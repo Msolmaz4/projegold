@@ -12,7 +12,7 @@ import {
   MenuItem,
   Paper,
 } from "@mui/material";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import BusinessIcon from "@mui/icons-material/Business";
 import EditUserModal from "./EditUserModal";
@@ -56,13 +56,25 @@ const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
   const filteredTasks =
     user.tasks?.filter((task) => task.name.trim() !== "" && task.milestones.length > 0) ?? [];
 
+  const aufgabenStatusMap = useMemo(() => {
+    const map = new Map<string, string>();
+    user.aufgabe?.forEach((a) => {
+      if (a.name && a.status) {
+        map.set(a.name, a.status);
+      }
+    });
+    return map;
+  }, [user]);
+
   const renderTabContent = () => {
     switch (tabIndex) {
       case 0:
         return <Typography mt={2}>{user.company?.name ?? "Keine Unternehmensdaten"}</Typography>;
       case 1:
         return (
-          <Typography mt={2}>{user.company?.description ?? "Keine Beschreibung verfügbar"}</Typography>
+          <Typography mt={2}>
+            {user.company?.description ?? "Keine Beschreibung verfügbar"}
+          </Typography>
         );
       case 2:
         return <Typography mt={2}>{user.website ?? "Keine Webseite verfügbar"}</Typography>;
@@ -76,6 +88,8 @@ const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
         return null;
     }
   };
+
+  console.log(user, "detail");
 
   return (
     <Box mt={4} borderTop="1px solid #ddd" pt={4}>
@@ -160,23 +174,39 @@ const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
           </Typography>
           {filteredTasks[selectedAufgabe].milestones.map((milestone: any, idx: number) => {
             const today = dayjs();
-            const date = dayjs(milestone.fallig); // <<-- Burada fallig alanı okundu
+            const date = dayjs(milestone.fallig ?? milestone.date);
             let icon = "🚀";
             let color = "#607d8b";
 
             if (date.isValid()) {
               if (date.isBefore(today, "day")) {
                 icon = "✔";
-                color = "#d32f2f"; // kırmızı: geçmiş
+                color = "#d32f2f";
               } else if (date.isSame(today, "day")) {
                 icon = "🚧";
-                color = "#f57c00"; // turuncu: bugün
+                color = "#f57c00";
               }
             }
 
+            // Milestone içindeki status kontrolü eklendi
+            const isErledigt = milestone.status === "erledigt";
+
+            const displayText = milestone.title?.trim() ? milestone.title : "";
+
             return (
               <Typography key={idx} variant="body1" sx={{ mb: 1, color }}>
-                {icon} {milestone.title} – {date.isValid() ? date.format("DD.MM.YYYY") : ""}
+                {icon}{" "}
+                <span
+                  style={{
+                    textDecoration: isErledigt ? "line-through" : "none",
+                    textDecorationColor: isErledigt ? color : undefined,
+                    textDecorationThickness: isErledigt ? "2px" : undefined,
+                    textDecorationStyle: isErledigt ? "solid" : undefined,
+                  }}
+                >
+                  {displayText}
+                  {date.isValid() ? ` – ${date.format("DD.MM.YYYY")}` : ""}
+                </span>
               </Typography>
             );
           })}

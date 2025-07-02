@@ -18,6 +18,8 @@ const AddTaskModal: React.FC<ModalProps> = ({
   open, onClose, onSave, existingTask, firmOptions = [],
 }) => {
   const { categories } = useUser();
+  console.log(categories,'')
+  console.log(existingTask,'upgrdetask')
 
   const [task, setTask] = useState<Task>({
     id: new Date().getTime(),
@@ -36,7 +38,19 @@ const AddTaskModal: React.FC<ModalProps> = ({
   });
 
   useEffect(() => {
-    setTask(existingTask ?? {
+  if (existingTask) {
+    // existingTask varsa, dönüştürme işlemi (önceki cevaptaki gibi)
+    const categoryObj = categories.find(cat => cat.name === existingTask.category);
+    const subcategoryObj = categoryObj?.subcategories.find(sub => sub.name === existingTask.subcategory);
+
+    setTask({
+      ...existingTask,
+      category: categoryObj ? categoryObj.id.toString() : "",
+      subcategory: subcategoryObj ? subcategoryObj.id : "",
+      milestoneDate: existingTask.milestoneDate || new Date().toISOString().split("T")[0], // burada güncel tarih atanıyor
+    });
+  } else {
+    setTask({
       id: new Date().getTime(),
       category: "",
       subcategory: "",
@@ -47,11 +61,14 @@ const AddTaskModal: React.FC<ModalProps> = ({
       kosten: 0,
       status: "offen",
       milestone: "",
-      milestoneDate: "",
+      milestoneDate: new Date().toISOString().split("T")[0], // yeni görevde de bugünün tarihini varsayılan yapıyoruz
       dueDate: "",
       firma: "",
     });
-  }, [existingTask, open]);
+  }
+}, [existingTask, open, categories]);
+
+
 
   const handleChange = (field: keyof Task, value: any) =>
     setTask((prev) => ({ ...prev, [field]: value }));

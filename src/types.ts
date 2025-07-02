@@ -73,11 +73,13 @@ export interface Task {
   dueDate?: string;
   firma?: string;
   tasks?: string[] | undefined;
+  milestoneDate?: string | undefined;
   milestones?: {
     title?: string;
     date?: string;
     fallig?: string;
     meilenstein?: string;
+
   }[];
 };
 
