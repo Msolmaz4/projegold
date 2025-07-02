@@ -11,14 +11,14 @@ import {
   DialogContent,
   DialogActions,
   Collapse,
+  IconButton, // delete için eklendi
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete"; // delete ikonu eklendi
 import { useUser } from "../../context/UserContext";
-import type { Aufgabe ,User} from  '../../types'
-
-
+import type { Aufgabe, User } from "../../types";
 
 const MilestoneOverview: React.FC = () => {
-  const { users  } = useUser();
+  const { users } = useUser();
   const [expandedCompanies, setExpandedCompanies] = useState<Set<number>>(new Set());
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [selectDialogOpen, setSelectDialogOpen] = useState(false);
@@ -31,6 +31,12 @@ const MilestoneOverview: React.FC = () => {
       setSelectedUsers([user, ...selectedUsers]);
     }
     setSelectDialogOpen(false);
+  };
+
+  const handleUserDelete = (userId: number) => {
+    setSelectedUsers((prevSelectedUsers) =>
+      prevSelectedUsers.filter((user) => user.id !== userId)
+    );
   };
 
   const toggleUser = (userId: number) => {
@@ -118,10 +124,7 @@ const MilestoneOverview: React.FC = () => {
                   flexDirection: "column",
                 }}
               >
-                <Typography
-                  variant="caption"
-                  sx={{ textTransform: "lowercase", fontSize: 10, mb: 0.5 }}
-                >
+                <Typography variant="caption" sx={{ textTransform: "lowercase", fontSize: 10, mb: 0.5 }}>
                   vorarbeit
                 </Typography>
                 <Typography variant="caption">{remaining.vorarbeit}</Typography>
@@ -135,10 +138,7 @@ const MilestoneOverview: React.FC = () => {
                   flexDirection: "column",
                 }}
               >
-                <Typography
-                  variant="caption"
-                  sx={{ textTransform: "lowercase", fontSize: 10, mb: 0.5 }}
-                >
+                <Typography variant="caption" sx={{ textTransform: "lowercase", fontSize: 10, mb: 0.5 }}>
                   umsetzung
                 </Typography>
                 <Typography variant="caption">{remaining.umsetzung}</Typography>
@@ -152,14 +152,23 @@ const MilestoneOverview: React.FC = () => {
                   flexDirection: "column",
                 }}
               >
-                <Typography
-                  variant="caption"
-                  sx={{ textTransform: "lowercase", fontSize: 10, mb: 0.5 }}
-                >
+                <Typography variant="caption" sx={{ textTransform: "lowercase", fontSize: 10, mb: 0.5 }}>
                   kontrolle
                 </Typography>
                 <Typography variant="caption">{remaining.kontrolle}</Typography>
               </Box>
+
+              {/* Silme butonu */}
+              <IconButton
+                aria-label="delete"
+                onClick={(event) => {
+                  event.stopPropagation(); // collapse açılmasını engelle
+                  handleUserDelete(user.id);
+                }}
+                size="small"
+              >
+                <DeleteIcon fontSize="small" />
+              </IconButton>
             </Stack>
 
             <Collapse in={expandedCompanies.has(user.id)}>
