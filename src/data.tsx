@@ -28,34 +28,10 @@ const Users: UserWithTasks[] = [
     description: "Innovatives Unternehmen im Bereich Technologie und Entwicklung.",
     imageURL: "",
      tasks: [
-      {
-        name: "Forschung",
-        milestones: [
-          { title: "Labortests abgeschlossen", fallig: "2024-05-15" },
-          { title: "Ergebnisse veröffentlicht", fallig: new Date().toLocaleDateString("de-DE") }
-        ]
-      },
-      {
-        name: "Marketing",
-        milestones: [
-          { title: "Kampagnenstart", fallig: "2025-07-10" },
-          { title: "Social Media Präsenz erhöht", fallig: "2025-08-01" }
-        ]
-      }
+   
     ],
     aufgabe: [
-      {
-        vorarbeit: 7,
-        umsetzung: 9,
-        kontrolle: 8,
-        kosten: 320,
-        status: "offen",
-        dueDate: "2025-06-30",
-        category: "Marketing",
-        subcategory: "SEO",
-        name: "Backlink auf Wikipedia setzen",
-        firma: "Google",
-      },
+   
     ],
   },
   {
@@ -80,34 +56,10 @@ const Users: UserWithTasks[] = [
     description: "Führender Anbieter von Finanzdienstleistungen.",
     imageURL: "",
     tasks: [
-      {
-        name: "Forschung",
-        milestones: [
-          { title: "Labortests abgeschlossen", fallig: "2024-05-15" },
-          { title: "Ergebnisse veröffentlicht", fallig: new Date().toLocaleDateString("de-DE") }
-        ]
-      },
-      {
-        name: "Marketing",
-        milestones: [
-          { title: "Kampagnenstart", fallig: "2025-07-10" },
-          { title: "Social Media Präsenz erhöht", fallig: "2025-08-01" }
-        ]
-      }
+    
     ],
     aufgabe: [
-      {
-        vorarbeit: 8,
-        umsetzung: 7,
-        kontrolle: 9,
-        kosten: 280,
-        status: "Bearbeitung",
-        dueDate: "2025-06-30",
-        category: "Marketing",
-        subcategory: "SEO",
-        name: "Backlink auf Wikipedia setzen",
-        firma: "JPMorgan Chase",
-      },
+    
     ],
   },
   {
@@ -132,34 +84,10 @@ const Users: UserWithTasks[] = [
     description: "Spezialist für nachhaltige Energielösungen.",
     imageURL: "",
     tasks: [
-      {
-        name: "Forschung",
-        milestones: [
-          { title: "Labortests abgeschlossen", fallig: "2024-05-15" },
-          { title: "Ergebnisse veröffentlicht", fallig: new Date().toLocaleDateString("de-DE") }
-        ]
-      },
-      {
-        name: "Marketing",
-        milestones: [
-          { title: "Kampagnenstart", fallig: "2025-07-10" },
-          { title: "Social Media Präsenz erhöht", fallig: "2025-08-01" }
-        ]
-      }
+    
     ],
     aufgabe: [
-      {
-        vorarbeit: 9,
-        umsetzung: 8,
-        kontrolle: 7,
-        kosten: 310,
-        status: "erledigt",
-        dueDate: "2025-06-30",
-        category: "Marketing",
-        subcategory: "SEO",
-        name: "Backlink auf Wikipedia setzen",
-        firma: "Siemens",
-      },
+     
     ],
   },
   {
@@ -190,18 +118,7 @@ const Users: UserWithTasks[] = [
       }
     ],
     aufgabe: [
-      {
-        vorarbeit: 6,
-        umsetzung: 10,
-        kontrolle: 9,
-        kosten: 295,
-        status: "geplant",
-        dueDate: "2025-06-30",
-        category: "Marketing",
-        subcategory: "SEO",
-        name: "Backlink auf Wikipedia setzen",
-        firma: "DHL",
-      },
+  
     ],
   },
   {
@@ -226,34 +143,10 @@ const Users: UserWithTasks[] = [
     description: "Hersteller von hochwertigen Konsumgütern.",
     imageURL: "",
     tasks: [
-      {
-        name: "Forschung",
-        milestones: [
-          { title: "Labortests abgeschlossen", fallig: "2024-05-15" },
-          { title: "Ergebnisse veröffentlicht", fallig: new Date().toLocaleDateString("de-DE") }
-        ]
-      },
-      {
-        name: "Marketing",
-        milestones: [
-          { title: "Kampagnenstart", fallig: "2025-07-10" },
-          { title: "Social Media Präsenz erhöht", fallig: "2025-08-01" }
-        ]
-      }
+
     ],
     aufgabe: [
-      {
-        vorarbeit: 10,
-        umsetzung: 6,
-        kontrolle: 8,
-        kosten: 300,
-        status: "offen",
-        dueDate: "2025-06-30",
-        category: "Marketing",
-        subcategory: "SEO",
-        name: "Backlink auf Wikipedia setzen",
-        firma: "Procter & Gamble",
-      },
+    
     ],
   },
   {
@@ -278,34 +171,10 @@ const Users: UserWithTasks[] = [
     description: "Innovativer Softwareanbieter im Gesundheitsbereich.",
     imageURL: "",
    tasks: [
-      {
-        name: "Forschung",
-        milestones: [
-          { title: "Labortests abgeschlossen", fallig: "2024-05-15" },
-          { title: "Ergebnisse veröffentlicht", fallig: new Date().toLocaleDateString("de-DE") }
-        ]
-      },
-      {
-        name: "Marketing",
-        milestones: [
-          { title: "Kampagnenstart", fallig: "2025-07-10" },
-          { title: "Social Media Präsenz erhöht", fallig: "2025-08-01" }
-        ]
-      }
+
     ],
     aufgabe: [
-      {
-        vorarbeit: 8,
-        umsetzung: 9,
-        kontrolle: 10,
-        kosten: 310,
-        status: "offen",
-        dueDate: "2025-06-30",
-        category: "Marketing",
-        subcategory: "SEO",
-        name: "Backlink auf Wikipedia setzen",
-        firma: "Cerner",
-      },
+   
     ],
   },
   {
@@ -330,24 +199,10 @@ const Users: UserWithTasks[] = [
     description: "Beratung und professionelle Dienstleistungen.",
     imageURL: "",
     tasks: [
-      {
-        name: "",
-        milestones: []
-      }
+    
     ],
     aufgabe: [
-      {
-        vorarbeit: 9,
-        umsetzung: 7,
-        kontrolle: 8,
-        kosten: 305,
-        status: "offen",
-        dueDate: "2025-06-30",
-        category: "Marketing",
-        subcategory: "SEO",
-        name: "Backlink auf Wikipedia setzen",
-        firma: "Accenture",
-      },
+
     ],
   },
   {
@@ -372,24 +227,10 @@ const Users: UserWithTasks[] = [
     description: "Führender Chip-Hersteller weltweit.",
     imageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrlxr-DyfiUuz1NsbURt_V3zOYuAC2iVzA2a-fzud2ltjwomZpyYX-fVIgNH07CdRvREk&usqp=CAU",
     tasks: [
-      {
-        name: "",
-        milestones: []
-      }
+    
     ],
     aufgabe: [
-      {
-        vorarbeit: 7,
-        umsetzung: 8,
-        kontrolle: 9,
-        kosten: 315,
-        status: "offen",
-        dueDate: "2025-06-30",
-        category: "Marketing",
-        subcategory: "SEO",
-        name: "Backlink auf Wikipedia setzen",
-        firma: "Intel",
-      },
+ 
     ],
   },
   {
@@ -414,24 +255,10 @@ const Users: UserWithTasks[] = [
     description: "Pharmaunternehmen mit globaler Reichweite.",
     imageURL: "",
     tasks: [
-      {
-        name: "",
-        milestones: []
-      }
+     
     ],
     aufgabe: [
-      {
-        vorarbeit: 10,
-        umsetzung: 7,
-        kontrolle: 8,
-        kosten: 310,
-        status: "offen",
-        dueDate: "2025-06-30",
-        category: "Marketing",
-        subcategory: "SEO",
-        name: "Backlink auf Wikipedia setzen",
-        firma: "Bayer",
-      },
+  
     ],
   },
   {
@@ -456,24 +283,10 @@ const Users: UserWithTasks[] = [
     description: "Premium Autohersteller mit Fokus auf Innovation.",
     imageURL: "",
     tasks: [
-      {
-        name: "",
-        milestones: []
-      }
+    
     ],
     aufgabe: [
-      {
-        vorarbeit: 8,
-        umsetzung: 7,
-        kontrolle: 9,
-        kosten: 320,
-        status: "offen",
-        dueDate: "2025-06-30",
-        category: "Marketing",
-        subcategory: "SEO",
-        name: "Backlink auf Wikipedia setzen",
-        firma: "BMW",
-      },
+  
     ],
   },
 ];

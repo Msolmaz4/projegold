@@ -18,8 +18,7 @@ const AddTaskModal: React.FC<ModalProps> = ({
   open, onClose, onSave, existingTask, firmOptions = [],
 }) => {
   const { categories } = useUser();
-  console.log(categories,'')
-  console.log(existingTask,'upgrdetask')
+  console.log(existingTask,'adtaskmodel')
 
   const [task, setTask] = useState<Task>({
     id: new Date().getTime(),
@@ -38,51 +37,49 @@ const AddTaskModal: React.FC<ModalProps> = ({
   });
 
   useEffect(() => {
-  if (existingTask) {
-    // existingTask varsa, dönüştürme işlemi (önceki cevaptaki gibi)
-    const categoryObj = categories.find(cat => cat.name === existingTask.category);
-    const subcategoryObj = categoryObj?.subcategories.find(sub => sub.name === existingTask.subcategory);
+    if (existingTask) {
+      const categoryObj = categories.find(cat => cat.name === existingTask.category);
+      const subcategoryObj = categoryObj?.subcategories.find(sub => sub.name === existingTask.subcategory);
 
-    setTask({
-      ...existingTask,
-      category: categoryObj ? categoryObj.id.toString() : "",
-      subcategory: subcategoryObj ? subcategoryObj.id : "",
-      milestoneDate: existingTask.milestoneDate || new Date().toISOString().split("T")[0], // burada güncel tarih atanıyor
-    });
-  } else {
-    setTask({
-      id: new Date().getTime(),
-      category: "",
-      subcategory: "",
-      name: "",
-      vorarbeit: 0,
-      umsetzung: 0,
-      kontrolle: 0,
-      kosten: 0,
-      status: "offen",
-      milestone: "",
-      milestoneDate: new Date().toISOString().split("T")[0], // yeni görevde de bugünün tarihini varsayılan yapıyoruz
-      dueDate: "",
-      firma: "",
-    });
-  }
-}, [existingTask, open, categories]);
+      setTask({
+        ...existingTask,
+        category: categoryObj ? categoryObj.id.toString() : "",
+        subcategory: subcategoryObj ? subcategoryObj.id : "",
+        milestoneDate: existingTask.milestoneDate || new Date().toISOString().split("T")[0],
+      });
+    } else {
+      setTask({
+        id: new Date().getTime(),
+        category: "",
+        subcategory: "",
+        name: "",
+        vorarbeit: 0,
+        umsetzung: 0,
+        kontrolle: 0,
+        kosten: 0,
+        status: "offen",
+        milestone: "",
+        milestoneDate: new Date().toISOString().split("T")[0],
+        dueDate: "",
+        firma: "",
+      });
+    }
+  }, [existingTask, open, categories]);
 
-
-
-  const handleChange = (field: keyof Task, value: any) =>
-    setTask((prev) => ({ ...prev, [field]: value }));
-
-  const handleCategoryChange = (categoryId: string) => {
-    setTask((prev) => ({ ...prev, category: categoryId, subcategory: "" }));
+  const handleChange = (field: keyof Task, value: any) => {
+    setTask(prev => ({ ...prev, [field]: value }));
   };
 
-  const selectedCategory = categories.find((cat) => cat.id.toString() === task.category);
+  const handleCategoryChange = (categoryId: string) => {
+    setTask(prev => ({ ...prev, category: categoryId, subcategory: "" }));
+  };
+
+  const selectedCategory = categories.find(cat => cat.id.toString() === task.category);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>{existingTask ? "Aufgabe bearbeiten" : "Neue Aufgabe"}</DialogTitle>
-      <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 1 }}>
+      <DialogContent>
         <FormControl size="small" fullWidth margin="normal">
           <InputLabel>Firma *</InputLabel>
           <Select

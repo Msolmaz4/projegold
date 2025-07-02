@@ -9,6 +9,7 @@ type UserContextType = {
   updateUser: (payload: UpgradeUser) => void;
   categories: Category[];
   setCategories: React.Dispatch<React.SetStateAction<Category[]>>;
+    
 };
 
 type UpgradeUser = {
@@ -39,6 +40,8 @@ const [users, setUsers] = useState<User[]>(Users as User[] || []);
       prev.map((user) => (user.id === id ? { ...user, name, image } : user))
     );
   };
+
+  
   console.log("usersContext", users);
   return (
     <UserContext.Provider
