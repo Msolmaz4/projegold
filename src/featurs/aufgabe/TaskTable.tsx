@@ -34,7 +34,7 @@ import { CSS } from "@dnd-kit/utilities";
 import type { Task } from "../../types";
 import { useUser } from "../../context/UserContext";
 
-//DIKKAT 
+// DIKKAT
 const extractTasksFromUsers = (users: any[]): Task[] => {
   let idCounter = 1;
   return users?.flatMap((user) =>
@@ -97,7 +97,9 @@ function SortableRow({ task, onEdit, onDelete }: { task: Task; onEdit: (task: Ta
           }
         />
       </TableCell>
-      <TableCell>{task.milestone || "—"}</TableCell>
+      <TableCell>
+        {task.milestoneDate ? new Date(task.milestoneDate).toLocaleDateString("de-DE") : "—"}
+      </TableCell>
       <TableCell align="right">
         <IconButton size="small" onClick={() => onEdit(task)}>
           <EditIcon />
@@ -130,60 +132,32 @@ const TaskTable: React.FC = () => {
     const userTasks = extractTasksFromUsers(users);
     setTasks(userTasks);
   }, [users]);
-  //console.log("tasks", users);
 
   const uniqueFirms = useMemo(() => {
-
-    const taskFirms = tasks
-      .filter((t): t is Task => !!t && !!t.firma)
-      .map((t) => t.firma);
-
-
-    const userFirms = users
-      .filter((u) => u?.company?.name)
-      .map((u) => u.company.name);
-
-
+    const taskFirms = tasks.filter((t): t is Task => !!t && !!t.firma).map((t) => t.firma);
+    const userFirms = users.filter((u) => u?.company?.name).map((u) => u.company.name);
     return Array.from(new Set([...taskFirms, ...userFirms]));
   }, [tasks, users]);
 
   const handleAddTask = (newTask: Task) => {
-    console.log(newTask, "ddddddddddddd");
-
     const updatedUsers = users.map((user) => {
       if (user.company?.name === newTask.firma) {
-
         const newAufgabe = user.aufgabe ? [...user.aufgabe] : [];
-
-
-        newAufgabe.push({
-          ...newTask,
-          id: newTask.id,
-        });
+        newAufgabe.push({ ...newTask, id: newTask.id });
 
         let updatedTasks = user.tasks ? [...user.tasks] : [];
 
-        // Aynı category objesini bul
-        const categoryIndex = updatedTasks.findIndex(
-          (task: any) => task.name === newTask.category
-        );
-
+        const categoryIndex = updatedTasks.findIndex((task: any) => task.name === newTask.category);
         if (categoryIndex !== -1) {
-
           const milestones = updatedTasks[categoryIndex].milestones || [];
-
-
           if (!milestones.includes(newTask.subcategory)) {
             milestones.push(newTask.subcategory);
           }
-
-
           updatedTasks[categoryIndex] = {
             ...updatedTasks[categoryIndex],
             milestones,
           };
         } else {
-
           updatedTasks.push({
             name: newTask.category,
             milestones: [newTask.subcategory],
@@ -199,15 +173,10 @@ const TaskTable: React.FC = () => {
       return user;
     });
 
-
     setUsers(updatedUsers);
-
     const maxId = tasks.reduce((max, t) => (t.id > max ? t.id : max), 0);
     setTasks((prev) => [...prev, { ...newTask, id: maxId + 1 }]);
   };
-
-
-
 
   const handleEditTask = (task: Task) => {
     setSelectedTask(task);

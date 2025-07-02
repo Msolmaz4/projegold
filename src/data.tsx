@@ -31,15 +31,15 @@ const Users: UserWithTasks[] = [
       {
         name: "Forschung",
         milestones: [
-          { title: "Labortests abgeschlossen", date: "2024-05-15" },
-          { title: "Ergebnisse veröffentlicht", date: new Date().toLocaleDateString("de-DE") }
+          { title: "Labortests abgeschlossen", fallig: "2024-05-15" },
+          { title: "Ergebnisse veröffentlicht", fallig: new Date().toLocaleDateString("de-DE") }
         ]
       },
       {
         name: "Marketing",
         milestones: [
-          { title: "Kampagnenstart", date: "2025-07-10" },
-          { title: "Social Media Präsenz erhöht", date: "2025-08-01" }
+          { title: "Kampagnenstart", fallig: "2025-07-10" },
+          { title: "Social Media Präsenz erhöht", fallig: "2025-08-01" }
         ]
       }
     ],
@@ -83,15 +83,15 @@ const Users: UserWithTasks[] = [
       {
         name: "Forschung",
         milestones: [
-          { title: "Labortests abgeschlossen", date: "2024-05-15" },
-          { title: "Ergebnisse veröffentlicht", date: new Date().toLocaleDateString("de-DE") }
+          { title: "Labortests abgeschlossen", fallig: "2024-05-15" },
+          { title: "Ergebnisse veröffentlicht", fallig: new Date().toLocaleDateString("de-DE") }
         ]
       },
       {
         name: "Marketing",
         milestones: [
-          { title: "Kampagnenstart", date: "2025-07-10" },
-          { title: "Social Media Präsenz erhöht", date: "2025-08-01" }
+          { title: "Kampagnenstart", fallig: "2025-07-10" },
+          { title: "Social Media Präsenz erhöht", fallig: "2025-08-01" }
         ]
       }
     ],
@@ -135,15 +135,15 @@ const Users: UserWithTasks[] = [
       {
         name: "Forschung",
         milestones: [
-          { title: "Labortests abgeschlossen", date: "2024-05-15" },
-          { title: "Ergebnisse veröffentlicht", date: new Date().toLocaleDateString("de-DE") }
+          { title: "Labortests abgeschlossen", fallig: "2024-05-15" },
+          { title: "Ergebnisse veröffentlicht", fallig: new Date().toLocaleDateString("de-DE") }
         ]
       },
       {
         name: "Marketing",
         milestones: [
-          { title: "Kampagnenstart", date: "2025-07-10" },
-          { title: "Social Media Präsenz erhöht", date: "2025-08-01" }
+          { title: "Kampagnenstart", fallig: "2025-07-10" },
+          { title: "Social Media Präsenz erhöht", fallig: "2025-08-01" }
         ]
       }
     ],
@@ -229,15 +229,15 @@ const Users: UserWithTasks[] = [
       {
         name: "Forschung",
         milestones: [
-          { title: "Labortests abgeschlossen", date: "2024-05-15" },
-          { title: "Ergebnisse veröffentlicht", date: new Date().toLocaleDateString("de-DE") }
+          { title: "Labortests abgeschlossen", fallig: "2024-05-15" },
+          { title: "Ergebnisse veröffentlicht", fallig: new Date().toLocaleDateString("de-DE") }
         ]
       },
       {
         name: "Marketing",
         milestones: [
-          { title: "Kampagnenstart", date: "2025-07-10" },
-          { title: "Social Media Präsenz erhöht", date: "2025-08-01" }
+          { title: "Kampagnenstart", fallig: "2025-07-10" },
+          { title: "Social Media Präsenz erhöht", fallig: "2025-08-01" }
         ]
       }
     ],
@@ -281,15 +281,15 @@ const Users: UserWithTasks[] = [
       {
         name: "Forschung",
         milestones: [
-          { title: "Labortests abgeschlossen", date: "2024-05-15" },
-          { title: "Ergebnisse veröffentlicht", date: new Date().toLocaleDateString("de-DE") }
+          { title: "Labortests abgeschlossen", fallig: "2024-05-15" },
+          { title: "Ergebnisse veröffentlicht", fallig: new Date().toLocaleDateString("de-DE") }
         ]
       },
       {
         name: "Marketing",
         milestones: [
-          { title: "Kampagnenstart", date: "2025-07-10" },
-          { title: "Social Media Präsenz erhöht", date: "2025-08-01" }
+          { title: "Kampagnenstart", fallig: "2025-07-10" },
+          { title: "Social Media Präsenz erhöht", fallig: "2025-08-01" }
         ]
       }
     ],

@@ -160,31 +160,23 @@ const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
           </Typography>
           {filteredTasks[selectedAufgabe].milestones.map((milestone: any, idx: number) => {
             const today = dayjs();
-            const date = dayjs(milestone.date ?? milestone);
+            const date = dayjs(milestone.fallig); // <<-- Burada fallig alanı okundu
             let icon = "🚀";
             let color = "#607d8b";
 
             if (date.isValid()) {
               if (date.isBefore(today, "day")) {
                 icon = "✔";
-                color = "#d32f2f";
+                color = "#d32f2f"; // kırmızı: geçmiş
               } else if (date.isSame(today, "day")) {
                 icon = "🚧";
-                color = "#f57c00";
+                color = "#f57c00"; // turuncu: bugün
               }
-            }
-
-            if (typeof milestone === "object" && milestone !== null) {
-              return (
-                <Typography key={idx} variant="body1" sx={{ mb: 1, color }}>
-                  {icon} {milestone.title} – {date.isValid() ? date.format("DD.MM.YYYY") : ""}
-                </Typography>
-              );
             }
 
             return (
               <Typography key={idx} variant="body1" sx={{ mb: 1, color }}>
-                {icon} {milestone}
+                {icon} {milestone.title} – {date.isValid() ? date.format("DD.MM.YYYY") : ""}
               </Typography>
             );
           })}

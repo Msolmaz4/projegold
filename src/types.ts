@@ -36,6 +36,9 @@ export interface Aufgabe {
   | undefined;
   name: string;
   firma: string,
+  fallig?: string;
+  meilenstein?: string;
+
 }
 
 export interface User {
@@ -52,14 +55,14 @@ export interface User {
   tasks?: Task[];
   aufgabe?: Aufgabe[];
   imageFile?: Blob | MediaSource | null;
-  image?: Blob |MediaSource;
+  image?: Blob | MediaSource;
   milestoneDate?: string,
 }
 
 export interface Task {
   id?: number;
-  category?: KategorieListe | "" |string;
-  subcategory?: string| Subkategorie | "";
+  category?: KategorieListe | "" | string;
+  subcategory?: string | Subkategorie | "";
   name?: string;
   vorarbeit?: number;
   umsetzung?: number;
@@ -71,13 +74,11 @@ export interface Task {
   firma?: string;
   tasks?: string[] | undefined;
   milestones?: {
-  title?: string;
-  date?: string; 
-}[]
-
-
-
-
+    title?: string;
+    date?: string;
+    fallig?: string;
+    meilenstein?: string;
+  }[];
 };
 
 export type KategorieListe =
@@ -105,13 +106,13 @@ export type Subkategorie =
 
 
 
-export interface Category  {
-   id: string | number | undefined;
+export interface Category {
+  id: string | number | undefined;
   name: string;
   subcategories: Subcategory[];
 };
 
-export interface Subcategory  {
+export interface Subcategory {
   id: string;
   name: string;
 };
