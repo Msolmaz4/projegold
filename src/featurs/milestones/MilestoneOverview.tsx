@@ -11,10 +11,10 @@ import {
   DialogContent,
   DialogActions,
   Collapse,
-  IconButton, // delete için eklendi
+  IconButton, 
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete"; // delete ikonu eklendi
-import { useUser } from "../../context/UserContext";
+import DeleteIcon from "@mui/icons-material/Delete"; 
+import { useUser } from "../../context/UserContext"
 import type { Aufgabe, User } from "../../types";
 
 const MilestoneOverview: React.FC = () => {
@@ -158,11 +158,11 @@ const MilestoneOverview: React.FC = () => {
                 <Typography variant="caption">{remaining.kontrolle}</Typography>
               </Box>
 
-              {/* Silme butonu */}
+              {/* DELETE */}
               <IconButton
                 aria-label="delete"
                 onClick={(event) => {
-                  event.stopPropagation(); // collapse açılmasını engelle
+                  event.stopPropagation(); 
                   handleUserDelete(user.id);
                 }}
                 size="small"
@@ -208,7 +208,7 @@ const MilestoneOverview: React.FC = () => {
         );
       })}
 
-      {/* Firma / User Seçimi */}
+      {/* Firma / User AUSSUCHEN */}
       <Dialog open={selectDialogOpen} onClose={() => setSelectDialogOpen(false)}>
         <DialogTitle>Firma auswählen</DialogTitle>
         <DialogContent dividers>

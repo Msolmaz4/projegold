@@ -26,8 +26,6 @@ import { useUser } from "../../context/UserContext";
 
 const KategorieListe: React.FC = () => {
   const { categories, setCategories } = useUser();
-
-  // Local state for dialogs and editing
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [newName, setNewName] = useState("");
@@ -57,9 +55,7 @@ const KategorieListe: React.FC = () => {
       alert("Name darf nicht leer sein");
       return;
     }
-
     if (editId) {
-
       const updated = categories.map((cat) =>
         cat.id === editId ? { ...cat, name: newName } : cat
       );

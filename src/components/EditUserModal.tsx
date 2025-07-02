@@ -58,8 +58,6 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ open, onClose, user, onSa
             alert("Name darf nicht leer sein.");
             return;
         }
-
-
         const updatedUsers = users.map((u) =>
             u.id === formData.id ? formData : u
         );

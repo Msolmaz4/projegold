@@ -42,7 +42,7 @@ export interface Aufgabe {
 }
 
 export interface User {
-  id: number | string;
+  id: number ;
   name: string;
   username: string;
   email: string;
@@ -60,10 +60,10 @@ export interface User {
 }
 
 export interface Task {
-  id?: number;
+  id: number |string;
   category?: KategorieListe | "" | string;
   subcategory?: string | Subkategorie | "";
-  name?: string;
+  name: string;
   vorarbeit?: number;
   umsetzung?: number;
   kontrolle?: number;
@@ -74,7 +74,7 @@ export interface Task {
   firma?: string;
   tasks?: string[] | undefined;
   milestoneDate?: string | undefined;
-  milestones?: {
+  milestones: {
     title?: string;
     date?: string;
     fallig?: string;
@@ -109,7 +109,7 @@ export type Subkategorie =
 
 
 export interface Category {
-  id: string | number | undefined;
+  id: number;
   name: string;
   subcategories: Subcategory[];
 };

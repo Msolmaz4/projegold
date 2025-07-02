@@ -13,12 +13,12 @@ import {
   Fade,
 } from '@mui/material';
 import { useUser } from '../context/UserContext';
-
-interface ModalProps {
+import type { User } from '../types';
+type ModalProps = {
   open: boolean;
   onClose: () => void;
-  onSave?: (data: { name: string; image: File | null; id: number }) => void;
-}
+  onSave: (neue: User) => void;  
+};
 
 const Modal: React.FC<ModalProps> = ({ open, onClose }) => {
   const [text, setText] = useState('');

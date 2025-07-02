@@ -18,7 +18,7 @@ const AddTaskModal: React.FC<ModalProps> = ({
   open, onClose, onSave, existingTask, firmOptions = [],
 }) => {
   const { categories } = useUser();
-  console.log(existingTask,'adtaskmodel')
+  console.log(existingTask, 'adtaskmodel')
 
   const [task, setTask] = useState<Task>({
     id: new Date().getTime(),
@@ -34,6 +34,7 @@ const AddTaskModal: React.FC<ModalProps> = ({
     milestoneDate: "",
     dueDate: "",
     firma: "",
+     milestones: []
   });
 
   useEffect(() => {
@@ -62,6 +63,7 @@ const AddTaskModal: React.FC<ModalProps> = ({
         milestoneDate: new Date().toISOString().split("T")[0],
         dueDate: "",
         firma: "",
+         milestones: []
       });
     }
   }, [existingTask, open, categories]);

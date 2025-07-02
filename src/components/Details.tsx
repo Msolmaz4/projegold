@@ -12,7 +12,7 @@ import {
   MenuItem,
   Paper,
 } from "@mui/material";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import BusinessIcon from "@mui/icons-material/Business";
 import EditUserModal from "./EditUserModal";
@@ -56,15 +56,7 @@ const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
   const filteredTasks =
     user.tasks?.filter((task) => task.name.trim() !== "" && task.milestones.length > 0) ?? [];
 
-  const aufgabenStatusMap = useMemo(() => {
-    const map = new Map<string, string>();
-    user.aufgabe?.forEach((a) => {
-      if (a.name && a.status) {
-        map.set(a.name, a.status);
-      }
-    });
-    return map;
-  }, [user]);
+
 
   const renderTabContent = () => {
     switch (tabIndex) {

@@ -6,21 +6,17 @@ import {
     IconButton,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { useMediaQuery, useTheme } from "@mui/material";
-import "swiper/css";
-import "swiper/css/navigation";
 import { useState } from "react";
 import Modal from "../../utils/Modal";
-
-
-
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import Cards from "../../components/Cards";
 import { useUser } from "../../context/UserContext";
+import "swiper/css";
+import "swiper/css/navigation";
 
 
 
