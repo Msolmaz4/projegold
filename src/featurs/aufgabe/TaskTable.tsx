@@ -34,16 +34,17 @@ import { CSS } from "@dnd-kit/utilities";
 import type { Task } from "../../types";
 import { useUser } from "../../context/UserContext";
 
+
 const extractTasksFromUsers = (users: any[]): Task[] => {
   let idCounter = 1;
   return users?.flatMap((user) =>
     user?.aufgabe?.map((task: any) => ({
       ...task,
       id: task.id || `task-${idCounter++}`,
+      email: user.email, 
     })) || []
   ).filter(task => task !== null);
 };
-
 function SortableRow({ task, onEdit, onDelete }: { task: Task; onEdit: (task: Task) => void; onDelete: (task: Task) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: task.id });
   const [menuDialogOpen, setMenuDialogOpen] = useState(false);
@@ -122,23 +123,23 @@ const TaskTable: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [firmaFilter, setFirmaFilter] = useState("");
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [openDialog, setOpenDialog] = useState(false); 
-  const [editDialogOpen, setEditDialogOpen] = useState(false); 
+  const [openDialog, setOpenDialog] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
 
 
-  
- 
+
+
   useEffect(() => {
     const userTasks = extractTasksFromUsers(users);
     setTasks(userTasks);
   }, [users]);
- console.log(tasks,'dddddddddddddd')
+  console.log(tasks, 'dddddddddddddd')
   const uniqueFirms = useMemo(() => {
-  
+
     return Array.from(new Set(users.filter((u) => u?.company?.name).map((u) => u.company.name)));
-  }, [users]); 
+  }, [users]);
 
   const handleAddTask = (newTask: Task) => {
     setUsers((prevUsers) =>
@@ -179,6 +180,7 @@ const TaskTable: React.FC = () => {
               milestones: [newMilestone],
             });
           }
+          sendEmailToUser(user.email, "Neue Aufgabe zugewiesen", `Neue Mission: ${newTask.name} (${newTask.category})`);
 
           return {
             ...user,
@@ -216,14 +218,14 @@ const TaskTable: React.FC = () => {
               };
             }
             return taskCategory;
-          }).filter((taskCategory: any) => taskCategory.milestones && taskCategory.milestones.length > 0); // Remove empty categories
+          }).filter((taskCategory: any) => taskCategory.milestones && taskCategory.milestones.length > 0);
 
           const newMilestone = {
             title: editedTask.name,
             fallig: editedTask.milestoneDate,
             meilenstein: editedTask.milestoneDate,
             id: editedTask.id,
-            completed: editedTask.status === "erledigt", 
+            completed: editedTask.status === "erledigt",
             status: editedTask.status,
             category: editedTask.category,
             firma: editedTask.firma,
@@ -244,6 +246,8 @@ const TaskTable: React.FC = () => {
               milestones: [newMilestone],
             });
           }
+          sendEmailToUser(user.email, "Aufgabe aktualisieren", `Aktualisierte Mission: ${editedTask.name} (${editedTask.category})`);
+
 
           return {
             ...user,
@@ -257,7 +261,7 @@ const TaskTable: React.FC = () => {
 
     setEditDialogOpen(false);
     setSelectedTask(null);
-  
+
   };
 
   const handleDeleteTask = (taskToDelete: Task) => {
@@ -275,7 +279,8 @@ const TaskTable: React.FC = () => {
               };
             }
             return taskCategory;
-          }).filter((taskCategory: any) => taskCategory.milestones && taskCategory.milestones.length > 0); // Remove empty categories
+          }).filter((taskCategory: any) => taskCategory.milestones && taskCategory.milestones.length > 0);
+          sendEmailToUser(user.email, "Aufgabe lösen", `Aufgabe gelöscht: ${taskToDelete.name} (${taskToDelete.category})`);
 
           return {
             ...user,
@@ -286,7 +291,11 @@ const TaskTable: React.FC = () => {
         return user;
       })
     );
-   
+
+  };
+  const sendEmailToUser = (userEmail: string, subject: string, body: string) => {
+    // Buraya kendi e-posta gönderme işlemini ekle (EmailJS, API, vs.)
+    console.log(`Sending email to: ${userEmail}, Subject: ${subject}, Body: ${body}`);
   };
 
   const filteredTasks = tasks.filter(
@@ -328,18 +337,18 @@ const TaskTable: React.FC = () => {
 
     setUsers((prevUsers) =>
       prevUsers.map((user) => {
-    
+
         const isOwner = user.company?.name === activeTask.firma;
 
         if (isOwner) {
-         const taskIndexInAufgabe = user.aufgabe?.findIndex((t: any) => t.id === active.id);
+          const taskIndexInAufgabe = user.aufgabe?.findIndex((t: any) => t.id === active.id);
 
           if (taskIndexInAufgabe !== -1 && user.aufgabe) {
             const updatedAufgabe = [...user.aufgabe];
             const movedTask = { ...updatedAufgabe[taskIndexInAufgabe] };
 
             if (`${oldCategoryName}>${oldSubcategoryName}` === `${newCategoryName}>${newSubcategoryName}`) {
-          
+
               const groupTasksInUser = updatedAufgabe.filter(t =>
                 (categories.find(c => c.id.toString() === t.categoryId || c.name === t.category)?.name || t.category) === oldCategoryName &&
                 (categories.flatMap(c => c.subcategories).find(s => s.id === t.subcategoryId || s.name === t.subcategory)?.name || t.subcategory) === oldSubcategoryName
@@ -355,18 +364,18 @@ const TaskTable: React.FC = () => {
               user.aufgabe = [...otherTasks, ...reorderedGroup];
 
             } else {
-              
-              movedTask.category = newCategoryName; 
-              movedTask.subcategory = newSubcategoryName; 
+
+              movedTask.category = newCategoryName;
+              movedTask.subcategory = newSubcategoryName;
               movedTask.categoryId = overCatObj?.id.toString();
               movedTask.subcategoryId = overSubObj?.id;
-              movedTask.status = "in Bearbeitung"; 
-              updatedAufgabe.splice(taskIndexInAufgabe, 1); 
-              updatedAufgabe.push(movedTask); 
+              movedTask.status = "in Bearbeitung";
+              updatedAufgabe.splice(taskIndexInAufgabe, 1);
+              updatedAufgabe.push(movedTask);
               user.aufgabe = updatedAufgabe;
             }
 
-      
+
             let updatedTasksMilestones = user.tasks ? [...user.tasks] : [];
             updatedTasksMilestones = updatedTasksMilestones.map((taskCategory: any) => {
               if (taskCategory.milestones) {
@@ -376,9 +385,9 @@ const TaskTable: React.FC = () => {
                 };
               }
               return taskCategory;
-            }).filter((taskCategory: any) => taskCategory.milestones && taskCategory.milestones.length > 0); // Remove empty categories
+            }).filter((taskCategory: any) => taskCategory.milestones && taskCategory.milestones.length > 0); 
 
-      
+
             const updatedMilestone = {
               title: movedTask.name,
               fallig: movedTask.milestoneDate,
@@ -390,7 +399,7 @@ const TaskTable: React.FC = () => {
               firma: movedTask.firma,
             };
 
-      
+
             const targetCategoryIndex = updatedTasksMilestones.findIndex(
               (taskCategory: any) => taskCategory.name === updatedMilestone.category
             );
@@ -409,7 +418,7 @@ const TaskTable: React.FC = () => {
 
             return {
               ...user,
-              aufgabe: user.aufgabe, 
+              aufgabe: user.aufgabe,
               tasks: updatedTasksMilestones,
             };
           }
@@ -417,7 +426,7 @@ const TaskTable: React.FC = () => {
         return user;
       })
     );
-    
+
   };
 
 

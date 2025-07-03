@@ -17,8 +17,9 @@ type ModalProps = {
 const AddTaskModal: React.FC<ModalProps> = ({
   open, onClose, onSave, existingTask, firmOptions = [],
 }) => {
-  const { categories } = useUser();
-  //console.log(existingTask, 'adtaskmodel')
+  const { categories, users } = useUser();
+  console.log(existingTask, firmOptions, 'adtaskmodel')
+  console.log(users)
 
   const [task, setTask] = useState<Task>({
     id: new Date().getTime(),
@@ -34,7 +35,7 @@ const AddTaskModal: React.FC<ModalProps> = ({
     milestoneDate: "",
     dueDate: "",
     firma: "",
-     milestones: []
+    milestones: []
   });
 
   useEffect(() => {
@@ -63,15 +64,23 @@ const AddTaskModal: React.FC<ModalProps> = ({
         milestoneDate: new Date().toISOString().split("T")[0],
         dueDate: "",
         firma: "",
-         milestones: []
+        milestones: []
       });
     }
   }, [existingTask, open, categories]);
 
   const handleChange = (field: keyof Task, value: any) => {
-    setTask(prev => ({ ...prev, [field]: value }));
+    if (field === "firma") {
+      const matchedUser = users.find(user => user.company?.name === value);
+      setTask(prev => ({
+        ...prev,
+        firma: value,
+        email: matchedUser?.email || "",
+      }));
+    } else {
+      setTask(prev => ({ ...prev, [field]: value }));
+    }
   };
-
   const handleCategoryChange = (categoryId: string) => {
     setTask(prev => ({ ...prev, category: categoryId, subcategory: "" }));
   };
@@ -178,11 +187,27 @@ const AddTaskModal: React.FC<ModalProps> = ({
           label="Fälligkeitsdatum *"
           type="date"
           value={task.dueDate ? task.dueDate.split("T")[0] : ""}
-          onChange={(e) => handleChange("dueDate", e.target.value)}
+          onChange={(e) => {
+            const selectedDate = new Date(e.target.value);
+            const milestone = new Date(task.milestoneDate);
+            const maxDate = new Date(task.milestoneDate);
+            maxDate.setMonth(maxDate.getMonth() + 1);
+
+            if (selectedDate < milestone) {
+              alert("Fälligkeitsdatum darf nicht vor dem Meilenstein-Datum liegen.");
+              return;
+            }
+            if (selectedDate > maxDate) {
+              alert("Fälligkeitsdatum darf maximal 1 Monat nach dem Meilenstein-Datum liegen.");
+              return;
+            }
+
+            handleChange("dueDate", e.target.value);
+          }}
           size="small"
           fullWidth
-          InputLabelProps={{ shrink: true }}
           margin="normal"
+          InputLabelProps={{ shrink: true }}
         />
 
         <TextField
@@ -219,6 +244,7 @@ const AddTaskModal: React.FC<ModalProps> = ({
           size="small"
           fullWidth
           margin="normal"
+          InputLabelProps={{ shrink: true }}
         />
       </DialogContent>
 

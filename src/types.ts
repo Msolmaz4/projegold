@@ -42,7 +42,7 @@ export interface Aufgabe {
 }
 
 export interface User {
-  id: number ;
+  id: number;
   name: string;
   username: string;
   email: string;
@@ -60,7 +60,7 @@ export interface User {
 }
 
 export interface Task {
-  id: number |string;
+  id: number | string;
   category?: KategorieListe | string | undefined | '';
   subcategory?: string | Subkategorie | "";
   name: string;
@@ -70,6 +70,7 @@ export interface Task {
   kosten?: number;
   status?: "offen" | "in Bearbeitung" | "erledigt" | "geplant";
   milestone?: string;
+  email?: string;
   dueDate?: string;
   firma?: string;
   tasks?: string[] | undefined;
