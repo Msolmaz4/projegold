@@ -26,7 +26,7 @@ const Users: UserWithTasks[] = [
       bs: "harness real-time e-markets",
     },
     description: "Innovatives Unternehmen im Bereich Technologie und Entwicklung.",
-    imageURL: "",
+    imageURL: "/logos/google.jpeg",
      tasks: [
    
     ],
@@ -54,7 +54,7 @@ const Users: UserWithTasks[] = [
       bs: "synergize scalable supply-chains",
     },
     description: "Führender Anbieter von Finanzdienstleistungen.",
-    imageURL: "",
+    imageURL: "/logos/jpmorgan.png",
     tasks: [
     
     ],
@@ -82,7 +82,7 @@ const Users: UserWithTasks[] = [
       bs: "e-enable strategic applications",
     },
     description: "Spezialist für nachhaltige Energielösungen.",
-    imageURL: "",
+    imageURL: "/logos/siemens.jpeg",
     tasks: [
     
     ],
@@ -110,12 +110,9 @@ const Users: UserWithTasks[] = [
       bs: "transition cutting-edge web services",
     },
     description: "Globaler Dienstleister für Logistik und Transport.",
-    imageURL: "",
+    imageURL: "/logos/dhl.png",
     tasks: [
-      {
-        name: "",
-        milestones: []
-      }
+    
     ],
     aufgabe: [
   
@@ -141,7 +138,7 @@ const Users: UserWithTasks[] = [
       bs: "revolutionize end-to-end systems",
     },
     description: "Hersteller von hochwertigen Konsumgütern.",
-    imageURL: "",
+    imageURL: "/logos/procter.jpeg",
     tasks: [
 
     ],
@@ -169,7 +166,7 @@ const Users: UserWithTasks[] = [
       bs: "e-enable innovative applications",
     },
     description: "Innovativer Softwareanbieter im Gesundheitsbereich.",
-    imageURL: "",
+    imageURL: "/logos/cerner.jpeg",
    tasks: [
 
     ],
@@ -197,7 +194,7 @@ const Users: UserWithTasks[] = [
       bs: "aggregate real-time technologies",
     },
     description: "Beratung und professionelle Dienstleistungen.",
-    imageURL: "",
+    imageURL: "/logos/accentu.png",
     tasks: [
     
     ],
@@ -225,7 +222,7 @@ const Users: UserWithTasks[] = [
       bs: "target end-to-end models",
     },
     description: "Führender Chip-Hersteller weltweit.",
-    imageURL: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrlxr-DyfiUuz1NsbURt_V3zOYuAC2iVzA2a-fzud2ltjwomZpyYX-fVIgNH07CdRvREk&usqp=CAU",
+    imageURL :'/logos/intel.jpeg',
     tasks: [
     
     ],
@@ -253,7 +250,7 @@ const Users: UserWithTasks[] = [
       bs: "revolutionize end-to-end systems",
     },
     description: "Pharmaunternehmen mit globaler Reichweite.",
-    imageURL: "",
+    imageURL: "/logos/bayern.png",
     tasks: [
      
     ],
@@ -281,7 +278,7 @@ const Users: UserWithTasks[] = [
       bs: "revolutionize end-to-end systems",
     },
     description: "Premium Autohersteller mit Fokus auf Innovation.",
-    imageURL: "",
+    imageURL: "/logos/bwm.jpeg",
     tasks: [
     
     ],

@@ -61,7 +61,7 @@ export interface User {
 
 export interface Task {
   id: number |string;
-  category?: KategorieListe | "" | string;
+  category?: KategorieListe | string | undefined | '';
   subcategory?: string | Subkategorie | "";
   name: string;
   vorarbeit?: number;
@@ -79,6 +79,7 @@ export interface Task {
     date?: string;
     fallig?: string;
     meilenstein?: string;
+
 
   }[];
 };

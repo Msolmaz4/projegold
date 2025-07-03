@@ -81,7 +81,7 @@ const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
     }
   };
 
-  console.log(user, "detail");
+  //console.log(user, "detail");
 
   return (
     <Box mt={4} borderTop="1px solid #ddd" pt={4}>
@@ -182,9 +182,7 @@ const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
 
             // Milestone içindeki status kontrolü eklendi
             const isErledigt = milestone.status === "erledigt";
-
             const displayText = milestone.title?.trim() ? milestone.title : "";
-
             return (
               <Typography key={idx} variant="body1" sx={{ mb: 1, color }}>
                 {icon}{" "}

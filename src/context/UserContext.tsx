@@ -42,7 +42,7 @@ const [users, setUsers] = useState<User[]>(Users as User[] || []);
   };
 
   
-  console.log("usersContext", users);
+ // console.log("usersContext", users);
   return (
     <UserContext.Provider
       value={{ users, setUsers, deleteUser, updateUser, categories, setCategories }}

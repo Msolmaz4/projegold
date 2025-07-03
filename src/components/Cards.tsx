@@ -6,7 +6,6 @@ import {
   CardContent,
   Modal,
 } from "@mui/material";
-
 import BusinessIcon from "@mui/icons-material/Business";
 import type { User  } from "../types";
 import { useEffect, useState } from "react";
@@ -77,14 +76,12 @@ const Cards = ({ user }: CardsProps) => {
         >
           {!imageUrl && <BusinessIcon />}
         </Avatar>
-
         <CardContent sx={{ p: 1 }}>
           <Typography variant="subtitle1" sx={{ mb: 1 }}>
             {user.company?.name ?? user.name ?? "Kein Name vorhanden"}
           </Typography>
         </CardContent>
       </Card>
-
       <Modal open={openDetails} onClose={handleClose}>
         <Box
           sx={{

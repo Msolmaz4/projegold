@@ -35,24 +35,19 @@ import type { Task } from "../../types";
 import { useUser } from "../../context/UserContext";
 
 const extractTasksFromUsers = (users: any[]): Task[] => {
-  let idCounter = 1; // It's better to ensure IDs are unique and stable if possible, especially with dnd-kit
+  let idCounter = 1;
   return users?.flatMap((user) =>
     user?.aufgabe?.map((task: any) => ({
       ...task,
-      // Assign a stable ID if the backend doesn't provide one, or use existing ID
-      id: task.id || `task-${idCounter++}`, // Use existing task.id if available, otherwise generate
-      // Ensure category and subcategory are stored as names for display,
-      // but you might need their IDs for filtering/grouping based on your 'categories' structure.
-      // Assuming 'category' and 'subcategory' in 'aufgabe' already store names or IDs you can resolve.
+      id: task.id || `task-${idCounter++}`,
     })) || []
-  ).filter(task => task !== null); // Filter out any null/undefined tasks
+  ).filter(task => task !== null);
 };
 
 function SortableRow({ task, onEdit, onDelete }: { task: Task; onEdit: (task: Task) => void; onDelete: (task: Task) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: task.id });
   const [menuDialogOpen, setMenuDialogOpen] = useState(false);
   const anchorRef = React.useRef<HTMLButtonElement | null>(null);
-
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -126,35 +121,32 @@ const TaskTable: React.FC = () => {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [firmaFilter, setFirmaFilter] = useState("");
-  const [tasks, setTasks] = useState<Task[]>([]); // This will now be primarily derived
-  const [openDialog, setOpenDialog] = useState(false); // For adding a new task
-  const [editDialogOpen, setEditDialogOpen] = useState(false); // For editing an existing task
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [openDialog, setOpenDialog] = useState(false); 
+  const [editDialogOpen, setEditDialogOpen] = useState(false); 
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
-  // Effect to re-extract tasks whenever 'users' changes
+ 
   useEffect(() => {
     const userTasks = extractTasksFromUsers(users);
     setTasks(userTasks);
   }, [users]);
 
   const uniqueFirms = useMemo(() => {
-    // Only include firms from users, as tasks will belong to these users
+  
     return Array.from(new Set(users.filter((u) => u?.company?.name).map((u) => u.company.name)));
-  }, [users]); // Depend only on users, as tasks are derived from users
+  }, [users]); 
 
   const handleAddTask = (newTask: Task) => {
     setUsers((prevUsers) =>
       prevUsers.map((user) => {
         if (user.company?.name === newTask.firma) {
-          // Ensure a unique ID for the new task if it's not coming from a backend
           const newTaskId = newTask.id || new Date().getTime();
-
           const newAufgabe = user.aufgabe ? [...user.aufgabe] : [];
           newAufgabe.push({ ...newTask, id: newTaskId });
 
           let updatedTasks = user.tasks ? [...user.tasks] : [];
           const categoryIndex = updatedTasks.findIndex((taskCategory: any) => taskCategory.name === newTask.category);
-
           const newMilestone = {
             title: newTask.name,
             fallig: newTask.milestoneDate,
@@ -194,7 +186,7 @@ const TaskTable: React.FC = () => {
         return user;
       })
     );
-    // The useEffect will re-extract tasks after setUsers updates
+
   };
 
   const handleEditTask = (taskToEdit: Task) => {
@@ -205,20 +197,14 @@ const TaskTable: React.FC = () => {
   const handleSaveEdit = (editedTask: Task) => {
     setUsers((prevUsers) =>
       prevUsers.map((user) => {
-        // Find if this user owns the task being edited
         const taskInUserAufgabe = user.aufgabe?.find((t: any) => t.id === editedTask.id);
 
         if (taskInUserAufgabe) {
-          // Update task in 'aufgabe'
           const updatedAufgabe = user.aufgabe.map((t: any) =>
             t.id === editedTask.id ? editedTask : t
           );
 
-          // Update task in 'tasks' (milestones)
           let updatedTasksMilestones = user.tasks ? [...user.tasks] : [];
-
-          // First, remove the old milestone (if exists in the old category)
-          // This handles cases where category or subcategory might have changed during edit
           updatedTasksMilestones = updatedTasksMilestones.map((taskCategory: any) => {
             if (taskCategory.milestones) {
               return {
@@ -229,13 +215,12 @@ const TaskTable: React.FC = () => {
             return taskCategory;
           }).filter((taskCategory: any) => taskCategory.milestones && taskCategory.milestones.length > 0); // Remove empty categories
 
-          // Then, add the updated milestone to the correct (potentially new) category
           const newMilestone = {
             title: editedTask.name,
             fallig: editedTask.milestoneDate,
             meilenstein: editedTask.milestoneDate,
             id: editedTask.id,
-            completed: editedTask.status === "erledigt", // Update completed status based on task status
+            completed: editedTask.status === "erledigt", 
             status: editedTask.status,
             category: editedTask.category,
             firma: editedTask.firma,
@@ -269,20 +254,15 @@ const TaskTable: React.FC = () => {
 
     setEditDialogOpen(false);
     setSelectedTask(null);
-    // The useEffect will handle updating the local 'tasks' state.
+  
   };
 
   const handleDeleteTask = (taskToDelete: Task) => {
     setUsers((prevUsers) =>
       prevUsers.map((user) => {
-        // Only modify the user who owns this task
         const taskInUserAufgabe = user.aufgabe?.find((t: any) => t.id === taskToDelete.id);
-
         if (taskInUserAufgabe) {
-          // Remove from 'aufgabe'
           const updatedAufgabe = user.aufgabe.filter((t: any) => t.id !== taskToDelete.id);
-
-          // Remove from 'tasks' (milestones)
           let updatedTasksMilestones = user.tasks ? [...user.tasks] : [];
           updatedTasksMilestones = updatedTasksMilestones.map((taskCategory: any) => {
             if (taskCategory.milestones) {
@@ -303,7 +283,7 @@ const TaskTable: React.FC = () => {
         return user;
       })
     );
-    // The useEffect will handle updating the local 'tasks' state.
+   
   };
 
   const filteredTasks = tasks.filter(
@@ -314,10 +294,8 @@ const TaskTable: React.FC = () => {
   );
 
   const grouped = filteredTasks.reduce((acc, task) => {
-    // Ensure that category and subcategory are represented by their names for grouping
     const catObj = categories.find((c) => c.id.toString() === task.categoryId || c.name === task.category);
     const subObj = catObj?.subcategories.find((s) => s.id === task.subcategoryId || s.name === task.subcategory);
-
     const catName = catObj?.name || task.category;
     const subName = subObj?.name || task.subcategory;
 
@@ -335,33 +313,30 @@ const TaskTable: React.FC = () => {
 
     if (!activeTask || !overTask) return;
 
-    // Get original category/subcategory IDs for active and over tasks
+
     const activeCatObj = categories.find(c => c.name === activeTask.category);
     const activeSubObj = activeCatObj?.subcategories.find(s => s.name === activeTask.subcategory);
     const overCatObj = categories.find(c => c.name === overTask.category);
     const overSubObj = overCatObj?.subcategories.find(s => s.name === overTask.subcategory);
-
     const oldCategoryName = activeCatObj?.name || activeTask.category;
     const oldSubcategoryName = activeSubObj?.name || activeTask.subcategory;
-
     const newCategoryName = overCatObj?.name || overTask.category;
     const newSubcategoryName = overSubObj?.name || overTask.subcategory;
 
     setUsers((prevUsers) =>
       prevUsers.map((user) => {
-        // Only consider the user who owns the active task
+    
         const isOwner = user.company?.name === activeTask.firma;
 
         if (isOwner) {
-          // Find the active task in the user's 'aufgabe' array
-          const taskIndexInAufgabe = user.aufgabe?.findIndex((t: any) => t.id === active.id);
+         const taskIndexInAufgabe = user.aufgabe?.findIndex((t: any) => t.id === active.id);
 
           if (taskIndexInAufgabe !== -1 && user.aufgabe) {
             const updatedAufgabe = [...user.aufgabe];
             const movedTask = { ...updatedAufgabe[taskIndexInAufgabe] };
 
             if (`${oldCategoryName}>${oldSubcategoryName}` === `${newCategoryName}>${newSubcategoryName}`) {
-              // Reordering within the same group (category/subcategory)
+          
               const groupTasksInUser = updatedAufgabe.filter(t =>
                 (categories.find(c => c.id.toString() === t.categoryId || c.name === t.category)?.name || t.category) === oldCategoryName &&
                 (categories.flatMap(c => c.subcategories).find(s => s.id === t.subcategoryId || s.name === t.subcategory)?.name || t.subcategory) === oldSubcategoryName
@@ -369,10 +344,7 @@ const TaskTable: React.FC = () => {
 
               const oldIndexInGroup = groupTasksInUser.findIndex((t: any) => t.id === active.id);
               const newIndexInGroup = groupTasksInUser.findIndex((t: any) => t.id === over.id);
-
               const reorderedGroup = arrayMove(groupTasksInUser, oldIndexInGroup, newIndexInGroup);
-
-              // Replace the tasks in the main 'aufgabe' array
               const otherTasks = updatedAufgabe.filter(t =>
                 !((categories.find(c => c.id.toString() === t.categoryId || c.name === t.category)?.name || t.category) === oldCategoryName &&
                   (categories.flatMap(c => c.subcategories).find(s => s.id === t.subcategoryId || s.name === t.subcategory)?.name || t.subcategory) === oldSubcategoryName)
@@ -380,23 +352,19 @@ const TaskTable: React.FC = () => {
               user.aufgabe = [...otherTasks, ...reorderedGroup];
 
             } else {
-              // Moving to a different group (category/subcategory)
-              movedTask.category = newCategoryName; // Update category name
-              movedTask.subcategory = newSubcategoryName; // Update subcategory name
-              movedTask.categoryId = overCatObj?.id.toString(); // Update category ID
-              movedTask.subcategoryId = overSubObj?.id; // Update subcategory ID
-              movedTask.status = "in Bearbeitung"; // Status change on group move
-
-              // Remove from old location and add to new (conceptually)
-              updatedAufgabe.splice(taskIndexInAufgabe, 1); // Remove old
-              updatedAufgabe.push(movedTask); // Add new (at the end for now, ordering will be handled by sorting)
+              
+              movedTask.category = newCategoryName; 
+              movedTask.subcategory = newSubcategoryName; 
+              movedTask.categoryId = overCatObj?.id.toString();
+              movedTask.subcategoryId = overSubObj?.id;
+              movedTask.status = "in Bearbeitung"; 
+              updatedAufgabe.splice(taskIndexInAufgabe, 1); 
+              updatedAufgabe.push(movedTask); 
               user.aufgabe = updatedAufgabe;
             }
 
-            // Also update the 'tasks' (milestones) array for the user
+      
             let updatedTasksMilestones = user.tasks ? [...user.tasks] : [];
-
-            // Remove the milestone from its previous location
             updatedTasksMilestones = updatedTasksMilestones.map((taskCategory: any) => {
               if (taskCategory.milestones) {
                 return {
@@ -407,7 +375,7 @@ const TaskTable: React.FC = () => {
               return taskCategory;
             }).filter((taskCategory: any) => taskCategory.milestones && taskCategory.milestones.length > 0); // Remove empty categories
 
-            // Create the updated milestone
+      
             const updatedMilestone = {
               title: movedTask.name,
               fallig: movedTask.milestoneDate,
@@ -419,7 +387,7 @@ const TaskTable: React.FC = () => {
               firma: movedTask.firma,
             };
 
-            // Add the updated milestone to its new category
+      
             const targetCategoryIndex = updatedTasksMilestones.findIndex(
               (taskCategory: any) => taskCategory.name === updatedMilestone.category
             );
@@ -438,7 +406,7 @@ const TaskTable: React.FC = () => {
 
             return {
               ...user,
-              aufgabe: user.aufgabe, // This already has the modified array
+              aufgabe: user.aufgabe, 
               tasks: updatedTasksMilestones,
             };
           }
@@ -446,7 +414,7 @@ const TaskTable: React.FC = () => {
         return user;
       })
     );
-    // The useEffect will re-extract tasks after setUsers updates
+    
   };
 
 

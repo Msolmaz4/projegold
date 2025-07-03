@@ -18,7 +18,7 @@ const AddTaskModal: React.FC<ModalProps> = ({
   open, onClose, onSave, existingTask, firmOptions = [],
 }) => {
   const { categories } = useUser();
-  console.log(existingTask, 'adtaskmodel')
+ // console.log(existingTask, 'adtaskmodel')
 
   const [task, setTask] = useState<Task>({
     id: new Date().getTime(),

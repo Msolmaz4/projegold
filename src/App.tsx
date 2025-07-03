@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { UserProvider } from "./context/UserContext";
 import TaskTable from "./featurs/aufgabe/TaskTable";
 import Unternehmen from "./featurs/compaines/Unternehmen"
@@ -10,16 +10,24 @@ function App() {
   return (
     <>
       <UserProvider>
-        <Unternehmen />
-        <Typography variant="h4" gutterBottom align="center">
-          AUFGABEKATEGORIEN
-        </Typography>
-        <KategorieListe />
-        <Typography variant="h4" gutterBottom align="center">
-          AUFGABEN
-        </Typography>
-        <TaskTable />
-        <MilestoneOverview />
+        <Box
+          sx={{
+            minHeight: '100vh',
+            backgroundColor: '#f5f5f5', // Açık gri arka plan
+            padding: 2,
+          }}
+        >
+          <Unternehmen />
+          <Typography variant="h4" gutterBottom align="center">
+            AUFGABEKATEGORIEN
+          </Typography>
+          <KategorieListe />
+          <Typography variant="h4" gutterBottom align="center">
+            AUFGABEN
+          </Typography>
+          <TaskTable />
+          <MilestoneOverview />
+        </Box>
       </UserProvider>
     </>
   );
