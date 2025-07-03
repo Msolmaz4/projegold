@@ -6,6 +6,7 @@ import KategorieListe from "./featurs/tasks/KategorieListe";
 import MilestoneOverview from "./featurs/milestones/MilestoneOverview";
 
 
+
 function App() {
   return (
     <>
@@ -27,6 +28,7 @@ function App() {
           </Typography>
           <TaskTable />
           <MilestoneOverview />
+          
         </Box>
       </UserProvider>
     </>

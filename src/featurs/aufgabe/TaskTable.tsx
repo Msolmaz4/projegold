@@ -33,7 +33,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import type { Task } from "../../types";
 import { useUser } from "../../context/UserContext";
-
+import { useForm, ValidationError } from '@formspree/react';
 
 const extractTasksFromUsers = (users: any[]): Task[] => {
   let idCounter = 1;
@@ -126,6 +126,7 @@ const TaskTable: React.FC = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+   const [state, handleSubmit] = useForm("mrbkdywq")
 
 
 
@@ -192,6 +193,26 @@ const TaskTable: React.FC = () => {
       })
     );
 
+  };
+
+  const sendEmailToUser = (userEmail: string, subject: string, body: string) => {
+  
+
+    fetch("https://formspree.io/f/mrbkdywq", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: userEmail,
+        subject: subject,
+        message: body,
+      }),
+    }).then((res) => {
+      if (res.ok) {
+        console.log("Email sent successfully via Formspree");
+      } else {
+        console.error("Email sending failed");
+      }
+    }).catch(console.error);
   };
 
   const handleEditTask = (taskToEdit: Task) => {
@@ -292,10 +313,6 @@ const TaskTable: React.FC = () => {
       })
     );
 
-  };
-  const sendEmailToUser = (userEmail: string, subject: string, body: string) => {
-    // Buraya kendi e-posta gönderme işlemini ekle (EmailJS, API, vs.)
-    console.log(`Sending email to: ${userEmail}, Subject: ${subject}, Body: ${body}`);
   };
 
   const filteredTasks = tasks.filter(
