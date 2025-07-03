@@ -69,7 +69,7 @@ const MilestoneOverview: React.FC = () => {
 
   return (
     <Paper sx={{ p: 4, mx: "auto", mt: 5 }}>
-      <Typography variant="h5" align="center" gutterBottom>
+      <Typography variant="h5" fontWeight="bold" gutterBottom align="center">
         MEILENSTEIN
       </Typography>
 

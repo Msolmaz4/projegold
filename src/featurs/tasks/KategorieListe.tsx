@@ -17,12 +17,12 @@ import {
   List,
   ListItem,
   ListItemText,
-  Grid,
 } from "@mui/material";
 import { MoreVert, Add } from "@mui/icons-material";
 import { v4 as uuidv4 } from "uuid";
 import type { Category } from "../../types";
 import { useUser } from "../../context/UserContext";
+import Grid from '@mui/material/Grid';
 
 const KategorieListe: React.FC = () => {
   const { categories, setCategories } = useUser();

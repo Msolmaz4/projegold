@@ -60,7 +60,7 @@ function Unternehmen() {
                             // border: "1px solid red",
                         }}
                     >
-                        <Typography variant="h5">UNTERNEHMEN</Typography>
+                        <Typography variant="h5" fontWeight="bold" gutterBottom align="center">UNTERNEHMEN</Typography>
                     </Box>
                 )}
 

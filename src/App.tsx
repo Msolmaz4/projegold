@@ -13,16 +13,16 @@ function App() {
         <Box
           sx={{
             minHeight: '100vh',
-            backgroundColor: '#f5f5f5', // Açık gri arka plan
+            backgroundColor: '#f5f5f5', 
             padding: 2,
           }}
         >
           <Unternehmen />
-          <Typography variant="h4" gutterBottom align="center">
+          <Typography variant="h5" fontWeight="bold" gutterBottom align="center" >
             AUFGABEKATEGORIEN
           </Typography>
           <KategorieListe />
-          <Typography variant="h4" gutterBottom align="center">
+          <Typography  variant="h5" fontWeight='bold' gutterBottom align="center" >
             AUFGABEN
           </Typography>
           <TaskTable />
