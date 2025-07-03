@@ -50,30 +50,40 @@ const KategorieListe: React.FC = () => {
   };
 
   // Kategori ADDDD
-  const handleSaveCategory = () => {
-    if (!newName.trim()) {
-      alert("Name darf nicht leer sein");
-      return;
-    }
-    if (editId) {
-      const updated = categories.map((cat) =>
-        cat.id === editId ? { ...cat, name: newName } : cat
-      );
-      setCategories(updated);
-    } else {
+ const handleSaveCategory = () => {
+  const trimmedName = newName.trim();
+  if (!trimmedName) {
+    alert("Name darf nicht leer sein");
+    return;
+  }
+  
+  if (!editId && categories.some(cat => cat.name.toLowerCase() === trimmedName.toLowerCase())) {
+    alert("Dieser Name wurde bereits gespeichert");
+    return;
+  }
+  
+  if (editId && categories.some(cat => cat.name.toLowerCase() === trimmedName.toLowerCase() && cat.id !== editId)) {
+    alert("Dieser Name wurde bereits gespeichert");
+    return;
+  }
 
-      const newCategory: Category = {
-        id: uuidv4(),
-        name: newName.trim(),
-        subcategories: [],
-      };
-      setCategories([...categories, newCategory]);
-    }
-    setNewName("");
-    setDialogOpen(false);
-    setEditId(null);
-  };
-
+  if (editId) {
+    const updated = categories.map((cat) =>
+      cat.id === editId ? { ...cat, name: trimmedName } : cat
+    );
+    setCategories(updated);
+  } else {
+    const newCategory: Category = {
+      id: uuidv4(),
+      name: trimmedName,
+      subcategories: [],
+    };
+    setCategories([...categories, newCategory]);
+  }
+  setNewName("");
+  setDialogOpen(false);
+  setEditId(null);
+};
   const handleDelete = (id: string) => {
     const cat = categories.find((c) => c.id === id);
     if (cat && cat.subcategories.length > 0) {
