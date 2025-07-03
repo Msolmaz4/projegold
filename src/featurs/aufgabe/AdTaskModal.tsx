@@ -18,7 +18,7 @@ const AddTaskModal: React.FC<ModalProps> = ({
   open, onClose, onSave, existingTask, firmOptions = [],
 }) => {
   const { categories } = useUser();
- // console.log(existingTask, 'adtaskmodel')
+  //console.log(existingTask, 'adtaskmodel')
 
   const [task, setTask] = useState<Task>({
     id: new Date().getTime(),
@@ -213,9 +213,9 @@ const AddTaskModal: React.FC<ModalProps> = ({
         </FormControl>
 
         <TextField
-          label="Milestone"
-          value={task.milestone}
-          onChange={(e) => handleChange("milestone", e.target.value)}
+          label="Email"
+          value={task.email}
+          onChange={(e) => handleChange("email", e.target.value)}
           size="small"
           fullWidth
           margin="normal"

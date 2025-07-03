@@ -126,12 +126,15 @@ const TaskTable: React.FC = () => {
   const [editDialogOpen, setEditDialogOpen] = useState(false); 
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
+
+
+  
  
   useEffect(() => {
     const userTasks = extractTasksFromUsers(users);
     setTasks(userTasks);
   }, [users]);
-
+ console.log(tasks,'dddddddddddddd')
   const uniqueFirms = useMemo(() => {
   
     return Array.from(new Set(users.filter((u) => u?.company?.name).map((u) => u.company.name)));
