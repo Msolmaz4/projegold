@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Card,
@@ -22,7 +22,7 @@ import { MoreVert, Add } from "@mui/icons-material";
 import { v4 as uuidv4 } from "uuid";
 import type { Category } from "../../types";
 import { useUser } from "../../context/UserContext";
-import Grid from '@mui/material/Grid';
+import Grid from "@mui/material/Grid";
 
 const KategorieListe: React.FC = () => {
   const { categories, setCategories } = useUser();
@@ -38,7 +38,6 @@ const KategorieListe: React.FC = () => {
   const [subEditName, setSubEditName] = useState("");
   const [subEditDialogOpen, setSubEditDialogOpen] = useState(false);
 
-
   const openMenu = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
     setAnchorEl(e.currentTarget);
     setMenuId(id);
@@ -50,40 +49,52 @@ const KategorieListe: React.FC = () => {
   };
 
   // Kategori ADDDD
- const handleSaveCategory = () => {
-  const trimmedName = newName.trim();
-  if (!trimmedName) {
-    alert("Name darf nicht leer sein");
-    return;
-  }
-  
-  if (!editId && categories.some(cat => cat.name.toLowerCase() === trimmedName.toLowerCase())) {
-    alert("Dieser Name wurde bereits gespeichert");
-    return;
-  }
-  
-  if (editId && categories.some(cat => cat.name.toLowerCase() === trimmedName.toLowerCase() && cat.id !== editId)) {
-    alert("Dieser Name wurde bereits gespeichert");
-    return;
-  }
+  const handleSaveCategory = () => {
+    const trimmedName = newName.trim();
+    if (!trimmedName) {
+      alert("Name darf nicht leer sein");
+      return;
+    }
 
-  if (editId) {
-    const updated = categories.map((cat) =>
-      cat.id === editId ? { ...cat, name: trimmedName } : cat
-    );
-    setCategories(updated);
-  } else {
-    const newCategory: Category = {
-      id: uuidv4(),
-      name: trimmedName,
-      subcategories: [],
-    };
-    setCategories([...categories, newCategory]);
-  }
-  setNewName("");
-  setDialogOpen(false);
-  setEditId(null);
-};
+    if (
+      !editId &&
+      categories.some(
+        (cat) => cat.name.toLowerCase() === trimmedName.toLowerCase()
+      )
+    ) {
+      alert("Dieser Name wurde bereits gespeichert");
+      return;
+    }
+
+    if (
+      editId &&
+      categories.some(
+        (cat) =>
+          cat.name.toLowerCase() === trimmedName.toLowerCase() &&
+          cat.id !== editId
+      )
+    ) {
+      alert("Dieser Name wurde bereits gespeichert");
+      return;
+    }
+
+    if (editId) {
+      const updated = categories.map((cat) =>
+        cat.id === editId ? { ...cat, name: trimmedName } : cat
+      );
+      setCategories(updated);
+    } else {
+      const newCategory: Category = {
+        id: uuidv4(),
+        name: trimmedName,
+        subcategories: [],
+      };
+      setCategories([...categories, newCategory]);
+    }
+    setNewName("");
+    setDialogOpen(false);
+    setEditId(null);
+  };
   const handleDelete = (id: string) => {
     const cat = categories.find((c) => c.id === id);
     if (cat && cat.subcategories.length > 0) {
@@ -103,7 +114,6 @@ const KategorieListe: React.FC = () => {
     closeMenu();
   };
 
-
   const handleAddSub = () => {
     if (!newSubName.trim() || !selectedCatId) return;
 
@@ -116,12 +126,12 @@ const KategorieListe: React.FC = () => {
     const updated = categories.map((cat) =>
       cat.id === selectedCatId
         ? {
-          ...cat,
-          subcategories: [
-            ...cat.subcategories,
-            { id: uuidv4(), name: newSubName.trim() },
-          ],
-        }
+            ...cat,
+            subcategories: [
+              ...cat.subcategories,
+              { id: uuidv4(), name: newSubName.trim() },
+            ],
+          }
         : cat
     );
     setCategories(updated);
@@ -156,14 +166,15 @@ const KategorieListe: React.FC = () => {
 
     const updated = categories.map((cat) => ({
       ...cat,
-      subcategories: cat.subcategories.filter((sub) => sub.id !== selectedSubId),
+      subcategories: cat.subcategories.filter(
+        (sub) => sub.id !== selectedSubId
+      ),
     }));
     setCategories(updated);
     setSubEditDialogOpen(false);
     setSelectedSubId(null);
     setSubEditName("");
   };
-
 
   if (!categories) {
     return <Typography>Lädt Kategorien...</Typography>;
@@ -290,7 +301,11 @@ const KategorieListe: React.FC = () => {
       </Dialog>
 
       {/* Unterkategorie hinzufügen */}
-      <Dialog open={subDialogOpen} onClose={() => setSubDialogOpen(false)} fullWidth>
+      <Dialog
+        open={subDialogOpen}
+        onClose={() => setSubDialogOpen(false)}
+        fullWidth
+      >
         <DialogTitle>Unterkategorie hinzufügen</DialogTitle>
         <DialogContent>
           <TextField
