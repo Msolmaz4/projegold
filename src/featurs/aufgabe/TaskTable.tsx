@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Box,
   Table,
@@ -33,7 +33,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import type { Task } from "../../types";
 import { useUser } from "../../context/UserContext";
-import { useForm, ValidationError } from '@formspree/react';
+import emailjs from "@emailjs/browser"
 
 const extractTasksFromUsers = (users: any[]): Task[] => {
   let idCounter = 1;
@@ -41,7 +41,7 @@ const extractTasksFromUsers = (users: any[]): Task[] => {
     user?.aufgabe?.map((task: any) => ({
       ...task,
       id: task.id || `task-${idCounter++}`,
-      email: user.email, 
+      email: user.email,
     })) || []
   ).filter(task => task !== null);
 };
@@ -126,11 +126,9 @@ const TaskTable: React.FC = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-   const [state, handleSubmit] = useForm("mrbkdywq")
+  //const resend = new Resend(import.meta.env.VITE_APP_NAME);
 
-
-
-
+  //const resend = new Resend('re_DbgWj3qs_HgnY42PviabuFemxKybsLU9z');
 
   useEffect(() => {
     const userTasks = extractTasksFromUsers(users);
@@ -195,25 +193,33 @@ const TaskTable: React.FC = () => {
 
   };
 
-  const sendEmailToUser = (userEmail: string, subject: string, body: string) => {
-  
-
-    fetch("https://formspree.io/f/mrbkdywq", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: userEmail,
-        subject: subject,
-        message: body,
-      }),
-    }).then((res) => {
-      if (res.ok) {
-        console.log("Email sent successfully via Formspree");
-      } else {
-        console.error("Email sending failed");
-      }
-    }).catch(console.error);
+const sendEmailToUser = async (userEmail: string, subject: string, body: string) => {
+  const templateParams = {
+    
+    to_email: userEmail,
+    
+    subject: subject,
+    message: body,
   };
+
+  try {
+  const result = await emailjs.send(
+    "service_cujqktt",
+    "template_37k83vh",
+    templateParams,
+    "rfmiLie3_I9HQT2zo"
+  );
+  console.log("E-Mail gesendet:", result.text);
+  alert("Die E-Mail wurde erfolgreich gesendet!");
+} catch (error: any) {
+  console.error("Fehler beim Senden der E-Mail:", error?.text || error);
+  alert("Beim Senden der E-Mail ist ein Fehler aufgetreten.");
+}
+};
+
+
+   
+
 
   const handleEditTask = (taskToEdit: Task) => {
     setSelectedTask(taskToEdit);
@@ -402,7 +408,7 @@ const TaskTable: React.FC = () => {
                 };
               }
               return taskCategory;
-            }).filter((taskCategory: any) => taskCategory.milestones && taskCategory.milestones.length > 0); 
+            }).filter((taskCategory: any) => taskCategory.milestones && taskCategory.milestones.length > 0);
 
 
             const updatedMilestone = {
@@ -469,7 +475,6 @@ const TaskTable: React.FC = () => {
           size="small"
           fullWidth
         />
-
         <FormControl size="small" sx={{ minWidth: 200 }}>
           <InputLabel>Status</InputLabel>
           <Select value={statusFilter} label="Status" onChange={(e) => setStatusFilter(e.target.value)}>
