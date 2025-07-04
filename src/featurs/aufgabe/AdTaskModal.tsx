@@ -236,7 +236,7 @@ const AddTaskModal: React.FC<ModalProps> = ({
 
         <TextField
           label="Email"
-          value={task.email}
+          value={task.email ?? ''}
           onChange={(e) => handleChange("email", e.target.value)}
           size="small"
           fullWidth

@@ -1,7 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-
-
 import {
   Box,
   TextField,
@@ -24,7 +22,7 @@ const Modal: React.FC<ModalProps> = ({ open, onClose }) => {
   const [text, setText] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const { users, setUsers } = useUser()
+  const {  setUsers } = useUser()
  // console.log(image,users, 'modaldayiz')
 
   const onDrop = useCallback((acceptedFiles: File[]) => {

@@ -204,7 +204,7 @@ const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
       )}
 
       {/* EditUserModal */}
-      <EditUserModal
+      <EditUserModal    
         open={editOpen}
         onClose={() => setEditOpen(false)}
         user={editedUser}

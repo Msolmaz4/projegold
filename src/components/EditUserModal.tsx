@@ -26,6 +26,8 @@ type EditUserModalProps = {
 const EditUserModal: React.FC<EditUserModalProps> = ({ open, onClose, user, onSave }) => {
     const [formData, setFormData] = useState<User | null>(null);
     const { users, setUsers } = useUser();
+    const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+
 
     useEffect(() => {
         if (user) {
@@ -58,6 +60,10 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ open, onClose, user, onSa
             alert("Name darf nicht leer sein.");
             return;
         }
+         if (!emailRegex.test(formData.email)) {
+        alert("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
+        return;
+    }
         const updatedUsers = users.map((u) =>
             u.id === formData.id ? formData : u
         );

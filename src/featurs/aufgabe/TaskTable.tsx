@@ -197,7 +197,6 @@ const sendEmailToUser = async (userEmail: string, subject: string, body: string)
 
   const templateParams = {
     to_email: userEmail,
-   
     subject: subject,
     message: body,
   };
