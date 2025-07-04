@@ -126,15 +126,15 @@ const TaskTable: React.FC = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  //const resend = new Resend(import.meta.env.VITE_APP_NAME);
 
+  //const resend = new Resend(import.meta.env.VITE_APP_NAME);
   //const resend = new Resend('re_DbgWj3qs_HgnY42PviabuFemxKybsLU9z');
 
   useEffect(() => {
     const userTasks = extractTasksFromUsers(users);
     setTasks(userTasks);
   }, [users]);
-  console.log(tasks, 'dddddddddddddd')
+
   const uniqueFirms = useMemo(() => {
 
     return Array.from(new Set(users.filter((u) => u?.company?.name).map((u) => u.company.name)));
@@ -194,32 +194,28 @@ const TaskTable: React.FC = () => {
   };
 
 const sendEmailToUser = async (userEmail: string, subject: string, body: string) => {
+
   const templateParams = {
-    
     to_email: userEmail,
-    
+   
     subject: subject,
     message: body,
   };
 
   try {
-  const result = await emailjs.send(
+   await emailjs.send(
     "service_cujqktt",
     "template_37k83vh",
     templateParams,
     "rfmiLie3_I9HQT2zo"
   );
-  console.log("E-Mail gesendet:", result.text);
+
   alert("Die E-Mail wurde erfolgreich gesendet!");
 } catch (error: any) {
   console.error("Fehler beim Senden der E-Mail:", error?.text || error);
   alert("Beim Senden der E-Mail ist ein Fehler aufgetreten.");
 }
 };
-
-
-   
-
 
   const handleEditTask = (taskToEdit: Task) => {
     setSelectedTask(taskToEdit);
