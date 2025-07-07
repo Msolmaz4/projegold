@@ -1,7 +1,7 @@
-import { FC, FormEvent, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Collapse, Grid, Typography } from "@mui/material";
-import { confirmSignIn, signIn } from "aws-amplify/auth";
+
 import { useAuthContext, useLayoutContext } from "hooks";
 import { PasswordChangeSuccessIcon } from "icons";
 import { BoxContainer } from "layout";
@@ -12,7 +12,7 @@ import { AuthRoutes } from "routes";
 import utils from "utils";
 import useStyles from "./styles";
 
-const Login: FC = () => {
+const Login = () => {
   const { classes, cx } = useStyles();
   const navigate = useNavigate();
   const authContext = useAuthContext();
@@ -62,7 +62,7 @@ const Login: FC = () => {
         setSuccess(true);
         setLoading(false);
         return notify(
-          "Sie müssen das temporäre Passwort ändern. Bitte geben Sie ein neues Passwort ein!",
+          "Sie müssen das temporäre Passwort ändern. Bitte geben Sie ein neues Passwort ein!"
         );
       }
 
@@ -79,7 +79,7 @@ const Login: FC = () => {
         "Error on login!",
         "Authentication",
         err,
-        authContext,
+        authContext
       );
 
       setSuccess(false);
@@ -93,11 +93,11 @@ const Login: FC = () => {
         error?.message?.includes("Incorrect username or password")
       ) {
         notify(
-          "Falscher Benutzername oder falsches Passwort. Bitte überprüfe deine Eingabe!",
+          "Falscher Benutzername oder falsches Passwort. Bitte überprüfe deine Eingabe!"
         );
       } else {
         notify(
-          "Beim Anmelden ist ein Fehler aufgetreten. Bitte überprüfe deine Eingabe!",
+          "Beim Anmelden ist ein Fehler aufgetreten. Bitte überprüfe deine Eingabe!"
         );
       }
     } finally {
@@ -113,7 +113,7 @@ const Login: FC = () => {
 
       if (password === "" || password.length > 200) {
         return notify(
-          "Bitte gib das temporäre Passwort ein, das dir per E-Mail zugeschickt wurde!",
+          "Bitte gib das temporäre Passwort ein, das dir per E-Mail zugeschickt wurde!"
         );
       }
 
@@ -138,14 +138,14 @@ const Login: FC = () => {
 
       console.log(
         "Completed Password! changePasswordRequest is: ",
-        changePasswordRequest,
+        changePasswordRequest
       );
 
       if (!changePasswordRequest) {
         setSuccess(false);
         setLoading(false);
         return notify(
-          "Beim Ändern des temporären Passworts ist ein Fehler aufgetreten!",
+          "Beim Ändern des temporären Passworts ist ein Fehler aufgetreten!"
         );
       }
 
@@ -163,12 +163,12 @@ const Login: FC = () => {
         "Error on change temporary password!",
         "Authentication",
         err,
-        authContext,
+        authContext
       );
 
       setSuccess(false);
       notify(
-        "Beim Anmelden ist ein Fehler aufgetreten. Bitte überprüfe deine Eingabe!",
+        "Beim Anmelden ist ein Fehler aufgetreten. Bitte überprüfe deine Eingabe!"
       );
     } finally {
       setLoading(false);
@@ -203,7 +203,7 @@ const Login: FC = () => {
         <div
           className={cx(
             classes.formContainer,
-            newPasswordRequired ? classes.temporaryPasswordChange : null,
+            newPasswordRequired ? classes.temporaryPasswordChange : null
           )}
         >
           <TextInputField

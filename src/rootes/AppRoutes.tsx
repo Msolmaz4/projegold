@@ -2,9 +2,7 @@ import {
   ArrowLoginIcon,
   GlobalSettingsIcon,
   LogoutIcon,
-  SettingsIcon,
   SpieleladenIcon,
-  TaskIcon,
 } from "icons";
 import { NoRouteMatch } from "layout/NoRouteMatch";
 import GlobalSettingsPage from "modules/basedata/globalsettings/globalsettingsDetails/GlobalSettingsPage";
@@ -17,14 +15,7 @@ import UserSettingsFormPage from "modules/usermanagement/usersettings/usersettin
 // Authentication Views
 // Other Views
 // import { Placeholder } from "modules/development/placeholder";
-import { Tasks } from "modules/workflow/tasks";
-import customers from "./moduleroutes/customers";
-import employees from "./moduleroutes/employees";
-import holidays from "./moduleroutes/holidays";
-import invoices from "./moduleroutes/invoices";
-import stafftypes from "./moduleroutes/stafftypes";
-import tariffclasses from "./moduleroutes/tariffclasses";
-import users from "./moduleroutes/users";
+
 import ConfirmForgotPassword from "../auth/ConfirmForgotPassword";
 import ForgotPassword from "../auth/ForgotPassword";
 import Login from "../auth/Login";
@@ -55,56 +46,7 @@ const AppRoutes = {
     isWithParam: false,
     children: {},
   },
-  development: {
-    key: "development",
-    path: "/dev",
-    section: "general",
-    title: "Datentest",
-    element: <Development />,
-    icon: <SpieleladenIcon />,
-    groups: [USER_GROUPS.ADMIN],
-    level: 0,
-    navigation: false,
-    indented: false,
-    isWithParam: false,
-    children: {},
-  },
-  customers: customers,
-  invoices: invoices,
-  employees: employees,
-  tariffclasses: tariffclasses,
-  stafftypes: stafftypes,
-  holidays: holidays,
-  users: users,
-  settings: {
-    key: "settings",
-    path: "/settings",
-    section: "account",
-    title: "Benutzer-Einstellungen",
-    element: <UserSettingsPage />,
-    icon: <SettingsIcon />,
-    groups: [USER_GROUPS.ADMIN, USER_GROUPS.ACCOUNTING, USER_GROUPS.OFFICE],
-    level: 0,
-    navigation: true,
-    indented: false,
-    isWithParam: false,
-    children: {
-      settingsedit: {
-        key: "settingsedit",
-        path: "/settings/edit",
-        section: "verwaltung",
-        title: "Benutzer-Einstellungen bearbeiten",
-        element: <UserSettingsFormPage />,
-        icon: <SpieleladenIcon />,
-        groups: [USER_GROUPS.ADMIN, USER_GROUPS.ACCOUNTING, USER_GROUPS.OFFICE],
-        level: 1,
-        navigation: false,
-        indented: false,
-        isWithParam: false,
-        children: {},
-      },
-    },
-  },
+
   globalsettings: {
     key: "globalsettings",
     path: "/globalsettings",
@@ -190,20 +132,7 @@ const AppRoutes = {
     isWithParam: false,
     children: {},
   },
-  tasks: {
-    key: "aufgaben",
-    path: "/aufgaben",
-    section: "account",
-    title: "Meine Aufgaben",
-    element: <Tasks />,
-    icon: <TaskIcon />,
-    groups: [USER_GROUPS.ADMIN, USER_GROUPS.ACCOUNTING, USER_GROUPS.OFFICE],
-    level: 0,
-    navigation: false,
-    indented: false,
-    isWithParam: false,
-    children: {},
-  },
+
   noRouteMatch: {
     key: "noRouteMatch",
     path: "*",

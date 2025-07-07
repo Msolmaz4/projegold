@@ -10,7 +10,7 @@ import BusinessIcon from "@mui/icons-material/Business";
 import type { User } from "../types/User.types";
 import { useEffect, useState } from "react";
 import Details from "./Details";
-import { useUser } from "../context/UserContext";
+import { useUserContext } from "../hooks/user/useUserContext";
 
 type CardsProps = {
   user: User;
@@ -19,7 +19,7 @@ type CardsProps = {
 const Cards = ({ user }: CardsProps) => {
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
   const [openDetails, setOpenDetails] = useState(false);
-  const { users, setUsers } = useUser();
+  const { users, setUsers } = useUserContext();
 
   useEffect(() => {
     if (user.image) {
