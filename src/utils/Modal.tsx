@@ -57,7 +57,6 @@ const Modal: React.FC<ModalProps> = ({
   const handleSave = () => {
     try {
       if (initialData) {
-        // Güncelleme modundayız: onSave ile güncel veriyi dışarı ilet
         const updatedData = {
           id: initialData.id,
           name: text,
@@ -65,7 +64,6 @@ const Modal: React.FC<ModalProps> = ({
         };
         onSave(updatedData);
       } else {
-        // Yeni kullanıcı ekleme modundayız
         const id = Date.now() + Math.floor(Math.random() * 1000000);
         const name = text;
 

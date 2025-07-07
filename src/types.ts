@@ -26,19 +26,18 @@ export interface Aufgabe {
   dueDate?: string | undefined;
   category?: "Marketing" | "Development" | "Design" | "Fulfillment" | undefined;
   subcategory?:
-  | "Google Ads"
-  | "Social Media"
-  | "SEO"
-  | "PDF Programmierung"
-  | "Webformula"
-  | 'Backend'
-  | 'UX/UI'
-  | undefined;
+    | "Google Ads"
+    | "Social Media"
+    | "SEO"
+    | "PDF Programmierung"
+    | "Webformula"
+    | "Backend"
+    | "UX/UI"
+    | undefined;
   name: string;
-  firma: string,
+  firma: string;
   fallig?: string;
   meilenstein?: string;
-
 }
 
 export interface User {
@@ -51,17 +50,17 @@ export interface User {
   website: string;
   company: Company;
   description?: string;
-  imageURL?: string | undefined;
+  imageURL: string;
   tasks?: Task[];
   aufgabe?: Aufgabe[];
   imageFile?: Blob | MediaSource | null;
   image?: Blob | MediaSource;
-  milestoneDate?: string,
+  milestoneDate?: string;
 }
 
 export interface Task {
   id: number | string;
-  category?: KategorieListe | string | undefined | '';
+  category?: KategorieListe | string | undefined | "";
   subcategory?: string | Subkategorie | "";
   name: string;
   vorarbeit?: number;
@@ -80,10 +79,8 @@ export interface Task {
     date?: string;
     fallig?: string;
     meilenstein?: string;
-
-
   }[];
-};
+}
 
 export type KategorieListe =
   | "Marketing"
@@ -108,16 +105,14 @@ export type Subkategorie =
   | "School"
   | "Other";
 
-
-
 export interface Category {
   id: number;
   name: string;
   subcategories: Subcategory[];
-};
+}
 
 export interface Subcategory {
   id: string;
   name: string;
-};
+}
 // -----------------------EDITUSERMODAL:TSX----------------------
