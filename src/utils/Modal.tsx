@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
+import React, { useState, useCallback, useEffect } from "react";
+import { useDropzone } from "react-dropzone";
 import {
   Box,
   TextField,
@@ -9,21 +9,27 @@ import {
   Modal as MuiModal,
   Backdrop,
   Fade,
-} from '@mui/material';
-import { useUser } from '../context/UserContext';
-import type { User } from '../types';
+} from "@mui/material";
+import { useUser } from "../context/UserContext";
+import type { User } from "../types";
 type ModalProps = {
   open: boolean;
   onClose: () => void;
-  onSave: (neue: User) => void;  
+  onSave: (neue: User) => void;
+  initialData?: { name: string; imageURL: string; id?: number | string };
 };
 
-const Modal: React.FC<ModalProps> = ({ open, onClose }) => {
-  const [text, setText] = useState('');
+const Modal: React.FC<ModalProps> = ({
+  open,
+  onClose,
+  initialData,
+  onSave,
+}) => {
+  const [text, setText] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const {  setUsers } = useUser()
- // console.log(image,users, 'modaldayiz')
+  const { setUsers } = useUser();
+  // console.log(image,users, 'modaldayiz')
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles && acceptedFiles[0]) {
@@ -37,44 +43,66 @@ const Modal: React.FC<ModalProps> = ({ open, onClose }) => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { 'image/*': [] },
+    accept: { "image/*": [] },
     multiple: false,
   });
 
+  useEffect(() => {
+    if (initialData && open) {
+      setText(initialData.name || "");
+      setPreview(initialData.imageURL || null);
+    }
+  }, [initialData, open]);
 
   const handleSave = () => {
-    const id = Date.now() + Math.floor(Math.random() * 1000000);
-    const name = text;
+    try {
+      if (initialData) {
+        // Güncelleme modundayız: onSave ile güncel veriyi dışarı ilet
+        const updatedData = {
+          id: initialData.id,
+          name: text,
+          imageURL: preview || "",
+        };
+        onSave(updatedData);
+      } else {
+        // Yeni kullanıcı ekleme modundayız
+        const id = Date.now() + Math.floor(Math.random() * 1000000);
+        const name = text;
 
-    const newUser = {
-      id,
-      name,
-      username: '',
-      email: '',
-      address: {
-        street: '',
-        suite: '',
-        city: '',
-        zipcode: '',
-        geo: { lat: '', lng: '' },
-      },
-      phone: '',
-      website: '',
-      company: {
-        name: name || '',
-        catchPhrase: '',
-        bs: '',
-      },
-      description: '',
-      imageURL: preview || '',
-      aufgabe: [],
-    };
+        const newUser: User = {
+          id,
+          name,
+          username: "",
+          email: "",
+          address: {
+            street: "",
+            suite: "",
+            city: "",
+            zipcode: "",
+            geo: { lat: "", lng: "" },
+          },
+          phone: "",
+          website: "",
+          company: {
+            name: name || "",
+            catchPhrase: "",
+            bs: "",
+          },
+          description: "",
+          imageURL: preview || "",
+          aufgabe: [],
+        };
 
-    setUsers((prev) => [...prev, newUser]);
-    onClose();
-    setText('');
-    setImage(null);
-    setPreview(null);
+        setUsers((prev) => [...prev, newUser]);
+      }
+    } catch (error) {
+      console.error("Speichern fehlgeschlagen:", error);
+    } finally {
+      onClose();
+      setText("");
+      setImage(null);
+      setPreview(null);
+    }
   };
 
   return (
@@ -88,16 +116,16 @@ const Modal: React.FC<ModalProps> = ({ open, onClose }) => {
       <Fade in={open}>
         <Box
           sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            bgcolor: 'background.paper',
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "background.paper",
             boxShadow: 24,
             borderRadius: 2,
             p: 4,
             width: 500,
-            maxWidth: '90%',
+            maxWidth: "90%",
           }}
         >
           <TextField
@@ -113,13 +141,13 @@ const Modal: React.FC<ModalProps> = ({ open, onClose }) => {
             sx={{
               mt: 2,
               height: 200,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderStyle: 'dashed',
-              bgcolor: isDragActive ? '#f0f0f0' : '#fafafa',
-              cursor: 'pointer',
-              textAlign: 'center',
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderStyle: "dashed",
+              bgcolor: isDragActive ? "#f0f0f0" : "#fafafa",
+              cursor: "pointer",
+              textAlign: "center",
             }}
             {...getRootProps()}
           >
@@ -129,21 +157,23 @@ const Modal: React.FC<ModalProps> = ({ open, onClose }) => {
                 src={preview}
                 alt="Preview"
                 style={{
-                  maxHeight: '100%',
-                  maxWidth: '100%',
-                  objectFit: 'contain',
+                  maxHeight: "100%",
+                  maxWidth: "100%",
+                  objectFit: "contain",
                 }}
               />
             ) : (
               <Typography variant="body2" color="textSecondary">
                 {isDragActive
-                  ? 'Lass es los 🫴'
-                  : 'Bild per Drag & Drop oder Klick hochladen'}
+                  ? "Lass es los 🫴"
+                  : "Bild per Drag & Drop oder Klick hochladen"}
               </Typography>
             )}
           </Paper>
 
-          <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+          <Box
+            sx={{ mt: 3, display: "flex", justifyContent: "flex-end", gap: 2 }}
+          >
             <Button variant="outlined" onClick={onClose}>
               Abbrechen
             </Button>

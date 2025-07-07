@@ -14,14 +14,12 @@ import { useUser } from "../context/UserContext";
 import type { User } from "../types";
 import Modal from "../utils/Modal";
 
-
 type EditUserModalProps = {
   open: boolean;
   onClose: () => void;
   user?: User | null;
   onSave: (updatedUser: User) => void;
 };
-
 
 const EditUserModal: React.FC<EditUserModalProps> = ({
   open,
@@ -34,7 +32,6 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
   const [modal, setModal] = useState<boolean>(false);
   const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
 
-
   useEffect(() => {
     if (user) {
       setFormData(user);
@@ -42,12 +39,10 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
   }, [user]);
   console.log(user);
 
-
   const handleChange = (field: keyof User, value: any) => {
     if (!formData) return;
     setFormData((prev) => (prev ? { ...prev, [field]: value } : prev));
   };
-
 
   const handleCompanyChange = (field: keyof User["company"], value: any) => {
     if (!formData) return;
@@ -56,14 +51,12 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
     );
   };
 
-
   const handleAddressChange = (field: keyof User["address"], value: any) => {
     if (!formData) return;
     setFormData((prev) =>
       prev ? { ...prev, address: { ...prev.address, [field]: value } } : prev
     );
   };
-
 
   const handleSave = () => {
     if (!formData) return;
@@ -79,15 +72,12 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
       u.id === formData.id ? formData : u
     );
 
-
     setUsers(updatedUsers);
     onSave(formData);
     onClose();
   };
 
-
   if (!formData) return null;
-
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
@@ -108,7 +98,6 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
           />
         </Box>
 
-
         <TextField
           label="Name"
           fullWidth
@@ -116,7 +105,6 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
           value={formData.name}
           onChange={(e) => handleChange("name", e.target.value)}
         />
-
 
         <TextField
           label="Username"
@@ -126,7 +114,6 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
           onChange={(e) => handleChange("username", e.target.value)}
         />
 
-
         <TextField
           label="Email"
           fullWidth
@@ -134,7 +121,6 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
           value={formData.email}
           onChange={(e) => handleChange("email", e.target.value)}
         />
-
 
         <TextField
           label="Telefon"
@@ -144,7 +130,6 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
           onChange={(e) => handleChange("phone", e.target.value)}
         />
 
-
         <TextField
           label="Website"
           fullWidth
@@ -152,7 +137,6 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
           value={formData.website}
           onChange={(e) => handleChange("website", e.target.value)}
         />
-
 
         <TextField
           label="Beschreibung"
@@ -163,7 +147,6 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
           value={formData.description}
           onChange={(e) => handleChange("description", e.target.value)}
         />
-
 
         {/* Firma */}
         <Box mt={4}>
@@ -178,7 +161,6 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
             onChange={(e) => handleCompanyChange("name", e.target.value)}
           />
         </Box>
-
 
         {/* Adresse */}
         <Box mt={4}>
@@ -250,8 +232,4 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
   );
 };
 
-
 export default EditUserModal;
-
-
-
