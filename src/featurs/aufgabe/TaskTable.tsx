@@ -31,22 +31,34 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { Task } from "../../types";
+import type { Task } from "../../types/Task.types";
 import { useUser } from "../../context/UserContext";
-import emailjs from "@emailjs/browser"
+import emailjs from "@emailjs/browser";
 
 const extractTasksFromUsers = (users: any[]): Task[] => {
   let idCounter = 1;
-  return users?.flatMap((user) =>
-    user?.aufgabe?.map((task: any) => ({
-      ...task,
-      id: task.id || `task-${idCounter++}`,
-      email: user.email,
-    })) || []
-  ).filter(task => task !== null);
+  return users
+    ?.flatMap(
+      (user) =>
+        user?.aufgabe?.map((task: any) => ({
+          ...task,
+          id: task.id || `task-${idCounter++}`,
+          email: user.email,
+        })) || []
+    )
+    .filter((task) => task !== null);
 };
-function SortableRow({ task, onEdit, onDelete }: { task: Task; onEdit: (task: Task) => void; onDelete: (task: Task) => void }) {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: task.id });
+function SortableRow({
+  task,
+  onEdit,
+  onDelete,
+}: {
+  task: Task;
+  onEdit: (task: Task) => void;
+  onDelete: (task: Task) => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: task.id });
   const [menuDialogOpen, setMenuDialogOpen] = useState(false);
   const anchorRef = React.useRef<HTMLButtonElement | null>(null);
   const style = {
@@ -60,7 +72,9 @@ function SortableRow({ task, onEdit, onDelete }: { task: Task; onEdit: (task: Ta
   const handleDeleteClick = () => {
     if (task.status !== "erledigt") {
       alert("Nur Aufgaben mit Status 'erledigt' können gelöscht werden!");
-    } else if (window.confirm(`Möchten Sie die Aufgabe "${task.name}" wirklich löschen?`)) {
+    } else if (
+      window.confirm(`Möchten Sie die Aufgabe "${task.name}" wirklich löschen?`)
+    ) {
       onDelete(task);
     }
     handleMenuClose();
@@ -73,14 +87,20 @@ function SortableRow({ task, onEdit, onDelete }: { task: Task; onEdit: (task: Ta
           <DragIndicatorIcon fontSize="small" />
         </IconButton>
       </TableCell>
-      <TableCell sx={{ maxWidth: 140, whiteSpace: "normal", wordWrap: "break-word" }}>
+      <TableCell
+        sx={{ maxWidth: 140, whiteSpace: "normal", wordWrap: "break-word" }}
+      >
         {task.name}
       </TableCell>
       <TableCell>{task.vorarbeit} min</TableCell>
       <TableCell>{task.umsetzung} min</TableCell>
       <TableCell>{task.kontrolle} min</TableCell>
       <TableCell>{task.kosten} €</TableCell>
-      <TableCell>{task.dueDate ? new Date(task.dueDate).toLocaleDateString("de-DE") : "—"}</TableCell>
+      <TableCell>
+        {task.dueDate
+          ? new Date(task.dueDate).toLocaleDateString("de-DE")
+          : "—"}
+      </TableCell>
       <TableCell>
         <Chip
           size="small"
@@ -97,7 +117,9 @@ function SortableRow({ task, onEdit, onDelete }: { task: Task; onEdit: (task: Ta
         />
       </TableCell>
       <TableCell>
-        {task.milestoneDate ? new Date(task.milestoneDate).toLocaleDateString("de-DE") : "—"}
+        {task.milestoneDate
+          ? new Date(task.milestoneDate).toLocaleDateString("de-DE")
+          : "—"}
       </TableCell>
       <TableCell align="right">
         <IconButton size="small" onClick={() => onEdit(task)}>
@@ -106,8 +128,17 @@ function SortableRow({ task, onEdit, onDelete }: { task: Task; onEdit: (task: Ta
         <IconButton size="small" ref={anchorRef} onClick={handleMenuOpen}>
           <MoreVertIcon />
         </IconButton>
-        <Menu anchorEl={anchorRef.current} open={menuDialogOpen} onClose={handleMenuClose}>
-          <MenuItem onClick={() => { onEdit(task); handleMenuClose(); }}>
+        <Menu
+          anchorEl={anchorRef.current}
+          open={menuDialogOpen}
+          onClose={handleMenuClose}
+        >
+          <MenuItem
+            onClick={() => {
+              onEdit(task);
+              handleMenuClose();
+            }}
+          >
             Bearbeiten
           </MenuItem>
           <MenuItem onClick={handleDeleteClick}>Löschen</MenuItem>
@@ -136,8 +167,9 @@ const TaskTable: React.FC = () => {
   }, [users]);
 
   const uniqueFirms = useMemo(() => {
-
-    return Array.from(new Set(users.filter((u) => u?.company?.name).map((u) => u.company.name)));
+    return Array.from(
+      new Set(users.filter((u) => u?.company?.name).map((u) => u.company.name))
+    );
   }, [users]);
 
   const handleAddTask = (newTask: Task) => {
@@ -149,7 +181,9 @@ const TaskTable: React.FC = () => {
           newAufgabe.push({ ...newTask, id: newTaskId });
 
           let updatedTasks = user.tasks ? [...user.tasks] : [];
-          const categoryIndex = updatedTasks.findIndex((taskCategory: any) => taskCategory.name === newTask.category);
+          const categoryIndex = updatedTasks.findIndex(
+            (taskCategory: any) => taskCategory.name === newTask.category
+          );
           const newMilestone = {
             title: newTask.name,
             fallig: newTask.milestoneDate,
@@ -164,7 +198,9 @@ const TaskTable: React.FC = () => {
           if (categoryIndex !== -1) {
             const milestones = updatedTasks[categoryIndex].milestones || [];
             const exists = milestones.some(
-              (m: any) => m.title === newMilestone.title && m.fallig === newMilestone.fallig
+              (m: any) =>
+                m.title === newMilestone.title &&
+                m.fallig === newMilestone.fallig
             );
             if (!exists) {
               milestones.push(newMilestone);
@@ -179,7 +215,11 @@ const TaskTable: React.FC = () => {
               milestones: [newMilestone],
             });
           }
-          sendEmailToUser(user.email, "Neue Aufgabe zugewiesen", `Neue Mission: ${newTask.name} (${newTask.category})`);
+          sendEmailToUser(
+            user.email,
+            "Neue Aufgabe zugewiesen",
+            `Neue Mission: ${newTask.name} (${newTask.category})`
+          );
 
           return {
             ...user,
@@ -190,31 +230,33 @@ const TaskTable: React.FC = () => {
         return user;
       })
     );
-
   };
 
-const sendEmailToUser = async (userEmail: string, subject: string, body: string) => {
+  const sendEmailToUser = async (
+    userEmail: string,
+    subject: string,
+    body: string
+  ) => {
+    const templateParams = {
+      to_email: userEmail,
+      subject: subject,
+      message: body,
+    };
 
-  const templateParams = {
-    to_email: userEmail,
-    subject: subject,
-    message: body,
+    try {
+      await emailjs.send(
+        "service_cujqktt",
+        "template_37k83vh",
+        templateParams,
+        "rfmiLie3_I9HQT2zo"
+      );
+
+      alert("Die E-Mail wurde erfolgreich gesendet!");
+    } catch (error: any) {
+      console.error("Fehler beim Senden der E-Mail:", error?.text || error);
+      alert("Beim Senden der E-Mail ist ein Fehler aufgetreten.");
+    }
   };
-
-  try {
-   await emailjs.send(
-    "service_cujqktt",
-    "template_37k83vh",
-    templateParams,
-    "rfmiLie3_I9HQT2zo"
-  );
-
-  alert("Die E-Mail wurde erfolgreich gesendet!");
-} catch (error: any) {
-  console.error("Fehler beim Senden der E-Mail:", error?.text || error);
-  alert("Beim Senden der E-Mail ist ein Fehler aufgetreten.");
-}
-};
 
   const handleEditTask = (taskToEdit: Task) => {
     setSelectedTask(taskToEdit);
@@ -224,7 +266,9 @@ const sendEmailToUser = async (userEmail: string, subject: string, body: string)
   const handleSaveEdit = (editedTask: Task) => {
     setUsers((prevUsers) =>
       prevUsers.map((user) => {
-        const taskInUserAufgabe = user.aufgabe?.find((t: any) => t.id === editedTask.id);
+        const taskInUserAufgabe = user.aufgabe?.find(
+          (t: any) => t.id === editedTask.id
+        );
 
         if (taskInUserAufgabe) {
           const updatedAufgabe = user.aufgabe.map((t: any) =>
@@ -232,15 +276,22 @@ const sendEmailToUser = async (userEmail: string, subject: string, body: string)
           );
 
           let updatedTasksMilestones = user.tasks ? [...user.tasks] : [];
-          updatedTasksMilestones = updatedTasksMilestones.map((taskCategory: any) => {
-            if (taskCategory.milestones) {
-              return {
-                ...taskCategory,
-                milestones: taskCategory.milestones.filter((m: any) => m.id !== editedTask.id),
-              };
-            }
-            return taskCategory;
-          }).filter((taskCategory: any) => taskCategory.milestones && taskCategory.milestones.length > 0);
+          updatedTasksMilestones = updatedTasksMilestones
+            .map((taskCategory: any) => {
+              if (taskCategory.milestones) {
+                return {
+                  ...taskCategory,
+                  milestones: taskCategory.milestones.filter(
+                    (m: any) => m.id !== editedTask.id
+                  ),
+                };
+              }
+              return taskCategory;
+            })
+            .filter(
+              (taskCategory: any) =>
+                taskCategory.milestones && taskCategory.milestones.length > 0
+            );
 
           const newMilestone = {
             title: editedTask.name,
@@ -260,7 +311,10 @@ const sendEmailToUser = async (userEmail: string, subject: string, body: string)
           if (categoryIndex !== -1) {
             updatedTasksMilestones[categoryIndex] = {
               ...updatedTasksMilestones[categoryIndex],
-              milestones: [...updatedTasksMilestones[categoryIndex].milestones, newMilestone],
+              milestones: [
+                ...updatedTasksMilestones[categoryIndex].milestones,
+                newMilestone,
+              ],
             };
           } else {
             updatedTasksMilestones.push({
@@ -268,8 +322,11 @@ const sendEmailToUser = async (userEmail: string, subject: string, body: string)
               milestones: [newMilestone],
             });
           }
-          sendEmailToUser(user.email, "Aufgabe aktualisieren", `Aktualisierte Mission: ${editedTask.name} (${editedTask.category})`);
-
+          sendEmailToUser(
+            user.email,
+            "Aufgabe aktualisieren",
+            `Aktualisierte Mission: ${editedTask.name} (${editedTask.category})`
+          );
 
           return {
             ...user,
@@ -283,26 +340,40 @@ const sendEmailToUser = async (userEmail: string, subject: string, body: string)
 
     setEditDialogOpen(false);
     setSelectedTask(null);
-
   };
 
   const handleDeleteTask = (taskToDelete: Task) => {
     setUsers((prevUsers) =>
       prevUsers.map((user) => {
-        const taskInUserAufgabe = user.aufgabe?.find((t: any) => t.id === taskToDelete.id);
+        const taskInUserAufgabe = user.aufgabe?.find(
+          (t: any) => t.id === taskToDelete.id
+        );
         if (taskInUserAufgabe) {
-          const updatedAufgabe = user.aufgabe.filter((t: any) => t.id !== taskToDelete.id);
+          const updatedAufgabe = user.aufgabe.filter(
+            (t: any) => t.id !== taskToDelete.id
+          );
           let updatedTasksMilestones = user.tasks ? [...user.tasks] : [];
-          updatedTasksMilestones = updatedTasksMilestones.map((taskCategory: any) => {
-            if (taskCategory.milestones) {
-              return {
-                ...taskCategory,
-                milestones: taskCategory.milestones.filter((m: any) => m.id !== taskToDelete.id),
-              };
-            }
-            return taskCategory;
-          }).filter((taskCategory: any) => taskCategory.milestones && taskCategory.milestones.length > 0);
-          sendEmailToUser(user.email, "Aufgabe lösen", `Aufgabe gelöscht: ${taskToDelete.name} (${taskToDelete.category})`);
+          updatedTasksMilestones = updatedTasksMilestones
+            .map((taskCategory: any) => {
+              if (taskCategory.milestones) {
+                return {
+                  ...taskCategory,
+                  milestones: taskCategory.milestones.filter(
+                    (m: any) => m.id !== taskToDelete.id
+                  ),
+                };
+              }
+              return taskCategory;
+            })
+            .filter(
+              (taskCategory: any) =>
+                taskCategory.milestones && taskCategory.milestones.length > 0
+            );
+          sendEmailToUser(
+            user.email,
+            "Aufgabe lösen",
+            `Aufgabe gelöscht: ${taskToDelete.name} (${taskToDelete.category})`
+          );
 
           return {
             ...user,
@@ -313,7 +384,6 @@ const sendEmailToUser = async (userEmail: string, subject: string, body: string)
         return user;
       })
     );
-
   };
 
   const filteredTasks = tasks.filter(
@@ -323,19 +393,32 @@ const sendEmailToUser = async (userEmail: string, subject: string, body: string)
       (firmaFilter ? task.firma === firmaFilter : true)
   );
 
-  const grouped = filteredTasks.reduce((acc, task) => {
-    const catObj = categories.find((c) => c.id.toString() === task.categoryId || c.name === task.category);
-    const subObj = catObj?.subcategories.find((s) => s.id === task.subcategoryId || s.name === task.subcategory);
-    const catName = catObj?.name || task.category;
-    const subName = subObj?.name || task.subcategory;
+  const grouped = filteredTasks.reduce(
+    (acc, task) => {
+      const catObj = categories.find(
+        (c) => c.id.toString() === task.categoryId || c.name === task.category
+      );
+      const subObj = catObj?.subcategories.find(
+        (s) => s.id === task.subcategoryId || s.name === task.subcategory
+      );
+      const catName = catObj?.name || task.category;
+      const subName = subObj?.name || task.subcategory;
 
-    const key = `${catName} > ${subName}`;
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(task);
-    return acc;
-  }, {} as Record<string, Task[]>);
+      const key = `${catName} > ${subName}`;
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(task);
+      return acc;
+    },
+    {} as Record<string, Task[]>
+  );
 
-  const onDragEnd = ({ active, over }: { active: { id: string | number }; over: { id: string | number } | null }) => {
+  const onDragEnd = ({
+    active,
+    over,
+  }: {
+    active: { id: string | number };
+    over: { id: string | number } | null;
+  }) => {
     if (!over || active.id === over.id) return;
 
     const activeTask = tasks.find((t) => t.id === active.id);
@@ -343,11 +426,14 @@ const sendEmailToUser = async (userEmail: string, subject: string, body: string)
 
     if (!activeTask || !overTask) return;
 
-
-    const activeCatObj = categories.find(c => c.name === activeTask.category);
-    const activeSubObj = activeCatObj?.subcategories.find(s => s.name === activeTask.subcategory);
-    const overCatObj = categories.find(c => c.name === overTask.category);
-    const overSubObj = overCatObj?.subcategories.find(s => s.name === overTask.subcategory);
+    const activeCatObj = categories.find((c) => c.name === activeTask.category);
+    const activeSubObj = activeCatObj?.subcategories.find(
+      (s) => s.name === activeTask.subcategory
+    );
+    const overCatObj = categories.find((c) => c.name === overTask.category);
+    const overSubObj = overCatObj?.subcategories.find(
+      (s) => s.name === overTask.subcategory
+    );
     const oldCategoryName = activeCatObj?.name || activeTask.category;
     const oldSubcategoryName = activeSubObj?.name || activeTask.subcategory;
     const newCategoryName = overCatObj?.name || overTask.category;
@@ -355,34 +441,64 @@ const sendEmailToUser = async (userEmail: string, subject: string, body: string)
 
     setUsers((prevUsers) =>
       prevUsers.map((user) => {
-
         const isOwner = user.company?.name === activeTask.firma;
 
         if (isOwner) {
-          const taskIndexInAufgabe = user.aufgabe?.findIndex((t: any) => t.id === active.id);
+          const taskIndexInAufgabe = user.aufgabe?.findIndex(
+            (t: any) => t.id === active.id
+          );
 
           if (taskIndexInAufgabe !== -1 && user.aufgabe) {
             const updatedAufgabe = [...user.aufgabe];
             const movedTask = { ...updatedAufgabe[taskIndexInAufgabe] };
 
-            if (`${oldCategoryName}>${oldSubcategoryName}` === `${newCategoryName}>${newSubcategoryName}`) {
-
-              const groupTasksInUser = updatedAufgabe.filter(t =>
-                (categories.find(c => c.id.toString() === t.categoryId || c.name === t.category)?.name || t.category) === oldCategoryName &&
-                (categories.flatMap(c => c.subcategories).find(s => s.id === t.subcategoryId || s.name === t.subcategory)?.name || t.subcategory) === oldSubcategoryName
+            if (
+              `${oldCategoryName}>${oldSubcategoryName}` ===
+              `${newCategoryName}>${newSubcategoryName}`
+            ) {
+              const groupTasksInUser = updatedAufgabe.filter(
+                (t) =>
+                  (categories.find(
+                    (c) =>
+                      c.id.toString() === t.categoryId || c.name === t.category
+                  )?.name || t.category) === oldCategoryName &&
+                  (categories
+                    .flatMap((c) => c.subcategories)
+                    .find(
+                      (s) =>
+                        s.id === t.subcategoryId || s.name === t.subcategory
+                    )?.name || t.subcategory) === oldSubcategoryName
               );
 
-              const oldIndexInGroup = groupTasksInUser.findIndex((t: any) => t.id === active.id);
-              const newIndexInGroup = groupTasksInUser.findIndex((t: any) => t.id === over.id);
-              const reorderedGroup = arrayMove(groupTasksInUser, oldIndexInGroup, newIndexInGroup);
-              const otherTasks = updatedAufgabe.filter(t =>
-                !((categories.find(c => c.id.toString() === t.categoryId || c.name === t.category)?.name || t.category) === oldCategoryName &&
-                  (categories.flatMap(c => c.subcategories).find(s => s.id === t.subcategoryId || s.name === t.subcategory)?.name || t.subcategory) === oldSubcategoryName)
+              const oldIndexInGroup = groupTasksInUser.findIndex(
+                (t: any) => t.id === active.id
+              );
+              const newIndexInGroup = groupTasksInUser.findIndex(
+                (t: any) => t.id === over.id
+              );
+              const reorderedGroup = arrayMove(
+                groupTasksInUser,
+                oldIndexInGroup,
+                newIndexInGroup
+              );
+              const otherTasks = updatedAufgabe.filter(
+                (t) =>
+                  !(
+                    (categories.find(
+                      (c) =>
+                        c.id.toString() === t.categoryId ||
+                        c.name === t.category
+                    )?.name || t.category) === oldCategoryName &&
+                    (categories
+                      .flatMap((c) => c.subcategories)
+                      .find(
+                        (s) =>
+                          s.id === t.subcategoryId || s.name === t.subcategory
+                      )?.name || t.subcategory) === oldSubcategoryName
+                  )
               );
               user.aufgabe = [...otherTasks, ...reorderedGroup];
-
             } else {
-
               movedTask.category = newCategoryName;
               movedTask.subcategory = newSubcategoryName;
               movedTask.categoryId = overCatObj?.id.toString();
@@ -393,18 +509,23 @@ const sendEmailToUser = async (userEmail: string, subject: string, body: string)
               user.aufgabe = updatedAufgabe;
             }
 
-
             let updatedTasksMilestones = user.tasks ? [...user.tasks] : [];
-            updatedTasksMilestones = updatedTasksMilestones.map((taskCategory: any) => {
-              if (taskCategory.milestones) {
-                return {
-                  ...taskCategory,
-                  milestones: taskCategory.milestones.filter((m: any) => m.id !== active.id),
-                };
-              }
-              return taskCategory;
-            }).filter((taskCategory: any) => taskCategory.milestones && taskCategory.milestones.length > 0);
-
+            updatedTasksMilestones = updatedTasksMilestones
+              .map((taskCategory: any) => {
+                if (taskCategory.milestones) {
+                  return {
+                    ...taskCategory,
+                    milestones: taskCategory.milestones.filter(
+                      (m: any) => m.id !== active.id
+                    ),
+                  };
+                }
+                return taskCategory;
+              })
+              .filter(
+                (taskCategory: any) =>
+                  taskCategory.milestones && taskCategory.milestones.length > 0
+              );
 
             const updatedMilestone = {
               title: movedTask.name,
@@ -417,15 +538,18 @@ const sendEmailToUser = async (userEmail: string, subject: string, body: string)
               firma: movedTask.firma,
             };
 
-
             const targetCategoryIndex = updatedTasksMilestones.findIndex(
-              (taskCategory: any) => taskCategory.name === updatedMilestone.category
+              (taskCategory: any) =>
+                taskCategory.name === updatedMilestone.category
             );
 
             if (targetCategoryIndex !== -1) {
               updatedTasksMilestones[targetCategoryIndex] = {
                 ...updatedTasksMilestones[targetCategoryIndex],
-                milestones: [...updatedTasksMilestones[targetCategoryIndex].milestones, updatedMilestone],
+                milestones: [
+                  ...updatedTasksMilestones[targetCategoryIndex].milestones,
+                  updatedMilestone,
+                ],
               };
             } else {
               updatedTasksMilestones.push({
@@ -444,16 +568,18 @@ const sendEmailToUser = async (userEmail: string, subject: string, body: string)
         return user;
       })
     );
-
   };
-
 
   return (
     <Box>
       <Box display="flex" gap={2} mb={2}>
         <FormControl size="small" sx={{ minWidth: 200 }}>
           <InputLabel>Firma</InputLabel>
-          <Select value={firmaFilter} label="Firma" onChange={(e) => setFirmaFilter(e.target.value)}>
+          <Select
+            value={firmaFilter}
+            label="Firma"
+            onChange={(e) => setFirmaFilter(e.target.value)}
+          >
             <MenuItem value="">Alle Firmen</MenuItem>
             {uniqueFirms.map((firma) => (
               <MenuItem key={firma} value={firma}>
@@ -472,7 +598,11 @@ const sendEmailToUser = async (userEmail: string, subject: string, body: string)
         />
         <FormControl size="small" sx={{ minWidth: 200 }}>
           <InputLabel>Status</InputLabel>
-          <Select value={statusFilter} label="Status" onChange={(e) => setStatusFilter(e.target.value)}>
+          <Select
+            value={statusFilter}
+            label="Status"
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
             <MenuItem value="">Alles</MenuItem>
             <MenuItem value="offen">Offen</MenuItem>
             <MenuItem value="in Bearbeitung">In Bearbeitung</MenuItem>
@@ -522,10 +652,18 @@ const sendEmailToUser = async (userEmail: string, subject: string, body: string)
                     <TableCell />
                   </TableRow>
                 </TableHead>
-                <SortableContext items={groupTasks.map((task) => task.id)} strategy={verticalListSortingStrategy}>
+                <SortableContext
+                  items={groupTasks.map((task) => task.id)}
+                  strategy={verticalListSortingStrategy}
+                >
                   <TableBody>
                     {groupTasks.map((task) => (
-                      <SortableRow key={task.id} task={task} onEdit={handleEditTask} onDelete={handleDeleteTask} />
+                      <SortableRow
+                        key={task.id}
+                        task={task}
+                        onEdit={handleEditTask}
+                        onDelete={handleDeleteTask}
+                      />
                     ))}
                   </TableBody>
                 </SortableContext>

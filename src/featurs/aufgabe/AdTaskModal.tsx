@@ -1,9 +1,17 @@
 import {
-  Dialog, DialogTitle, DialogContent, DialogActions, Button, MenuItem,
-  FormControl, InputLabel, Select, TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
+  TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import type { Task } from "../../types";
+import type { Task } from "../../types/Task.types";
 import { useUser } from "../../context/UserContext";
 
 type ModalProps = {
@@ -15,7 +23,11 @@ type ModalProps = {
 };
 
 const AddTaskModal: React.FC<ModalProps> = ({
-  open, onClose, onSave, existingTask, firmOptions = [],
+  open,
+  onClose,
+  onSave,
+  existingTask,
+  firmOptions = [],
 }) => {
   const { categories, users } = useUser();
   const [task, setTask] = useState<Task>({
@@ -32,19 +44,24 @@ const AddTaskModal: React.FC<ModalProps> = ({
     milestoneDate: "",
     dueDate: "",
     firma: "",
-    milestones: []
+    milestones: [],
   });
 
   useEffect(() => {
     if (existingTask) {
-      const categoryObj = categories.find(cat => cat.name === existingTask.category);
-      const subcategoryObj = categoryObj?.subcategories.find(sub => sub.name === existingTask.subcategory);
+      const categoryObj = categories.find(
+        (cat) => cat.name === existingTask.category
+      );
+      const subcategoryObj = categoryObj?.subcategories.find(
+        (sub) => sub.name === existingTask.subcategory
+      );
 
       setTask({
         ...existingTask,
         category: categoryObj ? categoryObj.id.toString() : "",
         subcategory: subcategoryObj ? subcategoryObj.id : "",
-        milestoneDate: existingTask.milestoneDate || new Date().toISOString().split("T")[0],
+        milestoneDate:
+          existingTask.milestoneDate || new Date().toISOString().split("T")[0],
       });
     } else {
       setTask({
@@ -61,32 +78,36 @@ const AddTaskModal: React.FC<ModalProps> = ({
         milestoneDate: new Date().toISOString().split("T")[0],
         dueDate: "",
         firma: "",
-        milestones: []
+        milestones: [],
       });
     }
   }, [existingTask, open, categories]);
 
   const handleChange = (field: keyof Task, value: any) => {
     if (field === "firma") {
-      const matchedUser = users.find(user => user.company?.name === value);
-      setTask(prev => ({
+      const matchedUser = users.find((user) => user.company?.name === value);
+      setTask((prev) => ({
         ...prev,
         firma: value,
         email: matchedUser?.email || "",
       }));
     } else {
-      setTask(prev => ({ ...prev, [field]: value }));
+      setTask((prev) => ({ ...prev, [field]: value }));
     }
   };
   const handleCategoryChange = (categoryId: string) => {
-    setTask(prev => ({ ...prev, category: categoryId, subcategory: "" }));
+    setTask((prev) => ({ ...prev, category: categoryId, subcategory: "" }));
   };
 
-  const selectedCategory = categories.find(cat => cat.id.toString() === task.category);
+  const selectedCategory = categories.find(
+    (cat) => cat.id.toString() === task.category
+  );
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>{existingTask ? "Aufgabe bearbeiten" : "Neue Aufgabe"}</DialogTitle>
+      <DialogTitle>
+        {existingTask ? "Aufgabe bearbeiten" : "Neue Aufgabe"}
+      </DialogTitle>
       <DialogContent>
         <FormControl size="small" fullWidth margin="normal">
           <InputLabel>Firma *</InputLabel>
@@ -96,7 +117,9 @@ const AddTaskModal: React.FC<ModalProps> = ({
             onChange={(e) => handleChange("firma", e.target.value)}
           >
             {firmOptions.map((firma) => (
-              <MenuItem key={firma} value={firma}>{firma}</MenuItem>
+              <MenuItem key={firma} value={firma}>
+                {firma}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
@@ -109,12 +132,19 @@ const AddTaskModal: React.FC<ModalProps> = ({
             onChange={(e) => handleCategoryChange(e.target.value)}
           >
             {categories.map((cat) => (
-              <MenuItem key={cat.id} value={cat.id.toString()}>{cat.name}</MenuItem>
+              <MenuItem key={cat.id} value={cat.id.toString()}>
+                {cat.name}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
 
-        <FormControl size="small" fullWidth margin="normal" disabled={!task.category}>
+        <FormControl
+          size="small"
+          fullWidth
+          margin="normal"
+          disabled={!task.category}
+        >
           <InputLabel>Subkategorie *</InputLabel>
           <Select
             value={task.subcategory}
@@ -122,7 +152,9 @@ const AddTaskModal: React.FC<ModalProps> = ({
             onChange={(e) => handleChange("subcategory", e.target.value)}
           >
             {selectedCategory?.subcategories.map((sub) => (
-              <MenuItem key={sub.id} value={sub.id}>{sub.name}</MenuItem>
+              <MenuItem key={sub.id} value={sub.id}>
+                {sub.name}
+              </MenuItem>
             )) || []}
           </Select>
         </FormControl>
@@ -191,11 +223,15 @@ const AddTaskModal: React.FC<ModalProps> = ({
             maxDate.setMonth(maxDate.getMonth() + 1);
 
             if (selectedDate < milestone) {
-              alert("Fälligkeitsdatum darf nicht vor dem Meilenstein-Datum liegen.");
+              alert(
+                "Fälligkeitsdatum darf nicht vor dem Meilenstein-Datum liegen."
+              );
               return;
             }
             if (selectedDate > maxDate) {
-              alert("Fälligkeitsdatum darf maximal 1 Monat nach dem Meilenstein-Datum liegen.");
+              alert(
+                "Fälligkeitsdatum darf maximal 1 Monat nach dem Meilenstein-Datum liegen."
+              );
               return;
             }
 
@@ -236,7 +272,7 @@ const AddTaskModal: React.FC<ModalProps> = ({
 
         <TextField
           label="Email"
-          value={task.email ?? ''}
+          value={task.email ?? ""}
           onChange={(e) => handleChange("email", e.target.value)}
           size="small"
           fullWidth
@@ -275,19 +311,23 @@ const AddTaskModal: React.FC<ModalProps> = ({
               return;
             }
             if (new Date(task.milestoneDate) > new Date(task.dueDate)) {
-              alert("Das Meilenstein-Datum darf nicht nach dem Fälligkeitsdatum liegen.");
+              alert(
+                "Das Meilenstein-Datum darf nicht nach dem Fälligkeitsdatum liegen."
+              );
               return;
             }
 
             const selectedCategory = categories.find(
-              cat => cat.id.toString() === task.category
+              (cat) => cat.id.toString() === task.category
             );
             const categoryName = selectedCategory ? selectedCategory.name : "";
 
             const selectedSubcategory = selectedCategory?.subcategories.find(
-              sub => sub.id === task.subcategory
+              (sub) => sub.id === task.subcategory
             );
-            const subcategoryName = selectedSubcategory ? selectedSubcategory.name : "";
+            const subcategoryName = selectedSubcategory
+              ? selectedSubcategory.name
+              : "";
 
             const taskWithNames = {
               ...task,

@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import type { User, Category } from "../types";
+import type { User } from "../types/User.types";
+import type { Category } from "../types";
 import { Users, Categories as InitialCategories } from "../data";
 
 type UserContextType = {
@@ -9,22 +10,23 @@ type UserContextType = {
   updateUser: (payload: UpgradeUser) => void;
   categories: Category[];
   setCategories: React.Dispatch<React.SetStateAction<Category[]>>;
-    
 };
 
 type UpgradeUser = {
   id: number;
   name: string;
   imageFile?: Blob | MediaSource | null;
-  image?: Blob |MediaSource;
+  image?: Blob | MediaSource;
 };
 
 const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-const [users, setUsers] = useState<User[]>(Users as User[] || []);
+  const [users, setUsers] = useState<User[]>((Users as User[]) || []);
 
-  const [categories, setCategories] = useState<Category[]>(InitialCategories || []);
+  const [categories, setCategories] = useState<Category[]>(
+    InitialCategories || []
+  );
 
   useEffect(() => {
     if (Users) setUsers(Users);
@@ -41,11 +43,17 @@ const [users, setUsers] = useState<User[]>(Users as User[] || []);
     );
   };
 
-  
- // console.log("usersContext", users);
+  // console.log("usersContext", users);
   return (
     <UserContext.Provider
-      value={{ users, setUsers, deleteUser, updateUser, categories, setCategories }}
+      value={{
+        users,
+        setUsers,
+        deleteUser,
+        updateUser,
+        categories,
+        setCategories,
+      }}
     >
       {children}
     </UserContext.Provider>

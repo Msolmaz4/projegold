@@ -7,11 +7,10 @@ import {
   Modal,
 } from "@mui/material";
 import BusinessIcon from "@mui/icons-material/Business";
-import type { User  } from "../types";
+import type { User } from "../types/User.types";
 import { useEffect, useState } from "react";
 import Details from "./Details";
 import { useUser } from "../context/UserContext";
-
 
 type CardsProps = {
   user: User;
@@ -37,7 +36,6 @@ const Cards = ({ user }: CardsProps) => {
 
   // DELETE
   const handleDelete = (userId: number) => {
-
     setUsers(users.filter((u) => u.id !== userId));
     handleClose();
   };

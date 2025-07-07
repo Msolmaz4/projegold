@@ -16,7 +16,7 @@ import { useState } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import BusinessIcon from "@mui/icons-material/Business";
 import EditUserModal from "./EditUserModal";
-import type { User } from "../types";
+import type { User } from "../types/User.types";
 import dayjs from "dayjs";
 import "dayjs/locale/de";
 dayjs.locale("de");
@@ -54,14 +54,18 @@ const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
   };
 
   const filteredTasks =
-    user.tasks?.filter((task) => task.name.trim() !== "" && task.milestones.length > 0) ?? [];
-
-
+    user.tasks?.filter(
+      (task) => task.name.trim() !== "" && task.milestones.length > 0
+    ) ?? [];
 
   const renderTabContent = () => {
     switch (tabIndex) {
       case 0:
-        return <Typography mt={2}>{user.company?.name ?? "Keine Unternehmensdaten"}</Typography>;
+        return (
+          <Typography mt={2}>
+            {user.company?.name ?? "Keine Unternehmensdaten"}
+          </Typography>
+        );
       case 1:
         return (
           <Typography mt={2}>
@@ -69,7 +73,11 @@ const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
           </Typography>
         );
       case 2:
-        return <Typography mt={2}>{user.website ?? "Keine Webseite verfügbar"}</Typography>;
+        return (
+          <Typography mt={2}>
+            {user.website ?? "Keine Webseite verfügbar"}
+          </Typography>
+        );
       case 3:
         return (
           <Typography mt={2}>
@@ -94,12 +102,18 @@ const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
           >
             {!imageUrl && <BusinessIcon />}
           </Avatar>
-          <Typography variant="h5">{user.company?.name ?? "Kein Name"}</Typography>
+          <Typography variant="h5">
+            {user.company?.name ?? "Kein Name"}
+          </Typography>
         </Box>
         <IconButton onClick={handleMenuOpen}>
           <MoreVertIcon />
         </IconButton>
-        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+        >
           <MenuItem
             onClick={() => {
               setEditedUser(user);
@@ -142,7 +156,9 @@ const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
                   sx={{
                     cursor: "pointer",
                     border:
-                      selectedAufgabe === index ? "2px solid #1976d2" : "1px solid #ccc",
+                      selectedAufgabe === index
+                        ? "2px solid #1976d2"
+                        : "1px solid #ccc",
                     "&:hover": { backgroundColor: "#f0f0f0" },
                   }}
                 >
@@ -164,47 +180,51 @@ const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
           <Typography variant="h6" gutterBottom>
             📍 Meilensteine
           </Typography>
-          {filteredTasks[selectedAufgabe].milestones.map((milestone: any, idx: number) => {
-            const today = dayjs();
-            const date = dayjs(milestone.fallig ?? milestone.date);
-            let icon = "🚀";
-            let color = "#607d8b";
+          {filteredTasks[selectedAufgabe].milestones.map(
+            (milestone: any, idx: number) => {
+              const today = dayjs();
+              const date = dayjs(milestone.fallig ?? milestone.date);
+              let icon = "🚀";
+              let color = "#607d8b";
 
-            if (date.isValid()) {
-              if (date.isBefore(today, "day")) {
-                icon = "✔";
-                color = "#d32f2f";
-              } else if (date.isSame(today, "day")) {
-                icon = "🚧";
-                color = "#f57c00";
+              if (date.isValid()) {
+                if (date.isBefore(today, "day")) {
+                  icon = "✔";
+                  color = "#d32f2f";
+                } else if (date.isSame(today, "day")) {
+                  icon = "🚧";
+                  color = "#f57c00";
+                }
               }
-            }
 
-            // Milestone içindeki status kontrolü eklendi
-            const isErledigt = milestone.status === "erledigt";
-            const displayText = milestone.title?.trim() ? milestone.title : "";
-            return (
-              <Typography key={idx} variant="body1" sx={{ mb: 1, color }}>
-                {icon}{" "}
-                <span
-                  style={{
-                    textDecoration: isErledigt ? "line-through" : "none",
-                    textDecorationColor: isErledigt ? color : undefined,
-                    textDecorationThickness: isErledigt ? "2px" : undefined,
-                    textDecorationStyle: isErledigt ? "solid" : undefined,
-                  }}
-                >
-                  {displayText}
-                  {date.isValid() ? ` – ${date.format("DD.MM.YYYY")}` : ""}
-                </span>
-              </Typography>
-            );
-          })}
+              // Milestone içindeki status kontrolü eklendi
+              const isErledigt = milestone.status === "erledigt";
+              const displayText = milestone.title?.trim()
+                ? milestone.title
+                : "";
+              return (
+                <Typography key={idx} variant="body1" sx={{ mb: 1, color }}>
+                  {icon}{" "}
+                  <span
+                    style={{
+                      textDecoration: isErledigt ? "line-through" : "none",
+                      textDecorationColor: isErledigt ? color : undefined,
+                      textDecorationThickness: isErledigt ? "2px" : undefined,
+                      textDecorationStyle: isErledigt ? "solid" : undefined,
+                    }}
+                  >
+                    {displayText}
+                    {date.isValid() ? ` – ${date.format("DD.MM.YYYY")}` : ""}
+                  </span>
+                </Typography>
+              );
+            }
+          )}
         </Paper>
       )}
 
       {/* EditUserModal */}
-      <EditUserModal    
+      <EditUserModal
         open={editOpen}
         onClose={() => setEditOpen(false)}
         user={editedUser}

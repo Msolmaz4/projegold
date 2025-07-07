@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useUser } from "../context/UserContext";
-import type { User } from "../types";
+import type { User } from "../types/User.types";
 import Modal from "../utils/Modal";
 
 type EditUserModalProps = {
