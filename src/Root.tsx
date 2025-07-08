@@ -8,14 +8,12 @@ import {
 import { Box, Typography } from "@mui/material";
 
 import UserContextProvider from "./context/user-context-provider";
-import { Users } from "./data";
 import TaskTable from "./featurs/aufgabe/TaskTable";
 import Unternehmen from "./featurs/compaines/Unternehmen";
 import KategorieListe from "./featurs/tasks/KategorieListe";
 import MilestoneOverview from "./featurs/milestones/MilestoneOverview";
 
 const MainLayout: FC = () => {
-  console.log(Users);
   return (
     <Box
       sx={{
