@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Table,
@@ -32,7 +32,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { Task } from "../../types/Task.types";
-import { useUser } from "../../context/UserContext";
+import { useUserContext } from "../../hooks/user/useUserContext";
 import emailjs from "@emailjs/browser";
 
 const extractTasksFromUsers = (users: any[]): Task[] => {
@@ -149,7 +149,7 @@ function SortableRow({
 }
 
 const TaskTable: React.FC = () => {
-  const { categories, users, setUsers } = useUser();
+  const { categories, users, setUsers } = useUserContext();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [firmaFilter, setFirmaFilter] = useState("");
@@ -264,17 +264,17 @@ const TaskTable: React.FC = () => {
   };
 
   const handleSaveEdit = (editedTask: Task) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) => {
+    setUsers((prevUsers) => {
+      let taskMoved = false;
+      const updatedUsers = prevUsers.map((user) => {
         const taskInUserAufgabe = user.aufgabe?.find(
           (t: any) => t.id === editedTask.id
         );
-
-        if (taskInUserAufgabe) {
+        // Eğer task bu user'ınsa ve firma DEĞİŞMEMİŞSE, sadece güncelle
+        if (taskInUserAufgabe && taskInUserAufgabe.firma === editedTask.firma) {
           const updatedAufgabe = user.aufgabe.map((t: any) =>
             t.id === editedTask.id ? editedTask : t
           );
-
           let updatedTasksMilestones = user.tasks ? [...user.tasks] : [];
           updatedTasksMilestones = updatedTasksMilestones
             .map((taskCategory: any) => {
@@ -322,6 +322,7 @@ const TaskTable: React.FC = () => {
               milestones: [newMilestone],
             });
           }
+
           sendEmailToUser(
             user.email,
             "Aufgabe aktualisieren",
@@ -334,9 +335,97 @@ const TaskTable: React.FC = () => {
             tasks: updatedTasksMilestones,
           };
         }
+
+        // Eğer task user'ınsa ama firma DEĞİŞTİYSE, task'ı BU kullanıcıdan kaldır
+        if (taskInUserAufgabe && taskInUserAufgabe.firma !== editedTask.firma) {
+          taskMoved = true;
+          const updatedAufgabe = user.aufgabe.filter(
+            (t: any) => t.id !== editedTask.id
+          );
+          const updatedTasksMilestones = (user.tasks || [])
+            .map((taskCategory: any) => {
+              if (taskCategory.milestones) {
+                return {
+                  ...taskCategory,
+                  milestones: taskCategory.milestones.filter(
+                    (m: any) => m.id !== editedTask.id
+                  ),
+                };
+              }
+              return taskCategory;
+            })
+            .filter(
+              (taskCategory: any) =>
+                taskCategory.milestones && taskCategory.milestones.length > 0
+            );
+
+          return {
+            ...user,
+            aufgabe: updatedAufgabe,
+            tasks: updatedTasksMilestones,
+          };
+        }
+
         return user;
-      })
-    );
+      });
+
+      // Task taşındıysa, yeni kullanıcıya task'ı ekle
+      if (taskMoved) {
+        const targetIndex = updatedUsers.findIndex(
+          (u) => u.company?.name === editedTask.firma
+        );
+        if (targetIndex !== -1) {
+          const user = updatedUsers[targetIndex];
+          const updatedAufgabe = [...(user.aufgabe || []), editedTask];
+
+          let updatedTasksMilestones = user.tasks ? [...user.tasks] : [];
+
+          const newMilestone = {
+            title: editedTask.name,
+            fallig: editedTask.milestoneDate,
+            meilenstein: editedTask.milestoneDate,
+            id: editedTask.id,
+            completed: editedTask.status === "erledigt",
+            status: editedTask.status,
+            category: editedTask.category,
+            firma: editedTask.firma,
+          };
+
+          const categoryIndex = updatedTasksMilestones.findIndex(
+            (taskCategory: any) => taskCategory.name === editedTask.category
+          );
+
+          if (categoryIndex !== -1) {
+            updatedTasksMilestones[categoryIndex] = {
+              ...updatedTasksMilestones[categoryIndex],
+              milestones: [
+                ...updatedTasksMilestones[categoryIndex].milestones,
+                newMilestone,
+              ],
+            };
+          } else {
+            updatedTasksMilestones.push({
+              name: editedTask.category,
+              milestones: [newMilestone],
+            });
+          }
+
+          sendEmailToUser(
+            user.email,
+            "Neue Aufgabe zugewiesen",
+            `Neue Aufgabe: ${editedTask.name} (${editedTask.category})`
+          );
+
+          updatedUsers[targetIndex] = {
+            ...user,
+            aufgabe: updatedAufgabe,
+            tasks: updatedTasksMilestones,
+          };
+        }
+      }
+
+      return updatedUsers;
+    });
 
     setEditDialogOpen(false);
     setSelectedTask(null);
