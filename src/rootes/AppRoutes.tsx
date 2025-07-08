@@ -1,34 +1,22 @@
-import { ArrowLoginIcon, LogoutIcon, SpieleladenIcon } from "icons";
-import { NoRouteMatch } from "layout/NoRouteMatch";
-
-import Dashboard from "modules/dashboard";
-import { USER_GROUPS } from "modules/usermanagement/roles/api";
-
+import { ArrowLoginIcon, LogoutIcon, SpieleladenIcon } from "../icons";
+import { NoRouteMatch } from "../layout/NoRouteMatch";
+import { USER_GROUPS } from "../modules/usermanagement/roles/api";
 import ConfirmForgotPassword from "../auth/ConfirmForgotPassword";
 import ForgotPassword from "../auth/ForgotPassword";
 import Login from "../auth/Login";
-
 import { AuthRoutes } from "./auth";
 import Logout from "../auth/Logout";
+import MainLayout from "../components/MainLayout";
 
-/**
- * Routes by default exports the paths NOT under authentication.
- *
- * (!) Warning: Non navigation routes should not have navigation: true set
- * since they lack needed information
- *
- * (!) Warning: The order here is important, since we map over possible navigations
- * to render sidebar items
- */
 const AppRoutes = {
   start: {
     key: "start",
     path: "/",
     section: "general",
-    title: "Dashboard",
-    element: <Dashboard />,
+    title: "mainlayout",
+    element: <MainLayout />,
     icon: <SpieleladenIcon />,
-    groups: [USER_GROUPS.ADMIN, USER_GROUPS.OFFICE, USER_GROUPS.ACCOUNTING],
+    groups: [USER_GROUPS.ADMIN, USER_GROUPS.ACCOUNTING],
     level: 0,
     navigation: false,
     indented: false,
@@ -43,7 +31,7 @@ const AppRoutes = {
     title: "Ausloggen",
     element: <Logout />,
     icon: <LogoutIcon />,
-    groups: [USER_GROUPS.ADMIN, USER_GROUPS.ACCOUNTING, USER_GROUPS.OFFICE],
+    groups: [USER_GROUPS.ADMIN, USER_GROUPS.ACCOUNTING],
     level: 0,
     navigation: true,
     indented: false,
@@ -57,7 +45,7 @@ const AppRoutes = {
     title: "Einloggen",
     element: <Login />,
     icon: <ArrowLoginIcon />,
-    groups: [USER_GROUPS.ADMIN, USER_GROUPS.ACCOUNTING, USER_GROUPS.OFFICE],
+    groups: [USER_GROUPS.ADMIN, USER_GROUPS.ACCOUNTING],
     level: 0,
     navigation: false,
     indented: false,
@@ -71,7 +59,7 @@ const AppRoutes = {
     title: "Passwort vergessen",
     element: <ForgotPassword />,
     icon: <ArrowLoginIcon />,
-    groups: [USER_GROUPS.ADMIN, USER_GROUPS.ACCOUNTING, USER_GROUPS.OFFICE],
+    groups: [USER_GROUPS.ADMIN, USER_GROUPS.ACCOUNTING],
     level: 0,
     navigation: false,
     indented: false,
@@ -85,7 +73,7 @@ const AppRoutes = {
     title: "Passwort vergessen bestätigen",
     element: <ConfirmForgotPassword />,
     icon: <ArrowLoginIcon />,
-    groups: [USER_GROUPS.ADMIN, USER_GROUPS.ACCOUNTING, USER_GROUPS.OFFICE],
+    groups: [USER_GROUPS.ADMIN, USER_GROUPS.ACCOUNTING],
     level: 0,
     navigation: false,
     indented: false,
@@ -100,7 +88,7 @@ const AppRoutes = {
     title: "Keine Route gefunden",
     element: <NoRouteMatch />,
     icon: <LogoutIcon />,
-    groups: [USER_GROUPS.ADMIN, USER_GROUPS.ACCOUNTING, USER_GROUPS.OFFICE],
+    groups: [USER_GROUPS.ADMIN, USER_GROUPS.ACCOUNTING],
     level: 0,
     navigation: false,
     indented: false,

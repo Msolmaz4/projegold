@@ -25,14 +25,12 @@ const Users: UserWithTasks[] = [
       catchPhrase: "Multi-layered client-server neural-net",
       bs: "harness real-time e-markets",
     },
-    description: "Innovatives Unternehmen im Bereich Technologie und Entwicklung.",
+    description:
+      "Innovatives Unternehmen im Bereich Technologie und Entwicklung.",
     imageURL: "/logos/google.jpeg",
-     tasks: [
-   
-    ],
-    aufgabe: [
-   
-    ],
+    tasks: [],
+    aufgabe: [],
+    admin: true,
   },
   {
     id: 2,
@@ -55,12 +53,8 @@ const Users: UserWithTasks[] = [
     },
     description: "Führender Anbieter von Finanzdienstleistungen.",
     imageURL: "/logos/jpmorgan.png",
-    tasks: [
-    
-    ],
-    aufgabe: [
-    
-    ],
+    tasks: [],
+    aufgabe: [],
   },
   {
     id: 3,
@@ -83,12 +77,9 @@ const Users: UserWithTasks[] = [
     },
     description: "Spezialist für nachhaltige Energielösungen.",
     imageURL: "/logos/siemens.jpeg",
-    tasks: [
-    
-    ],
-    aufgabe: [
-     
-    ],
+    tasks: [],
+    aufgabe: [],
+    admin: true,
   },
   {
     id: 4,
@@ -111,12 +102,9 @@ const Users: UserWithTasks[] = [
     },
     description: "Globaler Dienstleister für Logistik und Transport.",
     imageURL: "/logos/dhl.png",
-    tasks: [
-    
-    ],
-    aufgabe: [
-  
-    ],
+    tasks: [],
+    aufgabe: [],
+    admin: true,
   },
   {
     id: 5,
@@ -139,12 +127,9 @@ const Users: UserWithTasks[] = [
     },
     description: "Hersteller von hochwertigen Konsumgütern.",
     imageURL: "/logos/procter.jpeg",
-    tasks: [
-
-    ],
-    aufgabe: [
-    
-    ],
+    tasks: [],
+    aufgabe: [],
+    admin: false,
   },
   {
     id: 6,
@@ -167,12 +152,9 @@ const Users: UserWithTasks[] = [
     },
     description: "Innovativer Softwareanbieter im Gesundheitsbereich.",
     imageURL: "/logos/cerner.jpeg",
-   tasks: [
-
-    ],
-    aufgabe: [
-   
-    ],
+    tasks: [],
+    aufgabe: [],
+    admin: false,
   },
   {
     id: 7,
@@ -195,12 +177,9 @@ const Users: UserWithTasks[] = [
     },
     description: "Beratung und professionelle Dienstleistungen.",
     imageURL: "/logos/accentu.png",
-    tasks: [
-    
-    ],
-    aufgabe: [
-
-    ],
+    tasks: [],
+    aufgabe: [],
+    admin: false,
   },
   {
     id: 8,
@@ -222,13 +201,9 @@ const Users: UserWithTasks[] = [
       bs: "target end-to-end models",
     },
     description: "Führender Chip-Hersteller weltweit.",
-    imageURL :'/logos/intel.jpeg',
-    tasks: [
-    
-    ],
-    aufgabe: [
- 
-    ],
+    imageURL: "/logos/intel.jpeg",
+    tasks: [],
+    aufgabe: [],
   },
   {
     id: 9,
@@ -251,12 +226,8 @@ const Users: UserWithTasks[] = [
     },
     description: "Pharmaunternehmen mit globaler Reichweite.",
     imageURL: "/logos/bayern.png",
-    tasks: [
-     
-    ],
-    aufgabe: [
-  
-    ],
+    tasks: [],
+    aufgabe: [],
   },
   {
     id: 10,
@@ -279,16 +250,10 @@ const Users: UserWithTasks[] = [
     },
     description: "Premium Autohersteller mit Fokus auf Innovation.",
     imageURL: "/logos/bwm.jpeg",
-    tasks: [
-    
-    ],
-    aufgabe: [
-  
-    ],
+    tasks: [],
+    aufgabe: [],
   },
 ];
-
-
 
 const Categories: Category[] = [
   {
@@ -319,8 +284,5 @@ const Categories: Category[] = [
     ],
   },
 ];
-
-
-
 
 export { Users, Categories };
