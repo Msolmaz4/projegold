@@ -1,10 +1,10 @@
 import { createContext } from "react";
-import {
+import type {
   AuthDataProps,
   CurrentCognitoUserType,
   GlobalSettings,
   User,
-} from "types";
+} from "../types";
 
 interface ContextProps extends AuthDataProps {
   initAuth: boolean;

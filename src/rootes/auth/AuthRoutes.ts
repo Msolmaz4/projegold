@@ -1,10 +1,5 @@
 export const AuthRoutes = {
-  login: "/login",
-  logout: "/logout",
-  verify: "/verify",
-  resendVerify: "/resendverify",
-  forgotPassword: "/forgotpassword",
-  confirmForgotPassword: "/confirmForgotPassword",
+  login: "/",
 };
 
 export const isAuthRoute = (locationPathname: string) => {

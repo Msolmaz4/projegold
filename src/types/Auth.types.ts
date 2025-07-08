@@ -1,16 +1,16 @@
 import type { User } from "./User.types";
 
-export type CurrentData = {
+export interface CurrentData {
   id: string;
   name: string;
-};
+}
 
-export type CognitoUserGroup = {
+export interface CognitoUserGroup {
   groupID: string;
   groupName: string;
-};
+}
 
-export type CurrentCognitoUserType = {
+export interface CurrentCognitoUserType {
   username: string;
   salutation: "Mr" | "Mrs";
   customUsername: string;
@@ -24,18 +24,24 @@ export type CurrentCognitoUserType = {
   currentGroup: CognitoUserGroup;
   groups: CognitoUserGroup[];
   userID: string;
-};
+}
 
-export type AuthDataProps = {
+export interface GlobalSettings {
+  language: string;
+  timezone: string;
+  dateFormat: string;
+}
+
+export interface AuthDataProps {
   isLoading: boolean;
   isAuth: boolean;
   cognitoUser: CurrentCognitoUserType | null;
   userData: User | null;
-};
+}
 
-export type LoginErrorType = {
+export interface LoginErrorType {
   code?: string;
   stack?: string;
   errno?: number;
   message?: string;
-};
+}

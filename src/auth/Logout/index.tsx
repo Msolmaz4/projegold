@@ -1,11 +1,9 @@
 import { FC, useCallback, useEffect } from "react";
 import { Container, Typography } from "@mui/material";
-import { useAuthContext } from "hooks";
-import utils from "utils";
+import { useAuthContext } from "../../hooks/auth/useAuthContext";
 import useStyles from "./styles";
 
 const Logout: FC = () => {
-  utils.logger.info("On Logging out...");
   const { classes } = useStyles();
   const authContext = useAuthContext();
 

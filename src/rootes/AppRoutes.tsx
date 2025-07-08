@@ -1,8 +1,7 @@
 import { ArrowLoginIcon, LogoutIcon, SpieleladenIcon } from "../icons";
 import { NoRouteMatch } from "../layout/NoRouteMatch";
 import { USER_GROUPS } from "../modules/usermanagement/roles/api";
-import ConfirmForgotPassword from "../auth/ConfirmForgotPassword";
-import ForgotPassword from "../auth/ForgotPassword";
+
 import Login from "../auth/Login";
 import { AuthRoutes } from "./auth";
 import Logout from "../auth/Logout";
@@ -44,34 +43,6 @@ const AppRoutes = {
     section: "account",
     title: "Einloggen",
     element: <Login />,
-    icon: <ArrowLoginIcon />,
-    groups: [USER_GROUPS.ADMIN, USER_GROUPS.ACCOUNTING],
-    level: 0,
-    navigation: false,
-    indented: false,
-    isWithParam: false,
-    children: {},
-  },
-  forgotPassword: {
-    key: "forgotPassword",
-    path: AuthRoutes.forgotPassword,
-    section: "account",
-    title: "Passwort vergessen",
-    element: <ForgotPassword />,
-    icon: <ArrowLoginIcon />,
-    groups: [USER_GROUPS.ADMIN, USER_GROUPS.ACCOUNTING],
-    level: 0,
-    navigation: false,
-    indented: false,
-    isWithParam: false,
-    children: {},
-  },
-  confirmForgotPassword: {
-    key: "confirmForgotPassword",
-    path: AuthRoutes.confirmForgotPassword,
-    section: "account",
-    title: "Passwort vergessen bestätigen",
-    element: <ConfirmForgotPassword />,
     icon: <ArrowLoginIcon />,
     groups: [USER_GROUPS.ADMIN, USER_GROUPS.ACCOUNTING],
     level: 0,

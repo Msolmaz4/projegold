@@ -1,8 +1,7 @@
 import React from "react";
-import { Typography } from "@mui/material";
-import { useAuthContext } from "hooks";
-import { CustomButton, Loading } from "core";
-import utils from "utils";
+import { Button, Typography } from "@mui/material";
+import { useAuthContext } from "../../hooks/auth/useAuthContext";
+
 import useStyles from "./styles";
 
 type ErrorPageProps = {
@@ -18,13 +17,12 @@ const ErrorPage: React.FC<ErrorPageProps> = ({
   errorMessage,
   errorDescription,
 }) => {
-  utils.logger.info("eventID: ", eventID);
   const { classes } = useStyles();
   const authContext = useAuthContext();
 
   return (
     <div className={classes.root}>
-      {authContext.isLoading ? <Loading size="33px" /> : /*<MenuBar />*/ null}
+      {authContext?.isLoading ? <Loading size="33px" /> : /*<MenuBar />*/ null}
       <main className={classes.content}>
         <Typography className={classes.headerText}>{errorTitle}</Typography>
 
@@ -42,11 +40,7 @@ const ErrorPage: React.FC<ErrorPageProps> = ({
           </Typography>
         )}
 
-        <CustomButton
-          text="Zur Startseite"
-          onClick={() => (window.location.href = "/")}
-          style="filled"
-        />
+        <Button onClick={() => (window.location.href = "/")} />
       </main>
     </div>
   );

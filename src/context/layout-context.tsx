@@ -1,5 +1,4 @@
 import { ReactNode, createContext } from "react";
-import { ToastOptions } from "react-toastify";
 
 interface LayoutContextProps {
   activeView: string;
@@ -10,7 +9,7 @@ interface LayoutContextProps {
   setMenuLocked: (value: boolean) => void;
   subMenuOpen: boolean;
   setSubMenuOpen: (value: boolean) => void;
-  notify: (message: ReactNode, options?: ToastOptions) => number | string;
+  notify: (message: ReactNode, options?: "") => number | string;
 }
 
 const LayoutContext = createContext<LayoutContextProps>({
