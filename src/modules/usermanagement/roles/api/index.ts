@@ -1,6 +1,5 @@
 export const USER_GROUPS = {
   ADMIN: "Admin",
-  OFFICE: "office",
   ACCOUNTING: "accounting",
 };
 
@@ -10,12 +9,8 @@ export const USER_GROUPS_OPTIONS = [
     label: "Admin",
   },
   {
-    value: USER_GROUPS.OFFICE,
-    label: "Büro",
-  },
-  {
     value: USER_GROUPS.ACCOUNTING,
-    label: "Buchhaltung",
+    label: "Users/Firma",
   },
 ];
 
@@ -23,10 +18,8 @@ export const getUserRoleName = (value: string) => {
   switch (value) {
     case USER_GROUPS.ADMIN:
       return "Admin";
-    case USER_GROUPS.OFFICE:
-      return "Büro";
     case USER_GROUPS.ACCOUNTING:
-      return "Buchhaltung";
+      return "Users/Firma";
     default:
       throw new Error("Could not find userRole " + value);
   }

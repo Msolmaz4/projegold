@@ -31,6 +31,7 @@ const Users: UserWithTasks[] = [
     tasks: [],
     aufgabe: [],
     admin: true,
+    password: "123456",
   },
   {
     id: 2,
@@ -55,6 +56,7 @@ const Users: UserWithTasks[] = [
     imageURL: "/logos/jpmorgan.png",
     tasks: [],
     aufgabe: [],
+    password: "123456",
   },
   {
     id: 3,
@@ -80,6 +82,7 @@ const Users: UserWithTasks[] = [
     tasks: [],
     aufgabe: [],
     admin: true,
+    password: "123456",
   },
   {
     id: 4,
@@ -105,6 +108,7 @@ const Users: UserWithTasks[] = [
     tasks: [],
     aufgabe: [],
     admin: true,
+    password: "123456",
   },
   {
     id: 5,
@@ -130,6 +134,7 @@ const Users: UserWithTasks[] = [
     tasks: [],
     aufgabe: [],
     admin: false,
+    password: "123456",
   },
   {
     id: 6,
@@ -155,6 +160,7 @@ const Users: UserWithTasks[] = [
     tasks: [],
     aufgabe: [],
     admin: false,
+    password: "123456",
   },
   {
     id: 7,
@@ -180,6 +186,7 @@ const Users: UserWithTasks[] = [
     tasks: [],
     aufgabe: [],
     admin: false,
+    password: "123456",
   },
   {
     id: 8,
@@ -204,6 +211,7 @@ const Users: UserWithTasks[] = [
     imageURL: "/logos/intel.jpeg",
     tasks: [],
     aufgabe: [],
+    password: "123456",
   },
   {
     id: 9,
@@ -228,6 +236,7 @@ const Users: UserWithTasks[] = [
     imageURL: "/logos/bayern.png",
     tasks: [],
     aufgabe: [],
+    password: "123456",
   },
   {
     id: 10,
@@ -252,6 +261,7 @@ const Users: UserWithTasks[] = [
     imageURL: "/logos/bwm.jpeg",
     tasks: [],
     aufgabe: [],
+    password: "123456",
   },
 ];
 
