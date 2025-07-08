@@ -9,13 +9,13 @@ import { Modal } from "utils";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import Cards from "../../components/Cards";
-import { useUser } from "../../context/UserContext";
+import { useUserContext } from "../../hooks/user/useUserContext";
 import "swiper/css";
 import "swiper/css/navigation";
 
 function Unternehmen() {
   const [modal, setModal] = useState<boolean>(false);
-  const { users, setUsers } = useUser();
+  const { users, setUsers } = useUserContext();
   //console.log(users,'unternej´hmen');
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));

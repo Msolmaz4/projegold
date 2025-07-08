@@ -21,11 +21,11 @@ import {
 import { MoreVert, Add } from "@mui/icons-material";
 import { v4 as uuidv4 } from "uuid";
 import type { Category } from "../../types/Categories.types";
-import { useUser } from "../../context/UserContext";
+import { useUserContext } from "../../hooks/user/useUserContext";
 import Grid from "@mui/material/Grid";
 
 const KategorieListe: React.FC = () => {
-  const { categories, setCategories } = useUser();
+  const { categories, setCategories } = useUserContext();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [newName, setNewName] = useState("");

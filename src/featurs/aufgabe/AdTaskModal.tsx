@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import type { Task } from "../../types/Task.types";
-import { useUser } from "../../context/UserContext";
+import { useUserContext } from "../../hooks/user/useUserContext";
 
 type ModalProps = {
   open: boolean;
@@ -29,7 +29,8 @@ const AddTaskModal: React.FC<ModalProps> = ({
   existingTask,
   firmOptions = [],
 }) => {
-  const { categories, users } = useUser();
+  const { categories, users } = useUserContext();
+  console.log(users, "adtask");
   const [task, setTask] = useState<Task>({
     id: new Date().getTime(),
     category: "",
@@ -278,6 +279,7 @@ const AddTaskModal: React.FC<ModalProps> = ({
           fullWidth
           margin="normal"
           InputLabelProps={{ shrink: true }}
+          InputProps={{ readOnly: true }}
         />
       </DialogContent>
 

@@ -11,15 +11,17 @@ import {
   DialogContent,
   DialogActions,
   Collapse,
-  IconButton, 
+  IconButton,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete"; 
-import { useUser } from "../../context/UserContext"
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useUserContext } from "../../hooks/user/useUserContext";
 import type { Aufgabe, User } from "../../types";
 
 const MilestoneOverview: React.FC = () => {
-  const { users } = useUser();
-  const [expandedCompanies, setExpandedCompanies] = useState<Set<number>>(new Set());
+  const { users } = useUserContext();
+  const [expandedCompanies, setExpandedCompanies] = useState<Set<number>>(
+    new Set()
+  );
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [selectDialogOpen, setSelectDialogOpen] = useState(false);
 
@@ -101,7 +103,14 @@ const MilestoneOverview: React.FC = () => {
             onClick={() => toggleUser(user.id)}
           >
             <Stack direction="row" spacing={2} alignItems="center">
-              <Box sx={{ width: 160, display: "flex", alignItems: "center", gap: 1 }}>
+              <Box
+                sx={{
+                  width: 160,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                }}
+              >
                 <img src={user.imageURL} alt={user.name} width={30} />
                 <Typography fontWeight="bold">{user.company.name}</Typography>
               </Box>
@@ -113,7 +122,9 @@ const MilestoneOverview: React.FC = () => {
                 />
               </Box>
               <Box sx={{ width: 50, textAlign: "right" }}>
-                <Typography variant="body2">{progressPercent.toFixed(0)}%</Typography>
+                <Typography variant="body2">
+                  {progressPercent.toFixed(0)}%
+                </Typography>
               </Box>
 
               <Box
@@ -124,7 +135,10 @@ const MilestoneOverview: React.FC = () => {
                   flexDirection: "column",
                 }}
               >
-                <Typography variant="caption" sx={{ textTransform: "lowercase", fontSize: 10, mb: 0.5 }}>
+                <Typography
+                  variant="caption"
+                  sx={{ textTransform: "lowercase", fontSize: 10, mb: 0.5 }}
+                >
                   vorarbeit
                 </Typography>
                 <Typography variant="caption">{remaining.vorarbeit}</Typography>
@@ -138,7 +152,10 @@ const MilestoneOverview: React.FC = () => {
                   flexDirection: "column",
                 }}
               >
-                <Typography variant="caption" sx={{ textTransform: "lowercase", fontSize: 10, mb: 0.5 }}>
+                <Typography
+                  variant="caption"
+                  sx={{ textTransform: "lowercase", fontSize: 10, mb: 0.5 }}
+                >
                   umsetzung
                 </Typography>
                 <Typography variant="caption">{remaining.umsetzung}</Typography>
@@ -152,7 +169,10 @@ const MilestoneOverview: React.FC = () => {
                   flexDirection: "column",
                 }}
               >
-                <Typography variant="caption" sx={{ textTransform: "lowercase", fontSize: 10, mb: 0.5 }}>
+                <Typography
+                  variant="caption"
+                  sx={{ textTransform: "lowercase", fontSize: 10, mb: 0.5 }}
+                >
                   kontrolle
                 </Typography>
                 <Typography variant="caption">{remaining.kontrolle}</Typography>
@@ -162,7 +182,7 @@ const MilestoneOverview: React.FC = () => {
               <IconButton
                 aria-label="delete"
                 onClick={(event) => {
-                  event.stopPropagation(); 
+                  event.stopPropagation();
                   handleUserDelete(user.id);
                 }}
                 size="small"
@@ -193,8 +213,8 @@ const MilestoneOverview: React.FC = () => {
                           task.status.toLowerCase() === "erledigt"
                             ? "green"
                             : task.status.toLowerCase() === "bearbeitung"
-                            ? "orange"
-                            : "red"
+                              ? "orange"
+                              : "red"
                         }
                       >
                         {task.status}
@@ -209,7 +229,10 @@ const MilestoneOverview: React.FC = () => {
       })}
 
       {/* Firma / User AUSSUCHEN */}
-      <Dialog open={selectDialogOpen} onClose={() => setSelectDialogOpen(false)}>
+      <Dialog
+        open={selectDialogOpen}
+        onClose={() => setSelectDialogOpen(false)}
+      >
         <DialogTitle>Firma auswählen</DialogTitle>
         <DialogContent dividers>
           {users.map((user) => (
