@@ -10,7 +10,7 @@ import {
   Avatar,
   Typography,
 } from "@mui/material";
-import { useUser } from "../context/UserContext";
+import { useUserContext } from "../hooks/user/useUserContext";
 import type { User } from "../types/User.types";
 import Modal from "../utils/Modal";
 
@@ -28,7 +28,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
   onSave,
 }) => {
   const [formData, setFormData] = useState<User | null>(null);
-  const { users, setUsers } = useUser();
+  const { users, setUsers } = useUserContext();
   const [modal, setModal] = useState<boolean>(false);
   const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
 

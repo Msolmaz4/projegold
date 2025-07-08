@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import type { User, Category } from "types";
+import type { User, Category } from "../types";
 
 export type UpgradeUser = {
   id: number;
