@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   AppBar,
   Box,
@@ -17,7 +17,6 @@ const ForgotPasswordPage = () => {
 
   return (
     <Box sx={{ bgcolor: "#f5f5f5", minHeight: "100vh" }}>
-      {/* Üst Bar */}
       <AppBar position="static" elevation={0} color="default">
         <Toolbar sx={{ justifyContent: "flex-end" }}>
           <Button
@@ -30,7 +29,6 @@ const ForgotPasswordPage = () => {
         </Toolbar>
       </AppBar>
 
-      {/* Ortalanmış İçerik */}
       <Box
         sx={{
           display: "flex",

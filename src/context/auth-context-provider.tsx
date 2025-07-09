@@ -15,47 +15,33 @@ const AuthContextProvider: FC<AuthContextProviderProps> = ({ children }) => {
   const [cognitoUser, setCognitoUser] = useState(null);
   const [globalSettings, setGlobalSettings] = useState(null);
 
-  useEffect(() => {
-    setIsLoading(true);
-
-    //localstoragekontroll
-    const fakeAuthCheck = async () => {
-      await new Promise((res) => setTimeout(res, 500));
-      setIsAuth(false);
-      setUserData(null);
-      setInitAuth(true);
-      setIsLoading(false);
-    };
-
-    fakeAuthCheck();
-  }, []);
-
   const navigate = useNavigate();
 
   const loginHandler = async (user: User) => {
     console.log(user, "authcontext");
 
     setIsLoading(true);
+
     try {
       const foundUser = Users.find(
         (u) => u.email === user.email && u.password === user.password
       );
       console.log(foundUser);
+
       if (foundUser) {
         setUserData(foundUser);
         setIsAuth(true);
         setInitAuth(true);
-        navigate("/main");
-        setUserData(null);
-        setIsAuth(false);
-        setInitAuth(true);
-        alert("E-Mail oder Password Fehler");
+        navigate("/");
+      } else {
+        throw new Error("Ungültige E-Mail oder Passwort.");
       }
     } catch (error) {
       console.error("Login failed", error);
       setUserData(null);
       setIsAuth(false);
       setInitAuth(true);
+      alert("E-Mail oder Passwort ist falsch.");
     } finally {
       setIsLoading(false);
     }

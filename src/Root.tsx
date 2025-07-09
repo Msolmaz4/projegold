@@ -1,59 +1,27 @@
 // src/Root.tsx
-import { FC, Suspense, useEffect, useRef } from "react";
+import { FC, useEffect } from "react";
 import {
   createBrowserRouter,
   RouterProvider,
-  useLocation,
-  useNavigate,
   Outlet,
   type NonIndexRouteObject,
+  useLocation,
+  useNavigate,
 } from "react-router-dom";
 import { datadogRum } from "@datadog/browser-rum";
 import UserContextProvider from "./context/user-context-provider";
 import { AppRoutes, getSubNavigationsAsArray, isAuthRoute } from "./rootes";
 import { useAuthContext } from "./hooks/auth/useAuthContext";
-import { Loading } from "./core";
 import AuthContextProvider from "./context/auth-context-provider";
-import LoginPage from "./auth/Login";
+import { Loading } from "./core";
 
 const ProtectedRoutes: FC = () => {
-  const { pathname } = useLocation();
-  const navigate = useNavigate();
   const authContext = useAuthContext();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const isOnAuthRoute = isAuthRoute(pathname);
+  const isOnAuthRoute = isAuthRoute(location.pathname);
 
-  useEffect(() => {
-    if (!authContext.initAuth || authContext.isLoading) return;
-
-    // Eğer kullanıcı giriş yapmamış ve auth sayfasında değilse → login'e yönlendir
-    if (!authContext.isAuth && !isOnAuthRoute) {
-      navigate("/login", { replace: true });
-    }
-
-    // Eğer kullanıcı giriş yapmış ama auth sayfasındaysa → anasayfaya yönlendir
-    if (authContext.isAuth && isOnAuthRoute) {
-      navigate("/", { replace: true });
-    }
-  }, [
-    authContext.initAuth,
-    authContext.isLoading,
-    authContext.isAuth,
-    pathname,
-    navigate,
-    isOnAuthRoute,
-  ]);
-
-  // Eğer auth yüklenmemişse → loading göster
-  if (!authContext.initAuth || authContext.isLoading) {
-    return <Loading description="Bitte warten..." />;
-  }
-
-  // Doğru sayfa router tarafından basılacak
-  return <Outlet />;
-};
-
-const RootStart: FC = () => {
   useEffect(() => {
     datadogRum.init({
       applicationId: "37127132-a5b7-4d78-af01-86960aaafb28",
@@ -73,6 +41,29 @@ const RootStart: FC = () => {
     datadogRum.startSessionReplayRecording();
   }, []);
 
+  useEffect(() => {
+    if (!authContext.initAuth) {
+      if (!authContext.initAuth) {
+        navigate("/login", { replace: true });
+      }
+    }
+  }, [authContext.initAuth, isOnAuthRoute, navigate]);
+
+  if (!authContext.initAuth && isOnAuthRoute) {
+    // Auth sayfasında isek initAuth beklenmeden Outlet çalıştırılır (login, forgot, register gibi)
+    return <Outlet />;
+  }
+
+  if (!authContext.initAuth) {
+    // initAuth false ve auth sayfasında değilsek → Loading gösterilebilir ya da redirect edilir (yukarıda zaten yönlendirildi)
+    return <Loading description="Bitte warten..." />;
+  }
+
+  // Auth tamamlandıysa → App sayfalarını aç
+  return <Outlet />;
+};
+
+const RootStart: FC = () => {
   return (
     <AuthContextProvider>
       <UserContextProvider>

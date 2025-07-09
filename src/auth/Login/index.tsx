@@ -71,7 +71,12 @@ const LoginPage = () => {
       password,
     };
 
-    loginHandler(user);
+    try {
+      await loginHandler(user);
+    } catch (error) {
+      setEmail("");
+      setPassword("");
+    }
   };
 
   return (
