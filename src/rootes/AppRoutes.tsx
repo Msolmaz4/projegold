@@ -6,6 +6,8 @@ import Login from "../auth/Login";
 import { AuthRoutes } from "./auth";
 import Logout from "../auth/Logout";
 import MainLayout from "../components/MainLayout";
+import ForgotPasswordPage from "../auth/ForgotPassword";
+import ConfirmForgotPassword from "../auth/ConfirmForgotPassword";
 
 const AppRoutes = {
   start: {
@@ -59,6 +61,35 @@ const AppRoutes = {
     title: "Keine Route gefunden",
     element: <NoRouteMatch />,
     icon: <LogoutIcon />,
+    groups: [USER_GROUPS.ADMIN, USER_GROUPS.ACCOUNTING],
+    level: 0,
+    navigation: false,
+    indented: false,
+    isWithParam: false,
+    children: {},
+  },
+
+  forgotPassword: {
+    key: "forgotPassword",
+    path: AuthRoutes.forgotPassword,
+    section: "account",
+    title: "Passwort vergessen",
+    element: <ForgotPasswordPage />,
+    icon: <ArrowLoginIcon />,
+    groups: [USER_GROUPS.ADMIN, USER_GROUPS.ACCOUNTING],
+    level: 0,
+    navigation: false,
+    indented: false,
+    isWithParam: false,
+    children: {},
+  },
+  confirmForgotPassword: {
+    key: "confirmForgotPassword",
+    path: AuthRoutes.confirmForgotPassword,
+    section: "account",
+    title: "Passwort vergessen bestätigen",
+    element: <ConfirmForgotPassword />,
+    icon: <ArrowLoginIcon />,
     groups: [USER_GROUPS.ADMIN, USER_GROUPS.ACCOUNTING],
     level: 0,
     navigation: false,

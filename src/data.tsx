@@ -263,6 +263,33 @@ const Users: UserWithTasks[] = [
     aufgabe: [],
     password: "123456",
   },
+  {
+    id: 125,
+    name: "Test Admin",
+    username: "adminUser",
+    email: "admin@example.com",
+    address: {
+      street: "Test Street",
+      suite: "Suite 101",
+      city: "Testville",
+      zipcode: "12345-6789",
+      geo: { lat: "40.7128", lng: "-74.0060" },
+    },
+    phone: "555-123-4567",
+    website: "adminportal.test",
+    company: {
+      name: "TestCorp",
+      catchPhrase: "Leading the future of testing",
+      bs: "scalable test-driven development",
+    },
+    description:
+      "Test user with full administrative privileges. Responsible for managing all test data and system configurations.",
+    imageURL: "/logos/test.jpeg",
+    tasks: [],
+    aufgabe: [],
+    admin: true,
+    password: "Test@1234",
+  },
 ];
 
 const Categories: Category[] = [

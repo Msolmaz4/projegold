@@ -30,7 +30,7 @@ const AddTaskModal: React.FC<ModalProps> = ({
   firmOptions = [],
 }) => {
   const { categories, users } = useUserContext();
-  console.log(users, "adtask");
+  // console.log(users, "adtask");
   const [task, setTask] = useState<Task>({
     id: new Date().getTime(),
     category: "",

@@ -3,7 +3,6 @@ import Unternehmen from "../../featurs/compaines/Unternehmen";
 import KategorieListe from "../../featurs/tasks/KategorieListe";
 import MilestoneOverview from "../../featurs/milestones/MilestoneOverview";
 import TaskTable from "../../featurs/aufgabe/TaskTable";
-import Login from "../../auth/Login";
 
 const MainLayout: FC = () => {
   return (
@@ -24,7 +23,6 @@ const MainLayout: FC = () => {
       </Typography>
       <TaskTable />
       <MilestoneOverview />
-      <Login />
     </Box>
   );
 };

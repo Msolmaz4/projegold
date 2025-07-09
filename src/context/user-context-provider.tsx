@@ -17,12 +17,12 @@ const UserContextProvider: FC<UserContextProviderProps> = ({ children }) => {
   const [categories, setCategories] = useState<Category[]>(
     InitialCategories || []
   );
-  console.log(Users, "check imported users");
+  // console.log(Users, "check imported users");
   useEffect(() => {
     if (Users) setUsers(Users);
     if (InitialCategories) setCategories(InitialCategories);
   }, []);
-  console.log(users, "ddddd");
+  // console.log(users, "ddddd");
 
   const deleteUser = (id: number) => {
     setUsers((prev) => prev.filter((user) => user.id !== id));

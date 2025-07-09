@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -24,7 +24,6 @@ const LoginPage = () => {
 
   return (
     <Box sx={{ bgcolor: "#f5f5f5", minHeight: "100vh" }}>
-      {/* Üst Bar sadece "Anmelden" ile */}
       <AppBar position="static" elevation={0} color="default">
         <Toolbar sx={{ justifyContent: "flex-end" }}>
           <Button
@@ -37,13 +36,13 @@ const LoginPage = () => {
         </Toolbar>
       </AppBar>
 
-      {/* Ortalanmış Giriş Kutusu */}
+      {/*dividen */}
       <Box
         sx={{
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          minHeight: "calc(100vh - 64px)", // AppBar yüksekliği çıkarıldı
+          minHeight: "calc(100vh - 64px)",
         }}
       >
         <Container maxWidth="sm">

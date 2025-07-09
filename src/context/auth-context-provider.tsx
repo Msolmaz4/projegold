@@ -1,7 +1,7 @@
-import React, { useState, FC, ReactNode } from "react";
+import { useState, FC, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "./auth-context";
-import { User } from "../types";
+import type { User } from "../types";
 import { Users } from "../data";
 type AuthContextProviderProps = {
   children: ReactNode;
@@ -12,12 +12,8 @@ const AuthContextProvider: FC<AuthContextProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
   const [userData, setUserData] = useState<User | null>(null);
-  const [cognitoUser, setCognitoUser] = useState<CurrentCognitoUserType | null>(
-    null
-  );
-  const [globalSettings, setGlobalSettings] = useState<GlobalSettings | null>(
-    null
-  );
+  const [cognitoUser, setCognitoUser] = useState(null);
+  const [globalSettings, setGlobalSettings] = useState(null);
 
   const navigate = useNavigate();
 
