@@ -5,6 +5,7 @@ export const AuthRoutes = {
   resendVerify: "/resendverify",
   forgotPassword: "/forgotpassword",
   confirmForgotPassword: "/confirmForgotPassword",
+  register: "/register",
 };
 
 export const isAuthRoute = (locationPathname: string) => {

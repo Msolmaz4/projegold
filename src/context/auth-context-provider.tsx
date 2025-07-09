@@ -1,4 +1,4 @@
-import { useState, FC, ReactNode } from "react";
+import { useState, FC, ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "./auth-context";
 import type { User } from "../types";
@@ -15,15 +15,32 @@ const AuthContextProvider: FC<AuthContextProviderProps> = ({ children }) => {
   const [cognitoUser, setCognitoUser] = useState(null);
   const [globalSettings, setGlobalSettings] = useState(null);
 
+  useEffect(() => {
+    setIsLoading(true);
+
+    //localstoragekontroll
+    const fakeAuthCheck = async () => {
+      await new Promise((res) => setTimeout(res, 500));
+      setIsAuth(false);
+      setUserData(null);
+      setInitAuth(true);
+      setIsLoading(false);
+    };
+
+    fakeAuthCheck();
+  }, []);
+
   const navigate = useNavigate();
 
   const loginHandler = async (user: User) => {
+    console.log(user, "authcontext");
+
     setIsLoading(true);
     try {
       const foundUser = Users.find(
         (u) => u.email === user.email && u.password === user.password
       );
-
+      console.log(foundUser);
       if (foundUser) {
         setUserData(foundUser);
         setIsAuth(true);

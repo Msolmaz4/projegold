@@ -4,14 +4,14 @@ import {
   Box,
   Button,
   Container,
-  Link,
   Paper,
   TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
 import { Login as LoginIcon } from "@mui/icons-material";
-
+import { AuthRoutes } from "../../rootes/auth/AuthRoutes";
+import { Link } from "react-router-dom";
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
 
@@ -25,7 +25,7 @@ const ForgotPasswordPage = () => {
             startIcon={<LoginIcon />}
             sx={{ borderRadius: 10, textTransform: "none" }}
           >
-            Anmelden
+            <Link to={AuthRoutes.register}>Anmelden</Link>
           </Button>
         </Toolbar>
       </AppBar>
