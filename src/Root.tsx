@@ -50,16 +50,15 @@ const ProtectedRoutes: FC = () => {
   }, [authContext.initAuth, isOnAuthRoute, navigate]);
 
   if (!authContext.initAuth && isOnAuthRoute) {
-    // Auth sayfasında isek initAuth beklenmeden Outlet çalıştırılır (login, forgot, register gibi)
+    // Wenn wir uns auf einer Auth-Seite befinden, wird der Outlet ohne Warten auf initAuth gerendert (z. B. Login, Passwort vergessen, Registrierung)
     return <Outlet />;
   }
 
   if (!authContext.initAuth) {
-    // initAuth false ve auth sayfasında değilsek → Loading gösterilebilir ya da redirect edilir (yukarıda zaten yönlendirildi)
+    // „Wenn initAuth false ist und wir uns nicht auf einer Auth-Seite befinden → Es kann ein Ladebildschirm angezeigt oder eine Weiterleitung durchgeführt werden (oben wurde bereits weitergeleitet).
     return <Loading description="Bitte warten..." />;
   }
-
-  // Auth tamamlandıysa → App sayfalarını aç
+  //alles okey weiter
   return <Outlet />;
 };
 
@@ -77,7 +76,7 @@ const routes: NonIndexRouteObject[] = [
   {
     path: "/",
     element: <RootStart />,
-    children: getSubNavigationsAsArray(AppRoutes), // burada tüm sayfalar Outlet üzerinden render edilir
+    children: getSubNavigationsAsArray(AppRoutes),
   },
 ];
 

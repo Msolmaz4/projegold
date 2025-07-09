@@ -12,9 +12,14 @@ import {
   Typography,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useUserContext } from "../../hooks/user/useUserContext";
+import CryptoJS from "crypto-js";
+import { useNavigate } from "react-router";
 
 const RegisterPage = () => {
+  const { setUsers, users } = useUserContext();
   const [showPassword, setShowPassword] = useState(false);
+  const navi = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -28,14 +33,36 @@ const RegisterPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleRegister = (e) => {
+    e.preventDefault();
+
+    // Şifreyi hash'liyoruz (örnek SHA-256 ile)
+    const hashedPassword = CryptoJS.SHA256(formData.password).toString();
+
+    // Yeni user objesi oluşturuyoruz, şifre hash'lenmiş haliyle
+    const newUser = {
+      name: formData.name,
+      email: formData.email,
+      password: hashedPassword,
+    };
+
+    // setUser ile user context güncelleniyor
+    setUsers(newUser);
+
+    // Burada dilersen formu sıfırlayabilirsin
+    setFormData({ name: "", email: "", password: "" });
+
+    // Kayıt sonrası yönlendirme veya bilgilendirme ekleyebilirsin
+    alert("Konto wurde erfolgreich erstellt!");
+    navi("/login");
+  };
+
   return (
     <Box sx={{ bgcolor: "#f5f5f5", minHeight: "100vh" }}>
-      {/* Üst Bar sadece boş bıraktık */}
       <AppBar position="static" elevation={0} color="default">
         <Toolbar />
       </AppBar>
 
-      {/* Ortalanmış İçerik */}
       <Box
         sx={{
           display: "flex",
@@ -51,7 +78,12 @@ const RegisterPage = () => {
               Konto erstellen
             </Typography>
 
-            <Box component="form" noValidate autoComplete="off">
+            <Box
+              component="form"
+              noValidate
+              autoComplete="off"
+              onSubmit={handleRegister}
+            >
               <TextField
                 fullWidth
                 label="Name"
@@ -98,6 +130,7 @@ const RegisterPage = () => {
                 variant="contained"
                 color="primary"
                 sx={{ mt: 3, borderRadius: 4, py: 1.5 }}
+                type="submit"
               >
                 Registrieren
               </Button>
