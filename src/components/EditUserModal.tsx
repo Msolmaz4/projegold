@@ -37,7 +37,6 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
       setFormData(user);
     }
   }, [user]);
-  console.log(user);
 
   const handleChange = (field: keyof User, value: any) => {
     if (!formData) return;

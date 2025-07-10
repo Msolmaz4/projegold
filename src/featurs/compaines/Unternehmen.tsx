@@ -1,10 +1,8 @@
-import { Box, Typography, Button, IconButton } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
+import { Box, Typography, IconButton } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { useMediaQuery, useTheme } from "@mui/material";
 import { useState } from "react";
-
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import Cards from "../../components/Cards";

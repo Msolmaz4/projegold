@@ -27,16 +27,13 @@ const NewVersionTracker: React.FC = () => {
         if (!globalSettings || !authContext.globalSettings) {
           return;
         }
-
         const currentVersion = globalSettings.currentVersion;
-
         if (
           currentVersion &&
           currentVersion !== authContext.globalSettings.currentVersion
         ) {
           setNewVersionAvailable(true);
         }
-
         queryClient.invalidateQueries({
           queryKey: [QueryKeys.GlobalSettings],
         });
