@@ -16,8 +16,11 @@ import { useUserContext } from "../../hooks/user/useUserContext";
 import CryptoJS from "crypto-js";
 import { Link, useNavigate } from "react-router";
 import { AuthRoutes } from "../../rootes";
+import useStyles from "./styles";
+import NewUser from "../../core/newUser";
 
 const RegisterPage = () => {
+  const { classes } = useStyles();
   const { setUsers, users } = useUserContext();
   const [showPassword, setShowPassword] = useState(false);
   const navi = useNavigate();
@@ -35,7 +38,6 @@ const RegisterPage = () => {
 
   const handleRegister = (e) => {
     e.preventDefault();
-
     const hashedPassword = CryptoJS.SHA256(formData.password).toString();
     const userExists = users.some(
       (user) => user.email.toLowerCase() === formData.email.toLowerCase()
@@ -46,32 +48,11 @@ const RegisterPage = () => {
       return;
     }
 
-    const newUser = {
-      id: Date.now() + Math.floor(Math.random() * 1000000),
-      name: "",
-      username: "",
+    const newUser = NewUser({
+      name: formData.name,
       email: formData.email,
-      address: {
-        street: "",
-        suite: "",
-        city: "",
-        zipcode: "",
-        geo: { lat: "", lng: "" },
-      },
-      phone: "",
-      website: "",
-      company: {
-        name: formData.name,
-        catchPhrase: "",
-        bs: "",
-      },
-      description: "",
-      imageURL: "",
-      tasks: [],
-      aufgabe: [],
-      admin: false,
-      password: hashedPassword,
-    };
+      hashedPassword,
+    });
 
     setUsers([...users, newUser]);
     setFormData({ name: "", email: "", password: "" });
@@ -80,26 +61,17 @@ const RegisterPage = () => {
   };
   console.log(users, "sondurum");
   return (
-    <Box sx={{ bgcolor: "#f5f5f5", minHeight: "100vh" }}>
+    <Box className={classes.root}>
       <AppBar position="static" elevation={0} color="default">
         <Toolbar />
       </AppBar>
 
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "calc(100vh - 64px)",
-          textAlign: "center",
-        }}
-      >
-        <Container maxWidth="sm">
-          <Paper elevation={3} sx={{ p: 4 }}>
-            <Typography variant="h5" gutterBottom>
+      <Box className={classes.wrapper}>
+        <Container className={classes.container}>
+          <Paper className={classes.paper}>
+            <Typography variant="h5" className={classes.title}>
               Konto erstellen
             </Typography>
-
             <Box
               component="form"
               noValidate
@@ -112,10 +84,9 @@ const RegisterPage = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                margin="normal"
+                className={classes.textField}
                 required
               />
-
               <TextField
                 fullWidth
                 label="E-Mail-Adresse"
@@ -123,10 +94,9 @@ const RegisterPage = () => {
                 value={formData.email}
                 onChange={handleChange}
                 type="email"
-                margin="normal"
+                className={classes.textField}
                 required
               />
-
               <TextField
                 fullWidth
                 label="Passwort"
@@ -134,7 +104,7 @@ const RegisterPage = () => {
                 value={formData.password}
                 onChange={handleChange}
                 type={showPassword ? "text" : "password"}
-                margin="normal"
+                className={classes.textField}
                 required
                 InputProps={{
                   endAdornment: (
@@ -146,17 +116,20 @@ const RegisterPage = () => {
                   ),
                 }}
               />
-
               <Button
                 fullWidth
                 variant="contained"
                 color="primary"
-                sx={{ mt: 3, borderRadius: 4, py: 1.5 }}
                 type="submit"
+                className={classes.button}
               >
                 Registrieren
               </Button>
-              <Button variant="text" size="small" sx={{ mt: 2 }}>
+              <Button
+                variant="text"
+                size="small"
+                className={classes.backButton}
+              >
                 <Link to={AuthRoutes.login}>Zurück</Link>
               </Button>
             </Box>

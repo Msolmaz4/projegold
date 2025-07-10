@@ -12,20 +12,23 @@ const useStyles = makeStyles()((theme) => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    padding: theme.spacing(3),
+    minHeight: "calc(100vh - 64px)",
+    textAlign: "center",
+    padding: theme.spacing(2),
+  },
+  container: {
+    maxWidth: 500,
+    width: "100%",
   },
   paper: {
     padding: theme.spacing(4),
-    maxWidth: 460,
-    width: "100%",
     borderRadius: 16,
     backgroundColor: "#fff",
     boxShadow: theme.shadows[3],
-    alignItems: "center",
   },
   title: {
-    fontSize: 26,
-    fontWeight: 600,
+    fontSize: 28,
+    fontWeight: 700,
     marginBottom: theme.spacing(3),
     color: "#343333",
     textAlign: "center",
@@ -33,28 +36,21 @@ const useStyles = makeStyles()((theme) => ({
   textField: {
     marginTop: theme.spacing(2),
   },
-  forgotPassword: {
-    marginTop: theme.spacing(1),
-    textAlign: "right",
-    "& a": {
-      textDecoration: "none",
-      fontSize: 14,
-      color: "grey",
-      "&:hover": {
-        color: theme.palette.primary.main,
-      },
-    },
-  },
-  errorStack: {
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2),
-  },
   button: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(3),
+    borderRadius: 8,
     padding: theme.spacing(1.5),
     fontWeight: 600,
-    borderRadius: 8,
     textTransform: "none",
+  },
+  backButton: {
+    marginTop: theme.spacing(2),
+    fontSize: 14,
+    textDecoration: "none",
+    color: theme.palette.primary.main,
+    "&:hover": {
+      textDecoration: "underline",
+    },
   },
 }));
 

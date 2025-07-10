@@ -1,39 +1,63 @@
 import { makeStyles } from "tss-react/mui";
 
 const useStyles = makeStyles()((theme) => ({
-  formContainer: {
+  root: {
+    backgroundColor: "#f5f5f5",
+    minHeight: "100vh",
     display: "flex",
     flexDirection: "column",
-    padding: 40,
-    background: "white",
-    borderRadius: 5,
   },
-  buttonsContainer: {
+  wrapper: {
+    flex: 1,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: theme.spacing(3),
+    textAlign: "center",
+  },
+  container: {
+    maxWidth: 460,
     width: "100%",
-    textAlign: "center",
-    marginTop: 40,
   },
-  pageTitle: {
-    textAlign: "center",
-    fontSize: 27,
+  paper: {
+    padding: theme.spacing(4),
+    borderRadius: 16,
+    backgroundColor: "#fff",
+    boxShadow: theme.shadows[3],
+    marginTop: theme.spacing(2),
+  },
+  title: {
+    fontSize: 26,
     fontWeight: 600,
-    marginBottom: 19,
+    marginBottom: theme.spacing(1),
     color: "#343333",
   },
-  pageSubtitle: {
+  subtitle: {
+    color: theme.palette.text.secondary,
+    fontSize: 14,
     maxWidth: 425,
+    margin: "0 auto",
+    marginBottom: theme.spacing(4),
   },
-  changePasswordTextContainer: {
-    width: "100%",
-    textAlign: "center",
-    marginTop: 30,
-    marginBottom: 30,
+  input: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1),
   },
-  changePasswordTextLink: {
-    textDecoration: "none",
-    color: "grey",
-    "&:hover": {
-      color: theme.palette.primary.main,
+  button: {
+    marginTop: theme.spacing(2),
+    padding: theme.spacing(1.5),
+    borderRadius: 8,
+    fontWeight: 600,
+    textTransform: "none",
+  },
+  bottomLink: {
+    marginTop: theme.spacing(3),
+    "& a": {
+      textDecoration: "none",
+      color: "grey",
+      "&:hover": {
+        color: theme.palette.primary.main,
+      },
     },
   },
 }));

@@ -12,6 +12,8 @@ import {
 } from "@mui/material";
 import { useUserContext } from "../../hooks/user/useUserContext";
 import type { User } from "../../types";
+
+import NewUser from "../../core/newUser";
 type ModalProps = {
   open: boolean;
   onClose: () => void;
@@ -64,34 +66,14 @@ const Modal: React.FC<ModalProps> = ({
         };
         onSave(updatedData);
       } else {
-        const id = Date.now() + Math.floor(Math.random() * 1000000);
         const name = text;
 
-        const newUser: User = {
-          id,
-          name,
-          username: "",
+        const newUserModal = NewUser({
+          name: name || "",
           email: "",
-          address: {
-            street: "",
-            suite: "",
-            city: "",
-            zipcode: "",
-            geo: { lat: "", lng: "" },
-          },
-          phone: "",
-          website: "",
-          company: {
-            name: name || "",
-            catchPhrase: "",
-            bs: "",
-          },
-          description: "",
-          imageURL: preview || "",
-          aufgabe: [],
-        };
-
-        setUsers((prev) => [...prev, newUser]);
+          hashedPassword: "",
+        });
+        setUsers((prev) => [...prev, newUserModal]);
       }
     } catch (error) {
       console.error("Speichern fehlgeschlagen:", error);
@@ -133,7 +115,6 @@ const Modal: React.FC<ModalProps> = ({
             value={text}
             onChange={(e) => setText(e.target.value)}
           />
-
           <Paper
             variant="outlined"
             sx={{
