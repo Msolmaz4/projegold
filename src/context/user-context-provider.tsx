@@ -17,12 +17,11 @@ const UserContextProvider: FC<UserContextProviderProps> = ({ children }) => {
   const [categories, setCategories] = useState<Category[]>(
     InitialCategories || []
   );
-  // console.log(Users, "check imported users");
+
   useEffect(() => {
     if (Users) setUsers(Users);
     if (InitialCategories) setCategories(InitialCategories);
   }, []);
-  // console.log(users, "ddddd");
 
   const deleteUser = (id: number) => {
     setUsers((prev) => prev.filter((user) => user.id !== id));
@@ -33,7 +32,7 @@ const UserContextProvider: FC<UserContextProviderProps> = ({ children }) => {
       prev.map((user) => (user.id === id ? { ...user, name, image } : user))
     );
   };
-
+  console.log(users, "usercontext");
   return (
     <UserContext.Provider
       value={{

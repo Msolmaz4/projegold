@@ -1,18 +1,9 @@
-import {
-  ArrowLoginIcon,
-  GlobalSettingsIcon,
-  LogoutIcon,
-  SettingsIcon,
-  SpieleladenIcon,
-  TaskIcon,
-} from "icons";
+import { ArrowLoginIcon, LogoutIcon, SpieleladenIcon } from "../icons";
 import { NoRouteMatch } from "../layout/NoRouteMatch";
 
 import { USER_GROUPS } from "../modules/usermanagement/roles/api";
 
-// Authentication Views
-// Other Views
-// import { Placeholder } from "modules/development/placeholder";
+
 
 import ConfirmForgotPassword from "../auth/ConfirmForgotPassword";
 import ForgotPassword from "../auth/ForgotPassword";
@@ -22,15 +13,6 @@ import { AuthRoutes } from "./auth";
 import MainLayout from "../components/MainLayout";
 import RegisterPage from "../auth/Register";
 
-/**
- * Routes by default exports the paths NOT under authentication.
- *
- * (!) Warning: Non navigation routes should not have navigation: true set
- * since they lack needed information
- *
- * (!) Warning: The order here is important, since we map over possible navigations
- * to render sidebar items
- */
 const AppRoutes = {
   start: {
     key: "start",

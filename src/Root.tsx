@@ -64,11 +64,11 @@ const ProtectedRoutes: FC = () => {
 
 const RootStart: FC = () => {
   return (
-    <AuthContextProvider>
-      <UserContextProvider>
+    <UserContextProvider>
+      <AuthContextProvider>
         <ProtectedRoutes />
-      </UserContextProvider>
-    </AuthContextProvider>
+      </AuthContextProvider>
+    </UserContextProvider>
   );
 };
 

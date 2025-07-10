@@ -11,7 +11,7 @@ import {
   Fade,
 } from "@mui/material";
 import { useUserContext } from "../../hooks/user/useUserContext";
-import type { User } from "types";
+import type { User } from "../../types";
 type ModalProps = {
   open: boolean;
   onClose: () => void;

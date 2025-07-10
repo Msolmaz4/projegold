@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   AppBar,
   Box,
@@ -27,7 +27,6 @@ const RegisterPage = () => {
   });
 
   const handleTogglePassword = () => setShowPassword(!showPassword);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -36,27 +35,49 @@ const RegisterPage = () => {
   const handleRegister = (e) => {
     e.preventDefault();
 
-    // Şifreyi hash'liyoruz (örnek SHA-256 ile)
     const hashedPassword = CryptoJS.SHA256(formData.password).toString();
+    const userExists = users.some(
+      (user) => user.email.toLowerCase() === formData.email.toLowerCase()
+    );
+    if (userExists) {
+      setFormData({ name: "", email: "", password: "" });
+      alert("Dieser Benutzer ist bereits registriert!");
+      return;
+    }
 
-    // Yeni user objesi oluşturuyoruz, şifre hash'lenmiş haliyle
     const newUser = {
-      name: formData.name,
+      id: Date.now() + Math.floor(Math.random() * 1000000),
+      name: "",
+      username: "",
       email: formData.email,
+      address: {
+        street: "",
+        suite: "",
+        city: "",
+        zipcode: "",
+        geo: { lat: "", lng: "" },
+      },
+      phone: "",
+      website: "",
+      company: {
+        name: formData.name,
+        catchPhrase: "",
+        bs: "",
+      },
+      description: "",
+      imageURL: "",
+      tasks: [],
+      aufgabe: [],
+      admin: false,
       password: hashedPassword,
     };
 
-    // setUser ile user context güncelleniyor
-    setUsers(newUser);
-
-    // Burada dilersen formu sıfırlayabilirsin
+    setUsers([...users, newUser]);
     setFormData({ name: "", email: "", password: "" });
-
-    // Kayıt sonrası yönlendirme veya bilgilendirme ekleyebilirsin
     alert("Konto wurde erfolgreich erstellt!");
     navi("/login");
   };
-
+  console.log(users, "sondurum");
   return (
     <Box sx={{ bgcolor: "#f5f5f5", minHeight: "100vh" }}>
       <AppBar position="static" elevation={0} color="default">

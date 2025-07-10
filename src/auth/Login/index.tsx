@@ -22,20 +22,11 @@ import { useAuthContext } from "../../hooks/auth/useAuthContext";
 import { Link } from "react-router-dom";
 import { AuthRoutes } from "../../rootes/auth/AuthRoutes";
 
-// E-Mail kontrol fonksiyonu
+// E-Mail kontroll
 const isValidEmail = (email: string) => {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return regex.test(email);
 };
-
-// SHA-256 hash fonksiyonu
-//const hashPassword = async (password: string) => {
-// const encoder = new TextEncoder();
-// const data = encoder.encode(password);
-// const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-// const hashArray = Array.from(new Uint8Array(hashBuffer));
-// return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-//};
 
 const LoginPage = () => {
   const [email, setEmail] = useState<string>("");
@@ -50,7 +41,6 @@ const LoginPage = () => {
     e.preventDefault();
     const newErrors: string[] = [];
 
-    // Validierung
     if (!email.trim()) {
       newErrors.push("Die E-Mail-Adresse darf nicht leer sein.");
     } else if (!isValidEmail(email)) {
@@ -60,7 +50,7 @@ const LoginPage = () => {
     if (!password.trim()) {
       newErrors.push("Das Passwortfeld darf nicht leer sein.");
     }
-    console.log({ email, password, newErrors });
+
     setErrors(newErrors);
 
     // Wenn es Fehler gibt, Vorgang abbrechen

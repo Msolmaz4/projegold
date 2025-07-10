@@ -31,7 +31,8 @@ const Users: UserWithTasks[] = [
     tasks: [],
     aufgabe: [],
     admin: true,
-    password: "123456",
+    password:
+      "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
   },
   {
     id: 2,
@@ -56,7 +57,8 @@ const Users: UserWithTasks[] = [
     imageURL: "/logos/jpmorgan.png",
     tasks: [],
     aufgabe: [],
-    password: "123456",
+    password:
+      "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
   },
   {
     id: 3,
@@ -82,7 +84,8 @@ const Users: UserWithTasks[] = [
     tasks: [],
     aufgabe: [],
     admin: true,
-    password: "123456",
+    password:
+      "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
   },
   {
     id: 4,
@@ -108,7 +111,8 @@ const Users: UserWithTasks[] = [
     tasks: [],
     aufgabe: [],
     admin: true,
-    password: "123456",
+    password:
+      "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
   },
   {
     id: 5,
@@ -134,7 +138,8 @@ const Users: UserWithTasks[] = [
     tasks: [],
     aufgabe: [],
     admin: false,
-    password: "123456",
+    password:
+      "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
   },
   {
     id: 6,
@@ -160,7 +165,8 @@ const Users: UserWithTasks[] = [
     tasks: [],
     aufgabe: [],
     admin: false,
-    password: "123456",
+    password:
+      "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
   },
   {
     id: 7,
@@ -186,7 +192,8 @@ const Users: UserWithTasks[] = [
     tasks: [],
     aufgabe: [],
     admin: false,
-    password: "123456",
+    password:
+      "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
   },
   {
     id: 8,
@@ -211,7 +218,8 @@ const Users: UserWithTasks[] = [
     imageURL: "/logos/intel.jpeg",
     tasks: [],
     aufgabe: [],
-    password: "123456",
+    password:
+      "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
   },
   {
     id: 9,
@@ -236,7 +244,8 @@ const Users: UserWithTasks[] = [
     imageURL: "/logos/bayern.png",
     tasks: [],
     aufgabe: [],
-    password: "123456",
+    password:
+      "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
   },
   {
     id: 10,
@@ -261,7 +270,8 @@ const Users: UserWithTasks[] = [
     imageURL: "/logos/bwm.jpeg",
     tasks: [],
     aufgabe: [],
-    password: "123456",
+    password:
+      "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
   },
   {
     id: 125,
@@ -288,7 +298,8 @@ const Users: UserWithTasks[] = [
     tasks: [],
     aufgabe: [],
     admin: true,
-    password: "Test@1234",
+    password:
+      "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
   },
 ];
 
