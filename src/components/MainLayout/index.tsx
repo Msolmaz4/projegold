@@ -3,16 +3,13 @@ import Unternehmen from "../../featurs/compaines/Unternehmen";
 import KategorieListe from "../../featurs/tasks/KategorieListe";
 import MilestoneOverview from "../../featurs/milestones/MilestoneOverview";
 import TaskTable from "../../featurs/aufgabe/TaskTable";
+import useStyles from "./styles";
 
-const MainLayout: FC = () => {
+const MainLayout = () => {
+  const { classes } = useStyles();
+
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        backgroundColor: "#f5f5f5",
-        padding: 2,
-      }}
-    >
+    <Box className={classes.root}>
       <Unternehmen />
       <Typography variant="h5" fontWeight="bold" gutterBottom align="center">
         AUFGABEKATEGORIEN
