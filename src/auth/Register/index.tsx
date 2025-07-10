@@ -65,12 +65,11 @@ const RegisterPage = () => {
       <AppBar position="static" elevation={0} color="default">
         <Toolbar />
       </AppBar>
-
       <Box className={classes.wrapper}>
         <Container className={classes.container}>
           <Paper className={classes.paper}>
             <Typography variant="h5" className={classes.title}>
-              Konto erstellen
+              Konto Erstellen
             </Typography>
             <Box
               component="form"

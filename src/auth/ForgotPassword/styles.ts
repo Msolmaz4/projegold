@@ -4,61 +4,49 @@ const useStyles = makeStyles()((theme) => ({
   root: {
     backgroundColor: "#f5f5f5",
     minHeight: "100vh",
-    display: "flex",
-    flexDirection: "column",
   },
   wrapper: {
-    flex: 1,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    padding: theme.spacing(3),
+    minHeight: "calc(100vh - 64px)",
     textAlign: "center",
   },
   container: {
-    maxWidth: 460,
-    width: "100%",
-  },
-  paper: {
-    padding: theme.spacing(4),
-    borderRadius: 16,
-    backgroundColor: "#fff",
-    boxShadow: theme.shadows[3],
-    marginTop: theme.spacing(2),
+    maxWidth: theme.breakpoints.values.sm,
   },
   title: {
-    fontSize: 26,
-    fontWeight: 600,
+    fontSize: theme.typography.h5.fontSize,
+    fontWeight: theme.typography.fontWeightMedium,
     marginBottom: theme.spacing(1),
-    color: "#343333",
   },
   subtitle: {
     color: theme.palette.text.secondary,
-    fontSize: 14,
-    maxWidth: 425,
-    margin: "0 auto",
     marginBottom: theme.spacing(4),
   },
-  input: {
+  paper: {
+    padding: theme.spacing(3),
+  },
+  textField: {
     marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(1),
+    maxWidth: 300,
+    "& .MuiInputBase-root": {
+      fontSize: "0.8rem",
+      height: 36,
+      padding: "0 10px",
+    },
+    "& .MuiInputBase-input": {
+      padding: 0,
+    },
   },
   button: {
     marginTop: theme.spacing(2),
-    padding: theme.spacing(1.5),
-    borderRadius: 8,
-    fontWeight: 600,
-    textTransform: "none",
+    borderRadius: 4,
+    paddingTop: theme.spacing(1.5),
+    paddingBottom: theme.spacing(1.5),
   },
-  bottomLink: {
+  linkBox: {
     marginTop: theme.spacing(3),
-    "& a": {
-      textDecoration: "none",
-      color: "grey",
-      "&:hover": {
-        color: theme.palette.primary.main,
-      },
-    },
   },
 }));
 

@@ -3,9 +3,10 @@ import { makeStyles } from "tss-react/mui";
 const useStyles = makeStyles()((theme) => ({
   root: {
     backgroundColor: "#f5f5f5",
-    minHeight: "100vh",
+    minHeight: "50vh",
     display: "flex",
     flexDirection: "column",
+    border: "1px solid yellow",
   },
   wrapper: {
     flex: 1,
@@ -17,8 +18,9 @@ const useStyles = makeStyles()((theme) => ({
     padding: theme.spacing(2),
   },
   container: {
-    maxWidth: 500,
-    width: "100%",
+    //border: "1px solid black",
+    maxWidth: 250,
+    width: "32%",
   },
   paper: {
     padding: theme.spacing(4),
