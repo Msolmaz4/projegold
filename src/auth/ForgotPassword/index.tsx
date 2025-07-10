@@ -28,7 +28,7 @@ const ForgotPasswordPage = () => {
     );
     console.log(newUser);
     if (!newUser) alert("👉 „Benutzer nicht gefunden");
-    console.log(email);
+
     navigate("/login");
   };
 

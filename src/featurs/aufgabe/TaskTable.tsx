@@ -33,8 +33,8 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import type { Task } from "../../types/Task.types";
 import { useUserContext } from "../../hooks/user/useUserContext";
-import emailjs from "@emailjs/browser";
 import { useAuthContext } from "../../hooks/auth/useAuthContext/index";
+import SendEmailToUser from "../../core/email";
 
 const extractTasksFromUsers = (users: any[]): Task[] => {
   let idCounter = 1;
@@ -216,7 +216,8 @@ const TaskTable: React.FC = () => {
               milestones: [newMilestone],
             });
           }
-          sendEmailToUser(
+
+          SendEmailToUser(
             user.email,
             "Neue Aufgabe zugewiesen",
             `Neue Mission: ${newTask.name} (${newTask.category})`
@@ -231,32 +232,6 @@ const TaskTable: React.FC = () => {
         return user;
       })
     );
-  };
-
-  const sendEmailToUser = async (
-    userEmail: string,
-    subject: string,
-    body: string
-  ) => {
-    const templateParams = {
-      to_email: userEmail,
-      subject: subject,
-      message: body,
-    };
-
-    try {
-      await emailjs.send(
-        "service_cujqktt",
-        "template_37k83vh",
-        templateParams,
-        "rfmiLie3_I9HQT2zo"
-      );
-
-      alert("Die E-Mail wurde erfolgreich gesendet!");
-    } catch (error: any) {
-      console.error("Fehler beim Senden der E-Mail:", error?.text || error);
-      alert("Beim Senden der E-Mail ist ein Fehler aufgetreten.");
-    }
   };
 
   const handleEditTask = (taskToEdit: Task) => {
@@ -324,7 +299,7 @@ const TaskTable: React.FC = () => {
             });
           }
 
-          sendEmailToUser(
+          SendEmailToUser(
             user.email,
             "Aufgabe aktualisieren",
             `Aktualisierte Mission: ${editedTask.name} (${editedTask.category})`
@@ -411,7 +386,7 @@ const TaskTable: React.FC = () => {
             });
           }
 
-          sendEmailToUser(
+          SendEmailToUser(
             user.email,
             "Neue Aufgabe zugewiesen",
             `Neue Aufgabe: ${editedTask.name} (${editedTask.category})`
@@ -459,7 +434,8 @@ const TaskTable: React.FC = () => {
               (taskCategory: any) =>
                 taskCategory.milestones && taskCategory.milestones.length > 0
             );
-          sendEmailToUser(
+
+          SendEmailToUser(
             user.email,
             "Aufgabe lösen",
             `Aufgabe gelöscht: ${taskToDelete.name} (${taskToDelete.category})`
