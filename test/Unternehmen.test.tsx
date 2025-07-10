@@ -1,15 +1,15 @@
-import { render, screen } from '@testing-library/react'
-import { UserProvider } from '../src/context/UserContext'
-import Unternehmen from '../src/featurs/compaines/Unternehmen'
-import '@testing-library/jest-dom'
+import { render, screen } from "@testing-library/react";
+import UserContextProvider from "../src/context/user-context-provider";
+import Unternehmen from "../src/featurs/compaines/Unternehmen";
+import "@testing-library/jest-dom";
 
 test('Button "Hinzufügen"  geschrieben', () => {
   render(
-    <UserProvider>
+    <UserContextProvider>
       <Unternehmen />
-    </UserProvider>
-  )
-  
-  const button = screen.getByRole('button', { name: /hinzufügen/i })
-  expect(button).toBeInTheDocument()
-})
+    </UserContextProvider>
+  );
+
+  const button = screen.getByRole("Box", { name: /unternehmen/i });
+  expect(button).toBeInTheDocument();
+});

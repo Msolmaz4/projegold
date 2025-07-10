@@ -7,17 +7,26 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-
 import { AuthRoutes } from "../../rootes/auth/AuthRoutes";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AnmeldungButton from "../../core/button/AnmeldungButton";
+
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
+  const navigate = useNavigate();
+
+  const handleEdit = () => {
+    if (email.trim().length === 0) {
+      alert("Bitte Email eingeben");
+      return;
+    }
+
+    navigate("/login");
+  };
 
   return (
     <Box sx={{ bgcolor: "#f5f5f5", minHeight: "100vh" }}>
       <AnmeldungButton />
-
       <Box
         sx={{
           display: "flex",
@@ -50,6 +59,7 @@ const ForgotPasswordPage = () => {
               variant="contained"
               color="primary"
               sx={{ mt: 2, borderRadius: 4, py: 1.5 }}
+              onClick={() => handleEdit()}
             >
               Passwort zurücksetzen
             </Button>

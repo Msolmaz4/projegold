@@ -15,6 +15,14 @@ const Hinzufugen = ({ variant, name, onClick }) => {
 
   return (
     <Stack direction="row" spacing={2}>
+      <Button
+        variant={variant}
+        color={isAdmin ? "error" : "error"}
+        startIcon={<LogoutIcon />}
+        onClick={handleLogout}
+      >
+        Logout
+      </Button>
       {isAdmin && (
         <Button
           variant={variant}
@@ -25,14 +33,6 @@ const Hinzufugen = ({ variant, name, onClick }) => {
           {name}
         </Button>
       )}
-      <Button
-        variant={variant}
-        color={isAdmin ? "error" : "error"}
-        startIcon={<LogoutIcon />}
-        onClick={handleLogout}
-      >
-        Logout
-      </Button>
     </Stack>
   );
 };

@@ -211,7 +211,7 @@ const ChangeTemporaryPassword: FC = () => {
             <div className={classes.resendCodeContainer}>
               <Link
                 className={classes.resendCodeLink}
-                to={AuthRoutes.forgotPassword}
+                to={AuthRoutes.}
               >
                 Code erneut senden
               </Link>

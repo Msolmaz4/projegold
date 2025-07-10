@@ -4,13 +4,14 @@ import {
   TextField,
   Button,
   Stack,
-  Link,
   Container,
 } from "@mui/material";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import MarkEmailReadIcon from "@mui/icons-material/MarkEmailRead";
 import LinkIcon from "@mui/icons-material/Link";
 import AnmeldungButton from "../../core/button/AnmeldungButton";
+import { AuthRoutes } from "../../rootes";
+import { Link } from "react-router-dom";
 
 export default function ResetPassword() {
   return (
@@ -85,7 +86,11 @@ export default function ResetPassword() {
               <Button variant="contained" color="primary" fullWidth>
                 Passwort ändern
               </Button>
-              <Link href="#" underline="hover" fontSize={14}>
+              <Link
+                to={AuthRoutes.forgotPassword}
+                underline="hover"
+                fontSize={14}
+              >
                 Code erneut senden
               </Link>
             </Stack>
