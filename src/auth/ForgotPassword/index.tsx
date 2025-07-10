@@ -10,17 +10,25 @@ import {
 import { AuthRoutes } from "../../rootes/auth/AuthRoutes";
 import { Link, useNavigate } from "react-router-dom";
 import AnmeldungButton from "../../core/button/AnmeldungButton";
+import { useUserContext } from "../../hooks/user/useUserContext";
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
+  const { users } = useUserContext();
+  console.log(users);
 
   const handleEdit = () => {
     if (email.trim().length === 0) {
       alert("Bitte Email eingeben");
       return;
     }
-
+    const newUser = users?.some(
+      (u) => u.email.toLowerCase() === email.trim().toLowerCase()
+    );
+    console.log(newUser);
+    if (!newUser) alert("👉 „Benutzer nicht gefunden");
+    console.log(email);
     navigate("/login");
   };
 
