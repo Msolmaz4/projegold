@@ -34,6 +34,7 @@ import { CSS } from "@dnd-kit/utilities";
 import type { Task } from "../../types/Task.types";
 import { useUserContext } from "../../hooks/user/useUserContext";
 import emailjs from "@emailjs/browser";
+import { useAuthContext } from "../../hooks/auth/useAuthContext/index";
 
 const extractTasksFromUsers = (users: any[]): Task[] => {
   let idCounter = 1;
@@ -157,7 +158,7 @@ const TaskTable: React.FC = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-
+  const { userData } = useAuthContext();
   //const resend = new Resend(import.meta.env.VITE_APP_NAME);
   //const resend = new Resend('re_DbgWj3qs_HgnY42PviabuFemxKybsLU9z');
 
@@ -270,7 +271,7 @@ const TaskTable: React.FC = () => {
         const taskInUserAufgabe = user.aufgabe?.find(
           (t: any) => t.id === editedTask.id
         );
-        // Eğer task bu user'ınsa ve firma DEĞİŞMEMİŞSE, sadece güncelle
+
         if (taskInUserAufgabe && taskInUserAufgabe.firma === editedTask.firma) {
           const updatedAufgabe = user.aufgabe.map((t: any) =>
             t.id === editedTask.id ? editedTask : t
@@ -699,9 +700,11 @@ const TaskTable: React.FC = () => {
           </Select>
         </FormControl>
 
-        <Button variant="contained" onClick={() => setOpenDialog(true)}>
-          + Aufgabe hinzufügen
-        </Button>
+        {userData.admin && (
+          <Button variant="contained" onClick={() => setOpenDialog(true)}>
+            + Aufgabe hinzufügen
+          </Button>
+        )}
       </Box>
 
       <AddTaskModal

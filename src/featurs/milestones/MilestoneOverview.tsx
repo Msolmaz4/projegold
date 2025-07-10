@@ -16,9 +16,11 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useUserContext } from "../../hooks/user/useUserContext";
 import type { Aufgabe, User } from "../../types";
+import { useAuthContext } from "../../hooks/auth/useAuthContext";
 
 const MilestoneOverview: React.FC = () => {
   const { users } = useUserContext();
+  const { userData } = useAuthContext();
   const [expandedCompanies, setExpandedCompanies] = useState<Set<number>>(
     new Set()
   );
@@ -76,9 +78,11 @@ const MilestoneOverview: React.FC = () => {
       </Typography>
 
       <Box display="flex" justifyContent="flex-end" mb={2}>
-        <Button variant="contained" onClick={handleAddClick}>
-          Hinzufügen
-        </Button>
+        {userData?.admin && (
+          <Button variant="contained" onClick={handleAddClick}>
+            Hinzufügen
+          </Button>
+        )}
       </Box>
 
       {selectedUsers.length === 0 && (

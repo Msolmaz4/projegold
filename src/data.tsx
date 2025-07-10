@@ -217,6 +217,7 @@ const Users: UserWithTasks[] = [
     description: "Führender Chip-Hersteller weltweit.",
     imageURL: "/logos/intel.jpeg",
     tasks: [],
+    admin: false,
     aufgabe: [],
     password:
       "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
@@ -244,6 +245,7 @@ const Users: UserWithTasks[] = [
     imageURL: "/logos/bayern.png",
     tasks: [],
     aufgabe: [],
+    admin: false,
     password:
       "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
   },
@@ -270,6 +272,7 @@ const Users: UserWithTasks[] = [
     imageURL: "/logos/bwm.jpeg",
     tasks: [],
     aufgabe: [],
+    admin: false,
     password:
       "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
   },

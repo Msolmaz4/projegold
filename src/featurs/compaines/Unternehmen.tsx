@@ -12,6 +12,7 @@ import Cards from "../../components/Cards";
 import { useUserContext } from "../../hooks/user/useUserContext";
 import "swiper/css";
 import "swiper/css/navigation";
+import Hinzufugen from "../../core/button/HinzufugenButton/index";
 
 function Unternehmen() {
   const [modal, setModal] = useState<boolean>(false);
@@ -64,13 +65,12 @@ function Unternehmen() {
         )}
 
         <Box sx={{ marginLeft: "auto" }}>
-          <Button
+          <Hinzufugen
             variant="contained"
+            name="Hinzufügen"
             onClick={() => setModal(true)}
             startIcon={<AddIcon />}
-          >
-            Hinzufügen
-          </Button>
+          />
         </Box>
       </Box>
 

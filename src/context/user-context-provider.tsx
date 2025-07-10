@@ -32,7 +32,7 @@ const UserContextProvider: FC<UserContextProviderProps> = ({ children }) => {
       prev.map((user) => (user.id === id ? { ...user, name, image } : user))
     );
   };
-  console.log(users, "usercontext");
+  //console.log(users, "usercontext");
   return (
     <UserContext.Provider
       value={{

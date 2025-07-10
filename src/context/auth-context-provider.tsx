@@ -19,7 +19,7 @@ const AuthContextProvider: FC<AuthContextProviderProps> = ({ children }) => {
   const [globalSettings, setGlobalSettings] = useState(null);
 
   const navigate = useNavigate();
-  console.log(users, "auth");
+
   const loginHandler = async (user: User) => {
     setIsLoading(true);
 
@@ -29,7 +29,7 @@ const AuthContextProvider: FC<AuthContextProviderProps> = ({ children }) => {
           u.email == user.email &&
           u.password == CryptoJS.SHA256(user.password).toString()
       );
-      console.log(foundUser);
+      console.log(foundUser, "auth");
       if (foundUser) {
         setUserData(foundUser);
         setIsAuth(true);

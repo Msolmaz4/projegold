@@ -23,6 +23,7 @@ import { v4 as uuidv4 } from "uuid";
 import type { Category } from "../../types/Categories.types";
 import { useUserContext } from "../../hooks/user/useUserContext";
 import Grid from "@mui/material/Grid";
+import { useAuthContext } from "../../hooks/auth/useAuthContext";
 
 const KategorieListe: React.FC = () => {
   const { categories, setCategories } = useUserContext();
@@ -37,6 +38,7 @@ const KategorieListe: React.FC = () => {
   const [selectedSubId, setSelectedSubId] = useState<string | null>(null);
   const [subEditName, setSubEditName] = useState("");
   const [subEditDialogOpen, setSubEditDialogOpen] = useState(false);
+  const { userData } = useAuthContext();
 
   const openMenu = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
     setAnchorEl(e.currentTarget);
@@ -183,13 +185,15 @@ const KategorieListe: React.FC = () => {
   return (
     <Box p={2}>
       <Box display="flex" justifyContent="flex-end" mb={2}>
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          onClick={() => setDialogOpen(true)}
-        >
-          Hinzufügen
-        </Button>
+        {userData?.admin && (
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            onClick={() => setDialogOpen(true)}
+          >
+            Hinzufügen
+          </Button>
+        )}
       </Box>
 
       <Grid container spacing={2}>
