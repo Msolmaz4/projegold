@@ -14,7 +14,8 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useUserContext } from "../../hooks/user/useUserContext";
 import CryptoJS from "crypto-js";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { AuthRoutes } from "../../rootes";
 
 const RegisterPage = () => {
   const { setUsers, users } = useUserContext();
@@ -154,6 +155,9 @@ const RegisterPage = () => {
                 type="submit"
               >
                 Registrieren
+              </Button>
+              <Button variant="text" size="small" sx={{ mt: 2 }}>
+                <Link to={AuthRoutes.login}>Zurück</Link>
               </Button>
             </Box>
           </Paper>

@@ -7,20 +7,15 @@ import {
   IconButton,
   InputAdornment,
   Paper,
-  AppBar,
-  Toolbar,
   Container,
   Alert,
   Stack,
 } from "@mui/material";
-import {
-  Visibility,
-  VisibilityOff,
-  Login as LoginIcon,
-} from "@mui/icons-material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useAuthContext } from "../../hooks/auth/useAuthContext";
 import { Link } from "react-router-dom";
 import { AuthRoutes } from "../../rootes/auth/AuthRoutes";
+import AnmeldungButton from "../../core/button/AnmeldungButton";
 
 // E-Mail kontroll
 const isValidEmail = (email: string) => {
@@ -46,21 +41,17 @@ const LoginPage = () => {
     } else if (!isValidEmail(email)) {
       newErrors.push("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
     }
-
     if (!password.trim()) {
       newErrors.push("Das Passwortfeld darf nicht leer sein.");
     }
-
     setErrors(newErrors);
 
     // Wenn es Fehler gibt, Vorgang abbrechen
     if (newErrors.length > 0) return;
-
     const user = {
       email,
       password,
     };
-
     try {
       await loginHandler(user);
     } catch (error) {
@@ -71,18 +62,7 @@ const LoginPage = () => {
 
   return (
     <Box sx={{ bgcolor: "#f5f5f5", minHeight: "100vh" }}>
-      <AppBar position="static" elevation={0} color="default">
-        <Toolbar sx={{ justifyContent: "flex-end" }}>
-          <Button
-            variant="outlined"
-            startIcon={<LoginIcon />}
-            sx={{ borderRadius: 10, textTransform: "none" }}
-          >
-            <Link to={AuthRoutes.register}>Anmelden</Link>
-          </Button>
-        </Toolbar>
-      </AppBar>
-
+      <AnmeldungButton />
       <Box
         sx={{
           display: "flex",
@@ -128,7 +108,6 @@ const LoginPage = () => {
               <Box textAlign="right" mt={1} mb={2}>
                 <Link to={AuthRoutes.forgotPassword}>Passwort vergessen?</Link>
               </Box>
-
               {errors.length > 0 && (
                 <Stack spacing={1} mb={2}>
                   {errors.map((err, i) => (
@@ -138,7 +117,6 @@ const LoginPage = () => {
                   ))}
                 </Stack>
               )}
-
               <Button
                 type="submit"
                 fullWidth

@@ -16,7 +16,6 @@ const AuthContextProvider: FC<AuthContextProviderProps> = ({ children }) => {
   const [isAuth, setIsAuth] = useState(false);
   const [userData, setUserData] = useState<User | null>(null);
   const [cognitoUser, setCognitoUser] = useState(null);
-  const [globalSettings, setGlobalSettings] = useState(null);
 
   const navigate = useNavigate();
 
@@ -67,11 +66,6 @@ const AuthContextProvider: FC<AuthContextProviderProps> = ({ children }) => {
     // Kullanıcı verisini yenilemek için işlev ekle
   };
 
-  const checkUserExists = async (username: string) => {
-    // Kullanıcı var mı kontrol et, örnek false dönüyoruz
-    return false;
-  };
-
   return (
     <AuthContext.Provider
       value={{
@@ -81,11 +75,8 @@ const AuthContextProvider: FC<AuthContextProviderProps> = ({ children }) => {
         loginHandler,
         logoutHandler,
         reloadUserData,
-        checkUserExists,
         cognitoUser,
         userData,
-        globalSettings,
-        setGlobalSettings,
       }}
     >
       {children}

@@ -4,7 +4,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { useMediaQuery, useTheme } from "@mui/material";
 import { useState } from "react";
-import { Modal } from "utils";
 
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -13,6 +12,7 @@ import { useUserContext } from "../../hooks/user/useUserContext";
 import "swiper/css";
 import "swiper/css/navigation";
 import Hinzufugen from "../../core/button/HinzufugenButton/index";
+import { Modal } from "../../utils";
 
 function Unternehmen() {
   const [modal, setModal] = useState<boolean>(false);
@@ -69,7 +69,6 @@ function Unternehmen() {
             variant="contained"
             name="Hinzufügen"
             onClick={() => setModal(true)}
-            startIcon={<AddIcon />}
           />
         </Box>
       </Box>
@@ -143,13 +142,16 @@ function Unternehmen() {
             1800: { slidesPerView: 6 },
           }}
         >
-          {users?.map((user) => (
-            <SwiperSlide key={user.id}>
-              <Box sx={{ px: "10px", py: "10px" }}>
-                <Cards user={user} />
-              </Box>
-            </SwiperSlide>
-          ))}
+          {users
+            ?.slice()
+            .reverse()
+            .map((user) => (
+              <SwiperSlide key={user.id}>
+                <Box sx={{ px: "10px", py: "10px" }}>
+                  <Cards user={user} />
+                </Box>
+              </SwiperSlide>
+            ))}
         </Swiper>
       </Box>
     </Box>

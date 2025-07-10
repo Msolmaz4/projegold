@@ -1,33 +1,22 @@
 import { useState } from "react";
 import {
-  AppBar,
   Box,
   Button,
   Container,
   Paper,
   TextField,
-  Toolbar,
   Typography,
 } from "@mui/material";
-import { Login as LoginIcon } from "@mui/icons-material";
+
 import { AuthRoutes } from "../../rootes/auth/AuthRoutes";
 import { Link } from "react-router-dom";
+import AnmeldungButton from "../../core/button/AnmeldungButton";
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
 
   return (
     <Box sx={{ bgcolor: "#f5f5f5", minHeight: "100vh" }}>
-      <AppBar position="static" elevation={0} color="default">
-        <Toolbar sx={{ justifyContent: "flex-end" }}>
-          <Button
-            variant="outlined"
-            startIcon={<LoginIcon />}
-            sx={{ borderRadius: 10, textTransform: "none" }}
-          >
-            <Link to={AuthRoutes.register}>Anmelden</Link>
-          </Button>
-        </Toolbar>
-      </AppBar>
+      <AnmeldungButton />
 
       <Box
         sx={{
@@ -67,7 +56,7 @@ const ForgotPasswordPage = () => {
           </Paper>
 
           <Box mt={3}>
-            <Link href="#" variant="body2">
+            <Link to={AuthRoutes.confirmForgotPassword}>
               Ich habe bereits einen Code.
             </Link>
           </Box>
