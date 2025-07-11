@@ -13,7 +13,6 @@ import { Modal } from "../../utils";
 import Cards from "../../components/Cards";
 import useStyles from "./styles";
 
-
 function Unternehmen() {
   const [modal, setModal] = useState<boolean>(false);
   const { users, setUsers } = useUserContext();
@@ -60,13 +59,21 @@ function Unternehmen() {
 
       <Box className={classes.swiperWrapper}>
         <IconButton
-          className={cx("custom-swiper-prev", classes.navButton, classes.navButtonPrev)}
+          className={cx(
+            "custom-swiper-prev",
+            classes.navButton,
+            classes.navButtonPrev
+          )}
           aria-label="previous"
         >
           <ArrowBackIosNewIcon />
         </IconButton>
         <IconButton
-          className={cx("custom-swiper-next", classes.navButton, classes.navButtonNext)}
+          className={cx(
+            "custom-swiper-next",
+            classes.navButton,
+            classes.navButtonNext
+          )}
           aria-label="next"
         >
           <ArrowForwardIosIcon />

@@ -57,6 +57,8 @@ const Modal: React.FC<ModalProps> = ({
   }, [initialData, open]);
 
   const handleSave = () => {
+    console.log("ddddddd");
+
     try {
       if (initialData) {
         const updatedData = {
@@ -67,13 +69,14 @@ const Modal: React.FC<ModalProps> = ({
         onSave(updatedData);
       } else {
         const name = text;
-
         const newUserModal = NewUser({
           name: name || "",
           email: "",
           hashedPassword: "",
         });
-        setUsers((prev) => [...prev, newUserModal]);
+
+        // BU KISIM GİTMELİ: setUsers((prev) => [...prev, newUserModal]);
+        onSave(newUserModal); // ✅ onSave her zaman çağrılmalı
       }
     } catch (error) {
       console.error("Speichern fehlgeschlagen:", error);
@@ -84,7 +87,6 @@ const Modal: React.FC<ModalProps> = ({
       setPreview(null);
     }
   };
-
   return (
     <MuiModal
       open={open}

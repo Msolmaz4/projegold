@@ -28,6 +28,7 @@ const Cards = ({ user }: CardsProps) => {
 
   useEffect(() => {
     if (user.image) {
+      console.log("geldik");
       const logo = URL.createObjectURL(user.image);
       setImageUrl(logo);
       return () => URL.revokeObjectURL(logo);
