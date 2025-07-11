@@ -13,6 +13,7 @@ import {
 import { useEffect, useState } from "react";
 import type { Task } from "../../types/Task.types";
 import { useUserContext } from "../../hooks/user/useUserContext";
+import TaskTemplate from "../../core/task";
 
 type ModalProps = {
   open: boolean;
@@ -31,22 +32,7 @@ const AddTaskModal: React.FC<ModalProps> = ({
 }) => {
   const { categories, users } = useUserContext();
   // console.log(users, "adtask");
-  const [task, setTask] = useState<Task>({
-    id: new Date().getTime(),
-    category: "",
-    subcategory: "",
-    name: "",
-    vorarbeit: 0,
-    umsetzung: 0,
-    kontrolle: 0,
-    kosten: 0,
-    status: "offen",
-    milestone: "",
-    milestoneDate: "",
-    dueDate: "",
-    firma: "",
-    milestones: [],
-  });
+  const [task, setTask] = useState<Task>({ ...TaskTemplate });
 
   useEffect(() => {
     if (existingTask) {
@@ -58,6 +44,7 @@ const AddTaskModal: React.FC<ModalProps> = ({
       );
 
       setTask({
+        ...TaskTemplate,
         ...existingTask,
         category: categoryObj ? categoryObj.id.toString() : "",
         subcategory: subcategoryObj ? subcategoryObj.id : "",
@@ -66,20 +53,8 @@ const AddTaskModal: React.FC<ModalProps> = ({
       });
     } else {
       setTask({
-        id: new Date().getTime(),
-        category: "",
-        subcategory: "",
-        name: "",
-        vorarbeit: 0,
-        umsetzung: 0,
-        kontrolle: 0,
-        kosten: 0,
-        status: "offen",
-        milestone: "",
+        ...TaskTemplate,
         milestoneDate: new Date().toISOString().split("T")[0],
-        dueDate: "",
-        firma: "",
-        milestones: [],
       });
     }
   }, [existingTask, open, categories]);
