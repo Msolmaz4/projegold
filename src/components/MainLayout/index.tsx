@@ -3,7 +3,6 @@ import Unternehmen from "../Company";
 import useStyles from "./styles";
 import MilestoneOverview from "../MilestoneOwer";
 import TaskTable from "../../featurs/aufgabe/TaskTable";
-//import KategorieListe from "../../featurs/tasks/KategorieListe";
 import KategorieListe from "../Tasks";
 
 const MainLayout = () => {
