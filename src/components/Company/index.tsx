@@ -5,23 +5,24 @@ import { useMediaQuery, useTheme } from "@mui/material";
 import { useState } from "react";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import Cards from "../../components/Cards";
 import { useUserContext } from "../../hooks/user/useUserContext";
 import "swiper/css";
 import "swiper/css/navigation";
 import Hinzufugen from "../../core/button/HinzufugenButton/index";
 import { Modal } from "../../utils";
+import Cards from "../../components/Cards";
+import useStyles from "./styles";
+
 
 function Unternehmen() {
   const [modal, setModal] = useState<boolean>(false);
   const { users, setUsers } = useUserContext();
-  //console.log(users,'unternej´hmen');
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
-  // if (isLoading) return <Typography>Lädt...</Typography>;
-  // if (error) return <Typography>Fehler beim Laden.</Typography>;
+  const { classes, cx } = useStyles();
+
   return (
-    <Box sx={{ mt: 4 }}>
+    <Box className={classes.root}>
       {modal && (
         <Modal
           open={modal}
@@ -34,35 +35,21 @@ function Unternehmen() {
         />
       )}
 
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          mb: 2,
-          position: "relative",
-        }}
-      >
+      <Box className={classes.header}>
         {!isSmallScreen && (
-          <Box
-            sx={{
-              position: "absolute",
-              left: "50%",
-              transform: "translateX(-50%)",
-              // border: "1px solid red",
-            }}
-          >
+          <Box className={classes.headerTitleBox}>
             <Typography
               variant="h5"
-              fontWeight="bold"
               gutterBottom
               align="center"
+              className={classes.headerTitle}
             >
               UNTERNEHMEN
             </Typography>
           </Box>
         )}
 
-        <Box sx={{ marginLeft: "auto" }}>
+        <Box className={classes.addButtonBox}>
           <Hinzufugen
             variant="contained"
             name="Hinzufügen"
@@ -71,58 +58,19 @@ function Unternehmen() {
         </Box>
       </Box>
 
-      <Box
-        sx={{
-          position: "relative",
-          mt: 3,
-          // border: "1px solid red",
-          minHeight: 220,
-          justifyContent: "center",
-          alignItems: "center",
-          display: "flex",
-          px: 4,
-          // border: "1px solid red",
-        }}
-      >
-        {/* linker blauer Pfeil */}
+      <Box className={classes.swiperWrapper}>
         <IconButton
-          className="custom-swiper-prev"
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: 2,
-            transform: "translateY(-50%)",
-            zIndex: 10,
-            backgroundColor: "#1976d2",
-            color: "white",
-            "&:hover": {
-              backgroundColor: "#1565c0",
-            },
-          }}
+          className={cx("custom-swiper-prev", classes.navButton, classes.navButtonPrev)}
+          aria-label="previous"
         >
           <ArrowBackIosNewIcon />
         </IconButton>
-
-        {/* rechter blauer Pfeil */}
         <IconButton
-          className="custom-swiper-next"
-          sx={{
-            position: "absolute",
-            top: "50%",
-            right: 1,
-            transform: "translateY(-50%)",
-            zIndex: 10,
-            backgroundColor: "#1976d2",
-            color: "white",
-            "&:hover": {
-              backgroundColor: "#1565c0",
-            },
-          }}
+          className={cx("custom-swiper-next", classes.navButton, classes.navButtonNext)}
+          aria-label="next"
         >
           <ArrowForwardIosIcon />
         </IconButton>
-
-        {/* SWIPER */}
         <Swiper
           modules={[Navigation]}
           spaceBetween={20}
@@ -136,7 +84,6 @@ function Unternehmen() {
             900: { slidesPerView: 3 },
             1000: { slidesPerView: 4 },
             1600: { slidesPerView: 5 },
-
             1800: { slidesPerView: 6 },
           }}
         >
@@ -145,7 +92,7 @@ function Unternehmen() {
             .reverse()
             .map((user) => (
               <SwiperSlide key={user.id}>
-                <Box sx={{ px: "10px", py: "10px" }}>
+                <Box className={classes.slideBox}>
                   <Cards user={user} />
                 </Box>
               </SwiperSlide>

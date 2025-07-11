@@ -8,11 +8,12 @@ import {
   Tooltip,
 } from "@mui/material";
 import BusinessIcon from "@mui/icons-material/Business";
-import type { User } from "../types/User.types";
+import type { User } from "../../types/User.types";
 import { useEffect, useState } from "react";
-import Details from "./Details";
-import { useUserContext } from "../hooks/user/useUserContext";
-import { useAuthContext } from "../hooks/auth/useAuthContext";
+import { useAuthContext } from "../../hooks/auth/useAuthContext";
+import { useUserContext } from "../../hooks/user/useUserContext";
+import Details from "../Details";
+import useStyles from "./styles";
 
 type CardsProps = {
   user: User;
@@ -23,6 +24,7 @@ const Cards = ({ user }: CardsProps) => {
   const [openDetails, setOpenDetails] = useState(false);
   const { users, setUsers } = useUserContext();
   const { userData } = useAuthContext();
+  const { classes, cx } = useStyles();
 
   useEffect(() => {
     if (user.image) {
@@ -33,12 +35,14 @@ const Cards = ({ user }: CardsProps) => {
       setImageUrl(user?.imageURL);
     }
   }, [user.image, user.imageURL]);
+
   const handleOpen = () => {
     if (isAuthorized) {
       setOpenDetails(true);
     }
   };
   const handleClose = () => setOpenDetails(false);
+
   const handleDelete = (userId: number) => {
     setUsers(users.filter((u) => u.id !== userId));
     handleClose();
@@ -51,45 +55,24 @@ const Cards = ({ user }: CardsProps) => {
   return (
     <>
       <Tooltip title={isAuthorized ? "" : "Unbefugter Zugriff!"} arrow>
-        <Box>
+        <Box className={classes.cardBox}>
           <Card
             onClick={handleOpen}
-            sx={{
-              minWidth: 160,
-              textAlign: "center",
-              py: 2,
-              px: 1,
-              border: "1px solid #ccc",
-              borderRadius: 2,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              cursor: isAuthorized ? "pointer" : "not-allowed",
-              transition: "background-color 0.2s ease-in-out",
-              backgroundColor: isSameCompany ? "#e3f2fd" : "#fff",
-              "&:hover": {
-                backgroundColor: isSameCompany
-                  ? "#bbdefb"
-                  : isAuthorized
-                    ? "#f5f5f5"
-                    : "#fff",
-              },
-            }}
+            className={cx(
+              classes.card,
+              isSameCompany && classes.cardSameCompany,
+              !isAuthorized && classes.notAllowed
+            )}
             elevation={0}
           >
             <Avatar
               src={imageUrl || ""}
               alt={user.name}
-              sx={{
-                bgcolor: "#1976d2",
-                width: 64,
-                height: 64,
-                mb: 1,
-              }}
+              className={classes.avatar}
             >
               {!imageUrl && <BusinessIcon />}
             </Avatar>
-            <CardContent sx={{ p: 1 }}>
+            <CardContent className={classes.cardContent}>
               <Typography variant="subtitle1" sx={{ mb: 1 }}>
                 {user.company?.name ?? user.name ?? "Kein Name vorhanden"}
               </Typography>
@@ -99,21 +82,7 @@ const Cards = ({ user }: CardsProps) => {
       </Tooltip>
 
       <Modal open={openDetails} onClose={handleClose}>
-        <Box
-          sx={{
-            position: "absolute" as const,
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: { xs: "90%", sm: 600 },
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            p: 4,
-            borderRadius: 2,
-            maxHeight: "90vh",
-            overflowY: "auto",
-          }}
-        >
+        <Box className={classes.modalBox}>
           <Details user={user} imageUrl={imageUrl} onDelete={handleDelete} />
         </Box>
       </Modal>

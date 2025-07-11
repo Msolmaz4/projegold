@@ -14,9 +14,10 @@ import {
   IconButton,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useUserContext } from "../../hooks/user/useUserContext";
 import type { Aufgabe, User } from "../../types";
 import { useAuthContext } from "../../hooks/auth/useAuthContext";
+import { useUserContext } from "../../hooks/user/useUserContext";
+import useStyles from "./styles";
 
 const MilestoneOverview: React.FC = () => {
   const { users } = useUserContext();
@@ -26,7 +27,7 @@ const MilestoneOverview: React.FC = () => {
   );
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [selectDialogOpen, setSelectDialogOpen] = useState(false);
-
+  const { classes } = useStyles();
   const handleAddClick = () => setSelectDialogOpen(true);
 
   const handleUserSelect = (userId: number) => {
@@ -72,7 +73,7 @@ const MilestoneOverview: React.FC = () => {
   };
 
   return (
-    <Paper sx={{ p: 4, mx: "auto", mt: 5 }}>
+    <Paper className={classes.paper}>
       <Typography variant="h5" fontWeight="bold" gutterBottom align="center">
         MEILENSTEIN
       </Typography>
@@ -97,24 +98,11 @@ const MilestoneOverview: React.FC = () => {
         return (
           <Box
             key={user.id}
-            sx={{
-              mb: 3,
-              border: "1px solid #ccc",
-              borderRadius: 2,
-              p: 2,
-              cursor: "pointer",
-            }}
+            className={classes.companyBox}
             onClick={() => toggleUser(user.id)}
           >
             <Stack direction="row" spacing={2} alignItems="center">
-              <Box
-                sx={{
-                  width: 160,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                }}
-              >
+              <Box className={classes.companyHeader}>
                 <img src={user.imageURL} alt={user.name} width={30} />
                 <Typography fontWeight="bold">{user.company.name}</Typography>
               </Box>
@@ -122,67 +110,27 @@ const MilestoneOverview: React.FC = () => {
                 <LinearProgress
                   variant="determinate"
                   value={progressPercent}
-                  sx={{ height: 10, borderRadius: 5 }}
+                  className={classes.progressBar}
                 />
               </Box>
-              <Box sx={{ width: 50, textAlign: "right" }}>
+              <Box className={classes.progressText}>
                 <Typography variant="body2">
                   {progressPercent.toFixed(0)}%
                 </Typography>
               </Box>
 
-              <Box
-                sx={{
-                  width: 60,
-                  textAlign: "center",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Typography
-                  variant="caption"
-                  sx={{ textTransform: "lowercase", fontSize: 10, mb: 0.5 }}
-                >
-                  vorarbeit
-                </Typography>
-                <Typography variant="caption">{remaining.vorarbeit}</Typography>
-              </Box>
+              {["vorarbeit", "umsetzung", "kontrolle"].map((key) => (
+                <Box key={key} className={classes.remainingBox}>
+                  <Typography
+                    className={classes.remainingCaption}
+                    variant="caption"
+                  >
+                    {key}
+                  </Typography>
+                  <Typography variant="caption">{remaining[key]}</Typography>
+                </Box>
+              ))}
 
-              <Box
-                sx={{
-                  width: 60,
-                  textAlign: "center",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Typography
-                  variant="caption"
-                  sx={{ textTransform: "lowercase", fontSize: 10, mb: 0.5 }}
-                >
-                  umsetzung
-                </Typography>
-                <Typography variant="caption">{remaining.umsetzung}</Typography>
-              </Box>
-
-              <Box
-                sx={{
-                  width: 60,
-                  textAlign: "center",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Typography
-                  variant="caption"
-                  sx={{ textTransform: "lowercase", fontSize: 10, mb: 0.5 }}
-                >
-                  kontrolle
-                </Typography>
-                <Typography variant="caption">{remaining.kontrolle}</Typography>
-              </Box>
-
-              {/* DELETE */}
               <IconButton
                 aria-label="delete"
                 onClick={(event) => {
@@ -201,15 +149,7 @@ const MilestoneOverview: React.FC = () => {
                   <Typography variant="body2">Keine Aufgaben.</Typography>
                 ) : (
                   user.aufgabe.map((task, idx) => (
-                    <Box
-                      key={idx}
-                      sx={{
-                        p: 1,
-                        borderBottom: "1px solid #eee",
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
+                    <Box key={idx} className={classes.taskBox}>
                       <Typography variant="body2">{task.name}</Typography>
                       <Typography
                         variant="caption"
@@ -242,14 +182,7 @@ const MilestoneOverview: React.FC = () => {
           {users.map((user) => (
             <Box
               key={user.id}
-              sx={{
-                p: 1,
-                mb: 1,
-                border: "1px solid #ddd",
-                borderRadius: 1,
-                cursor: "pointer",
-                "&:hover": { backgroundColor: "#eee" },
-              }}
+              className={classes.userSelectBox}
               onClick={() => handleUserSelect(user.id)}
             >
               <Stack direction="row" spacing={1} alignItems="center">

@@ -15,10 +15,12 @@ import {
 import { useState } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import BusinessIcon from "@mui/icons-material/Business";
-import EditUserModal from "./EditUserModal";
-import type { User } from "../types/User.types";
+import type { User } from "../../types/User.types";
 import dayjs from "dayjs";
 import "dayjs/locale/de";
+import EditUserModal from "../../utils/EditModal";
+import useStyles from "./styles";
+
 dayjs.locale("de");
 
 type Props = {
@@ -29,6 +31,7 @@ type Props = {
 };
 
 const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
+  const { classes } = useStyles();
   const [tabIndex, setTabIndex] = useState(0);
   const [selectedAufgabe, setSelectedAufgabe] = useState<number | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -89,17 +92,12 @@ const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
     }
   };
 
-  //console.log(user, "detail");
-
   return (
     <Box mt={4} borderTop="1px solid #ddd" pt={4}>
       {/* Header */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Box display="flex" alignItems="center" gap={2}>
-          <Avatar
-            src={imageUrl || ""}
-            sx={{ width: 64, height: 64, bgcolor: "#1976d2" }}
-          >
+          <Avatar src={imageUrl || ""} className={classes.avatar}>
             {!imageUrl && <BusinessIcon />}
           </Avatar>
           <Typography variant="h5">
@@ -153,14 +151,11 @@ const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
               <Grid item xs={12} sm={6} md={4} key={index}>
                 <Card
                   onClick={() => setSelectedAufgabe(index)}
-                  sx={{
-                    cursor: "pointer",
-                    border:
-                      selectedAufgabe === index
-                        ? "2px solid #1976d2"
-                        : "1px solid #ccc",
-                    "&:hover": { backgroundColor: "#f0f0f0" },
-                  }}
+                  className={
+                    selectedAufgabe === index
+                      ? classes.selectedCard
+                      : classes.unselectedCard
+                  }
                 >
                   <CardContent>
                     <Typography align="center" variant="subtitle1">
@@ -176,7 +171,7 @@ const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
 
       {/* Aufgabenbereich Details mit Meilensteinen */}
       {selectedAufgabe !== null && filteredTasks[selectedAufgabe] && (
-        <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
+        <Paper elevation={3} className={classes.paper}>
           <Typography variant="h6" gutterBottom>
             📍 Meilensteine
           </Typography>
@@ -196,14 +191,17 @@ const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
                   color = "#f57c00";
                 }
               }
-
-              // Milestone içindeki status kontrolü eklendi
               const isErledigt = milestone.status === "erledigt";
               const displayText = milestone.title?.trim()
                 ? milestone.title
                 : "";
               return (
-                <Typography key={idx} variant="body1" sx={{ mb: 1, color }}>
+                <Typography
+                  key={idx}
+                  variant="body1"
+                  className={classes.milestoneText}
+                  sx={{ color }}
+                >
                   {icon}{" "}
                   <span
                     style={{

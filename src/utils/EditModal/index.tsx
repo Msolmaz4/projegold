@@ -10,9 +10,10 @@ import {
   Avatar,
   Typography,
 } from "@mui/material";
-import { useUserContext } from "../hooks/user/useUserContext";
-import type { User } from "../types/User.types";
-import Modal from "../utils/Modal";
+
+import type { User } from "../../types/User.types";
+import Modal from "../Modal/index";
+import { useUserContext } from "../../hooks/user/useUserContext";
 
 type EditUserModalProps = {
   open: boolean;

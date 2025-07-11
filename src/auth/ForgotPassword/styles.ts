@@ -1,52 +1,30 @@
 import { makeStyles } from "tss-react/mui";
 
-const useStyles = makeStyles()((theme) => ({
+const useStyles = makeStyles()(() => ({
   root: {
     backgroundColor: "#f5f5f5",
     minHeight: "100vh",
   },
-  wrapper: {
+  centerContainer: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     minHeight: "calc(100vh - 64px)",
     textAlign: "center",
-  },
-  container: {
-    maxWidth: theme.breakpoints.values.sm,
-  },
-  title: {
-    fontSize: theme.typography.h5.fontSize,
-    fontWeight: theme.typography.fontWeightMedium,
-    marginBottom: theme.spacing(1),
-  },
-  subtitle: {
-    color: theme.palette.text.secondary,
-    marginBottom: theme.spacing(4),
+    padding: 16,
+    boxSizing: "border-box",
   },
   paper: {
-    padding: theme.spacing(3),
-  },
-  textField: {
-    marginTop: theme.spacing(2),
-    maxWidth: 300,
-    "& .MuiInputBase-root": {
-      fontSize: "0.8rem",
-      height: 36,
-      padding: "0 10px",
-    },
-    "& .MuiInputBase-input": {
-      padding: 0,
-    },
+    padding: 24,
   },
   button: {
-    marginTop: theme.spacing(2),
-    borderRadius: 4,
-    paddingTop: theme.spacing(1.5),
-    paddingBottom: theme.spacing(1.5),
+    marginTop: 16,
+    borderRadius: 16,
+    paddingTop: 12,
+    paddingBottom: 12,
   },
   linkBox: {
-    marginTop: theme.spacing(3),
+    marginTop: 24,
   },
 }));
 

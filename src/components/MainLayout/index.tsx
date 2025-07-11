@@ -1,9 +1,10 @@
 import { Box, Typography } from "@mui/material";
-import Unternehmen from "../../featurs/compaines/Unternehmen";
-import KategorieListe from "../../featurs/tasks/KategorieListe";
-import MilestoneOverview from "../../featurs/milestones/MilestoneOverview";
-import TaskTable from "../../featurs/aufgabe/TaskTable";
+import Unternehmen from "../Company";
 import useStyles from "./styles";
+import MilestoneOverview from "../MilestoneOwer";
+import TaskTable from "../../featurs/aufgabe/TaskTable";
+//import KategorieListe from "../../featurs/tasks/KategorieListe";
+import KategorieListe from "../Tasks";
 
 const MainLayout = () => {
   const { classes } = useStyles();

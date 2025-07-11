@@ -1,6 +1,16 @@
-const NewUser = ({ name, email, hashedPassword }) => ({
+import type { User } from "../../types/User.types";
+
+const NewUser = ({
+  name,
+  email,
+  hashedPassword,
+}: {
+  name: string;
+  email: string;
+  hashedPassword: string;
+}): User => ({
   id: Date.now() + Math.floor(Math.random() * 1000000),
-  name: "",
+  name,
   username: "",
   email,
   address: {
