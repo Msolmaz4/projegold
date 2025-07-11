@@ -4,10 +4,12 @@ const NewUser = ({
   name,
   email,
   hashedPassword,
+  imageURL,
 }: {
   name: string;
   email: string;
   hashedPassword: string;
+  imageURL: string;
 }): User => ({
   id: Date.now() + Math.floor(Math.random() * 1000000),
   name,
@@ -28,7 +30,7 @@ const NewUser = ({
     bs: "",
   },
   description: "",
-  imageURL: "",
+  imageURL,
   tasks: [],
   aufgabe: [],
   admin: false,

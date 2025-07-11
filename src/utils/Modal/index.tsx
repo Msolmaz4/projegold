@@ -10,7 +10,6 @@ import {
   Backdrop,
   Fade,
 } from "@mui/material";
-import { useUserContext } from "../../hooks/user/useUserContext";
 import type { User } from "../../types";
 
 import NewUser from "../../core/newUser";
@@ -30,13 +29,14 @@ const Modal: React.FC<ModalProps> = ({
   const [text, setText] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const { setUsers } = useUserContext();
+
   // console.log(image,users, 'modaldayiz')
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles && acceptedFiles[0]) {
       const file = acceptedFiles[0];
       setImage(file);
+      console.log(image);
       const reader = new FileReader();
       reader.onloadend = () => setPreview(reader.result as string);
       reader.readAsDataURL(file);
@@ -68,15 +68,16 @@ const Modal: React.FC<ModalProps> = ({
         };
         onSave(updatedData);
       } else {
+        //console.log(preview, "dddddddddd");
         const name = text;
         const newUserModal = NewUser({
           name: name || "",
           email: "",
           hashedPassword: "",
+          imageURL: preview || "",
         });
 
-        // BU KISIM GİTMELİ: setUsers((prev) => [...prev, newUserModal]);
-        onSave(newUserModal); // ✅ onSave her zaman çağrılmalı
+        onSave(newUserModal);
       }
     } catch (error) {
       console.error("Speichern fehlgeschlagen:", error);
