@@ -30,7 +30,6 @@ const KategorieListe: React.FC = () => {
   const { classes } = useStyles(); // 🎨 Use styles
   const { categories, setCategories } = useUserContext();
   const { userData } = useAuthContext();
-
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [newName, setNewName] = useState("");

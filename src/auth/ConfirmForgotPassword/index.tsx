@@ -12,59 +12,41 @@ import LinkIcon from "@mui/icons-material/Link";
 import AnmeldungButton from "../../core/button/AnmeldungButton";
 import { AuthRoutes } from "../../rootes";
 import { Link } from "react-router-dom";
+import useStyles from "./styles";
 
 export default function ResetPassword() {
+  const { classes } = useStyles();
   return (
-    <Box
-      sx={{
-        backgroundColor: "#f5f5f5",
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        position: "relative",
-      }}
-    >
-      {/* Der ‚Anmelden‘-Button oben rechts */}
-
+    <Box className={classes.root}>
       <AnmeldungButton />
 
-      {/* Dividen Form */}
-      <Container
-        maxWidth="sm"
-        sx={{
-          backgroundColor: "#fff",
-          p: 4,
-          borderRadius: 2,
-          boxShadow: 3,
-        }}
-      >
+      <Container maxWidth="sm" className={classes.formContainer}>
         <Box textAlign="center">
           <Typography variant="h5" fontWeight="bold" gutterBottom>
             Passwort ändern
           </Typography>
 
-          <Stack direction="row" justifyContent="space-around" mt={4} mb={2}>
-            <Box display="flex" flexDirection="column" alignItems="center">
+          <Stack direction="row" className={classes.iconStack}>
+            <Box className={classes.iconBox}>
               <MailOutlineIcon fontSize="large" />
               <Typography variant="caption">Postfach prüfen</Typography>
             </Box>
-            <Box display="flex" flexDirection="column" alignItems="center">
+            <Box className={classes.iconBox}>
               <MarkEmailReadIcon fontSize="large" />
               <Typography variant="caption">E-Mail öffnen</Typography>
             </Box>
-            <Box display="flex" flexDirection="column" alignItems="center">
+            <Box className={classes.iconBox}>
               <LinkIcon fontSize="large" />
               <Typography variant="caption">Link in E-Mail klicken</Typography>
             </Box>
           </Stack>
 
-          <Typography mt={2}>
+          <Typography className={classes.infoText}>
             Wir haben dir eine E-Mail mit einem Code geschickt. <br />
             Bitte klicke diesen, um dein Passwort zurückzusetzen.
           </Typography>
 
-          <Typography mt={2} color="textSecondary" fontSize={14}>
+          <Typography className={classes.secondaryText}>
             E-Mail nicht erhalten?
           </Typography>
           <Typography fontSize={14}>
@@ -73,7 +55,7 @@ export default function ResetPassword() {
             Junk-E-Mail-Ordner auf Erhalt unserer Nachricht.
           </Typography>
 
-          <Box component="form" mt={4}>
+          <Box component="form" className={classes.form}>
             <Stack spacing={2}>
               <TextField fullWidth label="Code" />
               <TextField fullWidth label="E-Mail-Adresse" type="email" />
@@ -86,11 +68,7 @@ export default function ResetPassword() {
               <Button variant="contained" color="primary" fullWidth>
                 Passwort ändern
               </Button>
-              <Link
-                to={AuthRoutes.forgotPassword}
-                underline="hover"
-                fontSize={14}
-              >
+              <Link to={AuthRoutes.forgotPassword} className={classes.link}>
                 Code erneut senden
               </Link>
             </Stack>
