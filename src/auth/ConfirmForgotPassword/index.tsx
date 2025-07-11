@@ -29,7 +29,7 @@ export default function ResetPassword() {
 
       <AnmeldungButton />
 
-      {/* Ortalanmış Form */}
+      {/* Dividen Form */}
       <Container
         maxWidth="sm"
         sx={{

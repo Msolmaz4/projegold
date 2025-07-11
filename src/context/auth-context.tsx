@@ -10,7 +10,7 @@ interface ContextProps extends AuthDataProps {
   initAuth: boolean;
   isLoading: boolean;
   isAuth: boolean;
-  loginHandler: () => Promise<any>;
+  loginHandler: (user: Partial<User>) => Promise<void>;
   logoutHandler: () => Promise<void>;
   reloadUserData: () => void;
   checkUserExists: (username: string) => Promise<boolean>;

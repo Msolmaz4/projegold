@@ -32,5 +32,5 @@ export interface User {
   image?: Blob | MediaSource;
   milestoneDate?: string;
   admin: boolean;
-  password: string;
+  password?: string | undefined;
 }

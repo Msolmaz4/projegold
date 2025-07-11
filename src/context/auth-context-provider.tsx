@@ -1,4 +1,4 @@
-import { useState, FC, ReactNode } from "react";
+import { useState, type FC, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "./auth-context";
 import type { User } from "../types";
@@ -15,20 +15,23 @@ const AuthContextProvider: FC<AuthContextProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
   const [userData, setUserData] = useState<User | null>(null);
-  const [cognitoUser, setCognitoUser] = useState(null);
 
   const navigate = useNavigate();
 
-  const loginHandler = async (user: User) => {
+  const loginHandler = async (user: Partial<User>) => {
     setIsLoading(true);
 
     try {
+      if (!user.email || !user.password) {
+        throw new Error("E-Mail oder Passwort fehlt.");
+      }
+
       const foundUser = users.find(
         (u) =>
-          u.email == user.email &&
-          u.password == CryptoJS.SHA256(user.password).toString()
+          u.email === user.email &&
+          u.password === CryptoJS.SHA256(user.password).toString()
       );
-      console.log(foundUser, "auth");
+
       if (foundUser) {
         setUserData(foundUser);
         setIsAuth(true);
@@ -63,7 +66,7 @@ const AuthContextProvider: FC<AuthContextProviderProps> = ({ children }) => {
   };
 
   const reloadUserData = () => {
-    // Kullanıcı verisini yenilemek için işlev ekle
+    // users data add uprdade
   };
 
   return (
@@ -75,8 +78,11 @@ const AuthContextProvider: FC<AuthContextProviderProps> = ({ children }) => {
         loginHandler,
         logoutHandler,
         reloadUserData,
-        cognitoUser,
         userData,
+        checkUserExists: async (_username: string) => false,
+        cognitoUser: null,
+        globalSettings: null,
+        setGlobalSettings: () => {},
       }}
     >
       {children}
