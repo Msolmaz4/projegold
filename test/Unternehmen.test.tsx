@@ -1,15 +1,18 @@
 import { render, screen } from "@testing-library/react";
-import UserContextProvider from "../src/context/user-context-provider";
-import Unternehmen from "../src/featurs/compaines/Unternehmen";
 import "@testing-library/jest-dom";
+import { MemoryRouter } from "react-router-dom";
+import UserContextProvider from "../src/context/user-context-provider";
+import Unternehmen from "../src/components/Company";
 
-test('Button "Hinzufügen"  geschrieben', () => {
+test('Überschrift mit role="heading" und Text "UNTERNEHMEN" wird angezeigt', () => {
   render(
-    <UserContextProvider>
-      <Unternehmen />
-    </UserContextProvider>
+    <MemoryRouter>
+      <UserContextProvider>
+        <Unternehmen />
+      </UserContextProvider>
+    </MemoryRouter>
   );
 
-  const button = screen.getByRole("Box", { name: /unternehmen/i });
-  expect(button).toBeInTheDocument();
+  const heading = screen.getByRole("heading", { name: /unternehmen/i });
+  expect(heading).toBeInTheDocument();
 });
