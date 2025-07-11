@@ -20,16 +20,14 @@ const AuthContextProvider: FC<AuthContextProviderProps> = ({ children }) => {
 
   const loginHandler = async (user: Partial<User>) => {
     setIsLoading(true);
-
+    const hashedPassword = CryptoJS.SHA256(user.password ?? "").toString();
     try {
       if (!user.email || !user.password) {
         throw new Error("E-Mail oder Passwort fehlt.");
       }
 
       const foundUser = users.find(
-        (u) =>
-          u.email === user.email &&
-          u.password === CryptoJS.SHA256(user.password).toString()
+        (u) => u.email === user.email && u.password === hashedPassword
       );
 
       if (foundUser) {
