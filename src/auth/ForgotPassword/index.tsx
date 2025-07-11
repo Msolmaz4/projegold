@@ -8,17 +8,16 @@ import {
   Typography,
 } from "@mui/material";
 import { AuthRoutes } from "../../rootes/auth/AuthRoutes";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import AnmeldungButton from "../../core/button/AnmeldungButton";
 import { useUserContext } from "../../hooks/user/useUserContext";
 import useStyles from "./styles";
+import SendEmailToUser from "../../core/email";
 
 const ForgotPasswordPage = () => {
-  const [email, setEmail] = useState("");
-  const navigate = useNavigate();
   const { users } = useUserContext();
   const { classes } = useStyles();
-
+  const [email, setEmail] = useState("");
   const handleEdit = () => {
     if (email.trim().length === 0) {
       alert("Bitte Email eingeben");
@@ -28,7 +27,15 @@ const ForgotPasswordPage = () => {
       (u) => u.email.toLowerCase() === email.trim().toLowerCase()
     );
     if (!newUser) alert("👉 „Benutzer nicht gefunden");
-    navigate("/login");
+    if (newUser) {
+      SendEmailToUser(
+        email,
+        "neue Passwort",
+        "Um neue Passwort zu 123 Kod bitte benutzen"
+      ).catch(console.error);
+    }
+
+    setEmail("");
   };
 
   return (
