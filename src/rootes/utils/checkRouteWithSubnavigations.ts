@@ -1,6 +1,6 @@
 import { matchPath } from "react-router-dom";
 //import { AppRouteArray } from "types";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 export type AppRouteSection = "general" | "account" | "admin" | "verwaltung";
 

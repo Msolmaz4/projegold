@@ -1,5 +1,5 @@
 import { matchPath } from "react-router-dom";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { checkRouteWithSubnavigations } from "./checkRouteWithSubnavigations";
 
 export type AppRouteSection = "general" | "account" | "admin" | "verwaltung";
