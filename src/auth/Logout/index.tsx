@@ -1,4 +1,5 @@
-import { FC, useCallback, useEffect } from "react";
+import type { FC } from "react";
+import { useCallback, useEffect } from "react";
 import { Container, Typography } from "@mui/material";
 import { useAuthContext } from "../../hooks/auth/useAuthContext";
 import useStyles from "./styles";

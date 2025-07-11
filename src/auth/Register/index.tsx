@@ -31,12 +31,12 @@ const RegisterPage = () => {
   });
 
   const handleTogglePassword = () => setShowPassword(!showPassword);
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleRegister = (e) => {
+  const handleRegister = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const hashedPassword = CryptoJS.SHA256(formData.password).toString();
     const userExists = users.some(
@@ -52,6 +52,7 @@ const RegisterPage = () => {
       name: formData.name,
       email: formData.email,
       hashedPassword,
+      imageURL: "",
     });
 
     setUsers([...users, newUser]);
