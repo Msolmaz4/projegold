@@ -22,12 +22,12 @@ export type Subkategorie =
   | "Other";
 
 export interface Category {
-  id: string;
+  id: number | string;
   name: string;
   subcategories: Subcategory[];
 }
 
 export interface Subcategory {
-  id: string;
+  id: string | number;
   name: string;
 }
