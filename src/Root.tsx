@@ -1,5 +1,5 @@
 // src/Root.tsx
-import { FC, useEffect } from "react";
+import {type FC, useEffect } from "react";
 import {
   createBrowserRouter,
   RouterProvider,

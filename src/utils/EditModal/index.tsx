@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 
 import type { User } from "../../types/User.types";
-import Modal from "../Modal/index";
+import Modal from "../Modal";
 import { useUserContext } from "../../hooks/user/useUserContext";
 
 type EditUserModalProps = {
@@ -39,19 +39,25 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
     }
   }, [user]);
 
-  const handleChange = (field: keyof User, value: any) => {
+  const handleChange = <K extends keyof User>(field: K, value: User[K]) => {
     if (!formData) return;
     setFormData((prev) => (prev ? { ...prev, [field]: value } : prev));
   };
 
-  const handleCompanyChange = (field: keyof User["company"], value: any) => {
+  const handleCompanyChange = <K extends keyof User["company"]>(
+    field: K,
+    value: User["company"][K]
+  ) => {
     if (!formData) return;
     setFormData((prev) =>
       prev ? { ...prev, company: { ...prev.company, [field]: value } } : prev
     );
   };
 
-  const handleAddressChange = (field: keyof User["address"], value: any) => {
+  const handleAddressChange = <K extends keyof User["address"]>(
+    field: K,
+    value: User["address"][K]
+  ) => {
     if (!formData) return;
     setFormData((prev) =>
       prev ? { ...prev, address: { ...prev.address, [field]: value } } : prev
@@ -60,14 +66,17 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
 
   const handleSave = () => {
     if (!formData) return;
+
     if (formData.name.trim() === "") {
       alert("Name darf nicht leer sein.");
       return;
     }
+
     if (!emailRegex.test(formData.email)) {
       alert("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
       return;
     }
+
     const updatedUsers = users.map((u) =>
       u.id === formData.id ? formData : u
     );
@@ -85,10 +94,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
       <DialogContent>
         <Box display="flex" gap={2} mb={2}>
           <Button onClick={() => setModal(!modal)}>
-            <Avatar
-              src={formData.imageURL}
-              sx={{ width: 64, height: 64 }}
-            />{" "}
+            <Avatar src={formData.imageURL} sx={{ width: 64, height: 64 }} />
           </Button>
           <TextField
             label="Profilbild URL"
@@ -197,12 +203,14 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
           />
         </Box>
       </DialogContent>
+
       <DialogActions>
         <Button onClick={onClose}>Abbrechen</Button>
         <Button variant="contained" onClick={handleSave}>
           Speichern
         </Button>
       </DialogActions>
+
       {modal && (
         <Modal
           open={modal}
@@ -213,7 +221,6 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
             id: user?.id,
           }}
           onSave={(updated) => {
-            //  formData'yı sofort upgrade
             setFormData((prev) =>
               prev
                 ? {

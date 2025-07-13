@@ -38,7 +38,7 @@ const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
   const [editOpen, setEditOpen] = useState(false);
   const [editedUser, setEditedUser] = useState<User | null>(null);
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
     setSelectedAufgabe(null);
   };

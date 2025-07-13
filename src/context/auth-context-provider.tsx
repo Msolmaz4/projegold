@@ -77,7 +77,7 @@ const AuthContextProvider: FC<AuthContextProviderProps> = ({ children }) => {
         logoutHandler,
         reloadUserData,
         userData,
-        checkUserExists: async (_username: string) => false,
+        checkUserExists: async () => false,
         cognitoUser: null,
         globalSettings: null,
         setGlobalSettings: () => {},

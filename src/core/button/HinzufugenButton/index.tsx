@@ -1,10 +1,15 @@
-import { Button, Stack } from "@mui/material";
+import { Button, Stack,type ButtonProps  } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useAuthContext } from "../../../hooks/auth/useAuthContext";
 import { useNavigate } from "react-router-dom";
-
-const Hinzufugen = ({ variant, name, onClick }) => {
+import type { FC } from "react";
+type HinzufugenProps = {
+  variant: ButtonProps["variant"];
+  name: string;
+  onClick: () => void;
+};
+const Hinzufugen: FC<HinzufugenProps> = ({ variant, name, onClick }) => {
   const { userData } = useAuthContext();
   const isAdmin = userData?.admin === true;
   const navigate = useNavigate();
