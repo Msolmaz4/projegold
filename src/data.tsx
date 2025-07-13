@@ -35,7 +35,7 @@ const Users: UserWithTasks[] = [
       "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
   },
   {
-    id: 2,
+    id: 52,
     name: "Ervin Howell",
     username: "Antonette",
     email: "ervin@example.com",
@@ -57,6 +57,7 @@ const Users: UserWithTasks[] = [
     imageURL: "/logos/jpmorgan.png",
     tasks: [],
     aufgabe: [],
+    admin: true,
     password:
       "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
   },
