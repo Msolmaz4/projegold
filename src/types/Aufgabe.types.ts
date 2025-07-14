@@ -5,7 +5,7 @@ export interface Aufgabe {
   kosten?: number | undefined;
   status?: "offen" | "Bearbeitung" | "erledigt" | "geplant" | undefined;
   dueDate?: string | undefined;
-  category?: "Marketing" | "Development" | "Design" | "Fulfillment" | undefined;
+  category: "Marketing" | "Development" | "Design" | "Fulfillment" | undefined;
   subcategory?:
     | "Google Ads"
     | "Social Media"
@@ -19,4 +19,5 @@ export interface Aufgabe {
   firma: string;
   fallig?: string;
   meilenstein?: string;
+  id?: number;
 }

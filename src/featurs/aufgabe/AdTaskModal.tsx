@@ -194,8 +194,11 @@ const AddTaskModal: React.FC<ModalProps> = ({
           value={task.dueDate ? task.dueDate.split("T")[0] : ""}
           onChange={(e) => {
             const selectedDate = new Date(e.target.value);
-            const milestone = new Date(task.milestoneDate);
-            const maxDate = new Date(task.milestoneDate);
+            const milestoneDateString =
+              task.milestoneDate || new Date().toISOString();
+            const milestone = new Date(milestoneDateString);
+
+            const maxDate = new Date(milestone);
             maxDate.setMonth(maxDate.getMonth() + 1);
 
             if (selectedDate < milestone) {

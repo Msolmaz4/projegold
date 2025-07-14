@@ -2,8 +2,10 @@ import type { KategorieListe, Subkategorie } from "./Categories.types";
 
 export interface Task {
   id: number | string;
-  category?: KategorieListe | string | undefined | "";
+  category?: KategorieListe | string | "Unbekannte Kategorie";
   subcategory?: string | Subkategorie | "" | number;
+  categoryId?: string | number;
+  subcategoryId?: string | number;
   name: string;
   vorarbeit?: number;
   umsetzung?: number;

@@ -8,7 +8,8 @@ export type KategorieListe =
   | "IT"
   | "Logistik"
   | "Führung"
-  | "Kunden";
+  | "Kunden"
+  | "Unbekannte Kategorie";
 
 export type Subkategorie =
   | "SEO"

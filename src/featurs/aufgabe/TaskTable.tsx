@@ -35,6 +35,7 @@ import type { Task } from "../../types/Task.types";
 import { useUserContext } from "../../hooks/user/useUserContext";
 import { useAuthContext } from "../../hooks/auth/useAuthContext/index";
 import SendEmailToUser from "../../core/email";
+import ConvertTaskToAufgabe from "../../core/convertTaskToAufgabe";
 
 const extractTasksFromUsers = (users: any[]): Task[] => {
   let idCounter = 1;
@@ -179,12 +180,21 @@ const TaskTable: React.FC = () => {
         if (user.company?.name === newTask.firma) {
           const newTaskId = newTask.id || new Date().getTime();
           const newAufgabe = user.aufgabe ? [...user.aufgabe] : [];
-          newAufgabe.push({ ...newTask, id: newTaskId });
+
+          // Task'i Aufgabe'ye dönüştür ve id ata
+          const aufgabeToAdd = ConvertTaskToAufgabe({
+            ...newTask,
+            id: newTaskId,
+          });
+
+          newAufgabe.push(aufgabeToAdd);
 
           let updatedTasks = user.tasks ? [...user.tasks] : [];
+
           const categoryIndex = updatedTasks.findIndex(
             (taskCategory: any) => taskCategory.name === newTask.category
           );
+
           const newMilestone = {
             title: newTask.name,
             fallig: newTask.milestoneDate,
@@ -248,7 +258,7 @@ const TaskTable: React.FC = () => {
         );
 
         if (taskInUserAufgabe && taskInUserAufgabe.firma === editedTask.firma) {
-          const updatedAufgabe = user.aufgabe.map((t: any) =>
+          const updatedAufgabe = user.aufgabe?.map((t: any) =>
             t.id === editedTask.id ? editedTask : t
           );
           let updatedTasksMilestones = user.tasks ? [...user.tasks] : [];
@@ -315,7 +325,7 @@ const TaskTable: React.FC = () => {
 
         if (taskInUserAufgabe && taskInUserAufgabe.firma !== editedTask.firma) {
           taskMoved = true;
-          const updatedAufgabe = user.aufgabe.filter(
+          const updatedAufgabe = user.aufgabe?.filter(
             (t: any) => t.id !== editedTask.id
           );
           const updatedTasksMilestones = (user.tasks || [])
@@ -414,7 +424,7 @@ const TaskTable: React.FC = () => {
           (t: any) => t.id === taskToDelete.id
         );
         if (taskInUserAufgabe) {
-          const updatedAufgabe = user.aufgabe.filter(
+          const updatedAufgabe = user.aufgabe?.filter(
             (t: any) => t.id !== taskToDelete.id
           );
           let updatedTasksMilestones = user.tasks ? [...user.tasks] : [];
@@ -510,7 +520,7 @@ const TaskTable: React.FC = () => {
         const isOwner = user.company?.name === activeTask.firma;
 
         if (isOwner) {
-          const taskIndexInAufgabe = user.aufgabe?.findIndex(
+          const taskIndexInAufgabe  = user.aufgabe?.findIndex(
             (t: any) => t.id === active.id
           );
 
