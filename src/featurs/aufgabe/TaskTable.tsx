@@ -66,6 +66,7 @@ const TaskTable: React.FC = () => {
   }, [users]);
 
   const handleAddTask = (newTask: Task) => {
+    console.log("Type:", typeof newTask, "| Value:", newTask);
     setUsers((prevUsers) =>
       prevUsers.map((user) => {
         if (user.company?.name === newTask.firma) {
@@ -85,16 +86,15 @@ const TaskTable: React.FC = () => {
           );
 
           const newMilestone = {
-            title: newTask.name,
-            fallig: newTask.milestoneDate,
-            meilenstein: newTask.milestoneDate,
+            title: newTask.name ?? "Unbenannte Aufgabe",
+            fallig: newTask.milestoneDate ?? "",
+            meilenstein: newTask.milestoneDate ?? "",
             id: newTaskId,
             completed: false,
-            status: newTask.status,
-            category: newTask.category,
-            firma: newTask.firma,
+            status: newTask.status ?? "offen",
+            category: newTask.category ?? "Unbekannte Kategorie",
+            firma: newTask.firma ?? "Unbekannt",
           };
-
           if (categoryIndex !== -1) {
             const milestones = updatedTasks[categoryIndex].milestones || [];
             const exists = milestones.some(

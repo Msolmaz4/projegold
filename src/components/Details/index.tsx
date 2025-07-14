@@ -18,10 +18,8 @@ import BusinessIcon from "@mui/icons-material/Business";
 import type { User } from "types";
 import dayjs from "dayjs";
 import "dayjs/locale/de";
-
 import useStyles from "./styles";
 import EditUserModal from "utils/EditModal";
-
 dayjs.locale("de");
 
 type Props = {
