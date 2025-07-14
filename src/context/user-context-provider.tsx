@@ -1,5 +1,5 @@
 import {type  FC, type ReactNode, useEffect, useState } from "react";
-import type { User, Category } from "../types";
+import type { User, Category } from "types";
 import { Users, Categories as InitialCategories } from "../data";
 import UserContext from "./user-context";
 export type UpgradeUser = {

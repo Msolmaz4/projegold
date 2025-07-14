@@ -12,12 +12,12 @@ import {
   Typography,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useUserContext } from "../../hooks/user/useUserContext";
+import { useUserContext } from "hooks";
 import CryptoJS from "crypto-js";
 import { Link, useNavigate } from "react-router";
 import { AuthRoutes } from "../../rootes";
 import useStyles from "./styles";
-import NewUser from "../../core/newUser";
+import { Newuser } from "core";
 
 const RegisterPage = () => {
   const { classes } = useStyles();
@@ -48,7 +48,7 @@ const RegisterPage = () => {
       return;
     }
 
-    const newUser = NewUser({
+    const newUser = Newuser({
       name: formData.name,
       email: formData.email,
       hashedPassword,

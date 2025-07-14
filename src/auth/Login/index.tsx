@@ -11,11 +11,12 @@ import {
   Stack,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useAuthContext } from "../../hooks/auth/useAuthContext";
+import { AnmeldungButton } from "core";
+import { useAuthContext } from "hooks";
 import { Link } from "react-router-dom";
 import { AuthRoutes } from "../../rootes/auth/AuthRoutes";
-import AnmeldungButton from "../../core/button/AnmeldungButton";
 import useStyles from "./styles";
+
 
 const isValidEmail = (email: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);

@@ -8,10 +8,10 @@ import {
   Tooltip,
 } from "@mui/material";
 import BusinessIcon from "@mui/icons-material/Business";
-import type { User } from "../../types/User.types";
+import type { User } from "types";
 import { useEffect, useState } from "react";
-import { useAuthContext } from "../../hooks/auth/useAuthContext";
-import { useUserContext } from "../../hooks/user/useUserContext";
+import { useAuthContext } from "hooks";
+import { useUserContext } from "hooks";
 import Details from "../Details";
 import useStyles from "./styles";
 

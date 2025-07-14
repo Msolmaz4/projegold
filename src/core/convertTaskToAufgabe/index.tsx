@@ -2,7 +2,6 @@ import type { Aufgabe, Task } from "../../types";
 
 const ConvertTaskToAufgabe = (task: Task): Aufgabe => {
   return {
-    id: task.id,
     name: task.name,
     firma: task.firma || "",
     vorarbeit: task.vorarbeit,

@@ -31,11 +31,10 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { Task } from "../../types/Task.types";
-import { useUserContext } from "../../hooks/user/useUserContext";
-import { useAuthContext } from "../../hooks/auth/useAuthContext/index";
-import SendEmailToUser from "../../core/email";
-import ConvertTaskToAufgabe from "../../core/convertTaskToAufgabe";
+import type { Task } from "types";
+import { useUserContext } from "hooks";
+import { useAuthContext } from "hooks";
+import { ConvertTaskToAufgabe, SendEmailToUser } from "core";
 
 const extractTasksFromUsers = (users: any[]): Task[] => {
   let idCounter = 1;

@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import AuthContext from "./auth-context";
 import type { User } from "../types";
 import CryptoJS from "crypto-js";
+import { useUserContext } from "hooks";
 
-import { useUserContext } from "../hooks/user/useUserContext";
+
 type AuthContextProviderProps = {
   children: ReactNode;
 };

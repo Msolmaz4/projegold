@@ -9,13 +9,13 @@ import {
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import MarkEmailReadIcon from "@mui/icons-material/MarkEmailRead";
 import LinkIcon from "@mui/icons-material/Link";
-import AnmeldungButton from "../../core/button/AnmeldungButton";
-import { AuthRoutes } from "../../rootes";
 import { Link, useNavigate } from "react-router-dom";
 import useStyles from "./styles";
-import { useUserContext } from "../../hooks/user/useUserContext";
+import { useUserContext } from "hooks";
 import { useState } from "react";
 import CryptoJS from "crypto-js";
+import { AnmeldungButton } from "core";
+import { AuthRoutes } from "../../rootes";
 
 function ResetPassword() {
   const { classes } = useStyles();

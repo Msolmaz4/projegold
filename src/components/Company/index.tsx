@@ -5,13 +5,14 @@ import { useMediaQuery, useTheme } from "@mui/material";
 import { useState } from "react";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import { useUserContext } from "../../hooks/user/useUserContext";
 import "swiper/css";
 import "swiper/css/navigation";
-import Hinzufugen from "../../core/button/HinzufugenButton/index";
-import { Modal } from "../../utils";
 import Cards from "../../components/Cards";
 import useStyles from "./styles";
+import { Hinzufugen } from "core";
+import { useUserContext } from "hooks";
+import { Modal } from "utils";
+
 
 function Unternehmen() {
   const [modal, setModal] = useState<boolean>(false);

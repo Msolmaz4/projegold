@@ -21,9 +21,9 @@ import {
 import Grid from "@mui/material/Grid";
 import { MoreVert, Add } from "@mui/icons-material";
 import { v4 as uuidv4 } from "uuid";
-import type { Category } from "../../types/Categories.types";
-import { useUserContext } from "../../hooks/user/useUserContext";
-import { useAuthContext } from "../../hooks/auth/useAuthContext";
+import type { Category } from "types";
+import { useUserContext } from "hooks";
+import { useAuthContext } from "hooks";
 import useStyles from "./styles";
 
 const KategorieListe: React.FC = () => {

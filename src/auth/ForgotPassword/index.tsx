@@ -9,10 +9,9 @@ import {
 } from "@mui/material";
 import { AuthRoutes } from "../../rootes/auth/AuthRoutes";
 import { Link } from "react-router-dom";
-import AnmeldungButton from "../../core/button/AnmeldungButton";
-import { useUserContext } from "../../hooks/user/useUserContext";
+import { useUserContext } from "hooks";
 import useStyles from "./styles";
-import SendEmailToUser from "../../core/email";
+import { AnmeldungButton, SendEmailToUser } from "core";
 
 const ForgotPasswordPage = () => {
   const { users } = useUserContext();

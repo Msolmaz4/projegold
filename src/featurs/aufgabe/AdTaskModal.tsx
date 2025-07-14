@@ -11,9 +11,9 @@ import {
   TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import type { Task } from "../../types/Task.types";
-import { useUserContext } from "../../hooks/user/useUserContext";
-import TaskTemplate from "../../core/task";
+import type { Task } from "types";
+import { useUserContext } from "hooks";
+import { TaskTemplate } from "core";
 
 type ModalProps = {
   open: boolean;
