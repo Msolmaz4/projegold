@@ -1,5 +1,10 @@
 import type { KategorieListe, Subkategorie } from "./Categories.types";
-
+export interface Milestone {
+  title?: string;
+  date?: string;
+  fallig?: string;
+  meilenstein?: string;
+}
 export interface Task {
   id: number | string;
   category?: KategorieListe | string | "Unbekannte Kategorie";
@@ -18,10 +23,5 @@ export interface Task {
   firma?: string;
   tasks?: string[] | undefined;
   milestoneDate?: string | undefined;
-  milestones: {
-    title?: string;
-    date?: string;
-    fallig?: string;
-    meilenstein?: string;
-  }[];
+  milestones: Milestone[];
 }
