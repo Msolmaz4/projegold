@@ -22,7 +22,6 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
-import AddTaskModal from "./AdTaskModal";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -32,9 +31,9 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { Task } from "types";
-import { useUserContext } from "hooks";
-import { useAuthContext } from "hooks";
+import { useUserContext, useAuthContext } from "hooks";
 import { ConvertTaskToAufgabe, SendEmailToUser } from "core";
+import AddTaskModal from "./AdTaskModal";
 
 const extractTasksFromUsers = (users: any[]): Task[] => {
   let idCounter = 1;
@@ -66,7 +65,6 @@ function SortableRow({
     transform: CSS.Transform.toString(transform),
     transition,
   };
-
   const handleMenuOpen = () => setMenuDialogOpen(true);
   const handleMenuClose = () => setMenuDialogOpen(false);
 
