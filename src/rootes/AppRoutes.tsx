@@ -1,10 +1,6 @@
 import { ArrowLoginIcon, LogoutIcon, SpieleladenIcon } from "../icons";
 import { NoRouteMatch } from "../layout/NoRouteMatch";
-
 import { USER_GROUPS } from "../modules/usermanagement/roles/api";
-
-
-
 import ConfirmForgotPassword from "../auth/ConfirmForgotPassword";
 import ForgotPassword from "../auth/ForgotPassword";
 import Login from "../auth/Login";

@@ -1,61 +1,31 @@
+// src/rootes/utils/checkRouteWithSubnavigations.ts
+
 import { matchPath } from "react-router-dom";
-//import { AppRouteArray } from "types";
-import type { ReactNode } from "react";
+import type { AppRouteArray } from "../../types/Routes.types";
 
-export type AppRouteSection = "general" | "account" | "admin" | "verwaltung";
-
-export interface AppRoute {
-  key: string;
-  path: string;
-  section: AppRouteSection | (string & {});
-  title: string;
-  element: ReactNode;
-  icon: ReactNode;
-  groups: string[];
-  level: number;
-  navigation: boolean;
-  indented: boolean;
-  isWithParam: boolean;
-}
-
-export interface AppRouteMap extends AppRoute {
-  children: Record<string, AppRouteMap>;
-}
-
-export interface AppRouteArray extends AppRoute {
-  children: AppRouteArray[];
-}
-
+/**
+ * Alt navigasyonlarda path eşleşmesi olup olmadığını kontrol eder
+ */
 export const checkRouteWithSubnavigations = (
   pathname: string,
-  routeArray: AppRouteArray[]
+  children: AppRouteArray[]
 ): boolean => {
-  if (!routeArray.length) {
-    return false;
-  }
-  for (const route of routeArray) {
-    const isRoute = matchPath(
-      {
-        path: route.path,
-      },
-      pathname
-    );
+  for (const child of children) {
+    const match = matchPath({ path: child.path }, pathname);
 
-    const isRouteSelected = Boolean(isRoute !== null && isRoute !== undefined);
-
-    if (isRouteSelected) {
+    if (match) {
       return true;
     }
 
-    if (route.children.length) {
-      const isSubRouteSelected = checkRouteWithSubnavigations(
+    // Recursive kontrol (alt route içinde de alt route varsa)
+    if (child.children.length > 0) {
+      const nestedMatch = checkRouteWithSubnavigations(
         pathname,
-        route.children
+        child.children
       );
-      if (isSubRouteSelected) {
-        return true;
-      }
+      if (nestedMatch) return true;
     }
   }
+
   return false;
 };

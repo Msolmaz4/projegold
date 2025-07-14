@@ -15,7 +15,7 @@ const AnmeldungButton = () => {
         right: 0,
         backgroundColor: "transparent",
         boxShadow: "none",
-        zIndex: 10, // Formun üzerinde kalması için
+        zIndex: 10,
       }}
     >
       <Toolbar sx={{ justifyContent: "flex-end", pr: 4, pt: 2 }}>

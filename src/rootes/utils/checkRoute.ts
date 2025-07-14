@@ -1,22 +1,6 @@
 import { matchPath } from "react-router-dom";
-//import { AppRoute } from "types";
-import { type ReactNode } from "react";
-
+import type { AppRoute } from "../../types/Routes.types";
 export type AppRouteSection = "general" | "account" | "admin" | "verwaltung";
-
-export interface AppRoute {
-  key: string;
-  path: string;
-  section: AppRouteSection | (string & {});
-  title: string;
-  element: ReactNode;
-  icon: ReactNode;
-  groups: string[];
-  level: number;
-  navigation: boolean;
-  indented: boolean;
-  isWithParam: boolean;
-}
 
 export interface AppRouteMap extends AppRoute {
   children: Record<string, AppRouteMap>;
