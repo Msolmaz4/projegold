@@ -20,4 +20,6 @@ export interface Aufgabe {
   fallig?: string;
   meilenstein?: string;
   id?: number;
+  categoryId?: string | number;
+  subcategoryId?: string | number;
 }

@@ -520,7 +520,7 @@ const TaskTable: React.FC = () => {
         const isOwner = user.company?.name === activeTask.firma;
 
         if (isOwner) {
-          const taskIndexInAufgabe  = user.aufgabe?.findIndex(
+          const taskIndexInAufgabe = user.aufgabe?.findIndex(
             (t: any) => t.id === active.id
           );
 
@@ -580,7 +580,14 @@ const TaskTable: React.FC = () => {
               movedTask.categoryId = overCatObj?.id.toString();
               movedTask.subcategoryId = overSubObj?.id;
               movedTask.status = "in Bearbeitung";
-              updatedAufgabe.splice(taskIndexInAufgabe, 1);
+
+              if (
+                typeof taskIndexInAufgabe === "number" &&
+                taskIndexInAufgabe >= 0
+              ) {
+                updatedAufgabe.splice(taskIndexInAufgabe, 1);
+              }
+
               updatedAufgabe.push(movedTask);
               user.aufgabe = updatedAufgabe;
             }
@@ -628,7 +635,9 @@ const TaskTable: React.FC = () => {
                 ],
               };
             } else {
+              const newId = new Date().getTime().toString();
               updatedTasksMilestones.push({
+                id: newId,
                 name: updatedMilestone.category,
                 milestones: [updatedMilestone],
               });
