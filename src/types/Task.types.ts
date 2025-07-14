@@ -9,7 +9,7 @@ export interface Task {
   umsetzung?: number;
   kontrolle?: number;
   kosten?: number;
-  status?: "offen" | "in Bearbeitung" | "erledigt" | "geplant";
+  status?: "offen" | "in Bearbeitung" | "erledigt" | "geplant" | undefined;
   milestone?: string;
   email?: string;
   dueDate?: string;

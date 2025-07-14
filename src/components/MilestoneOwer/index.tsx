@@ -57,14 +57,15 @@ const MilestoneOverview: React.FC = () => {
     let remaining = { vorarbeit: 0, umsetzung: 0, kontrolle: 0 };
 
     aufgabeList.forEach((task) => {
-      const sum = task.vorarbeit + task.umsetzung + task.kontrolle;
+      const sum = task.vorarbeit! + task.umsetzung! + task.kontrolle!;
+
       total += sum;
-      if (task.status.toLowerCase() === "erledigt") {
+      if (task.status?.toLowerCase() === "erledigt") {
         done += sum;
       } else {
-        remaining.vorarbeit += task.vorarbeit;
-        remaining.umsetzung += task.umsetzung;
-        remaining.kontrolle += task.kontrolle;
+        remaining.vorarbeit += task.vorarbeit ?? 0;
+        remaining.umsetzung += task.umsetzung ?? 0;
+        remaining.kontrolle += task.kontrolle ?? 0;
       }
     });
 
@@ -93,7 +94,9 @@ const MilestoneOverview: React.FC = () => {
       )}
 
       {selectedUsers.map((user) => {
-        const { progressPercent, remaining } = calculateProgress(user.aufgabe);
+        const { progressPercent, remaining } = calculateProgress(
+          user.aufgabe ?? []
+        );
 
         return (
           <Box
@@ -119,7 +122,7 @@ const MilestoneOverview: React.FC = () => {
                 </Typography>
               </Box>
 
-              {["vorarbeit", "umsetzung", "kontrolle"].map((key) => (
+              {(["vorarbeit", "umsetzung", "kontrolle"] as const).map((key) => (
                 <Box key={key} className={classes.remainingBox}>
                   <Typography
                     className={classes.remainingCaption}
@@ -145,18 +148,18 @@ const MilestoneOverview: React.FC = () => {
 
             <Collapse in={expandedCompanies.has(user.id)}>
               <Box mt={2} pl={4}>
-                {user.aufgabe.length === 0 ? (
+                {user.aufgabe?.length === 0 ? (
                   <Typography variant="body2">Keine Aufgaben.</Typography>
                 ) : (
-                  user.aufgabe.map((task, idx) => (
+                  user.aufgabe?.map((task, idx) => (
                     <Box key={idx} className={classes.taskBox}>
                       <Typography variant="body2">{task.name}</Typography>
                       <Typography
                         variant="caption"
                         color={
-                          task.status.toLowerCase() === "erledigt"
+                          task.status?.toLowerCase() === "erledigt"
                             ? "green"
-                            : task.status.toLowerCase() === "bearbeitung"
+                            : task.status?.toLowerCase() === "bearbeitung"
                               ? "orange"
                               : "red"
                         }

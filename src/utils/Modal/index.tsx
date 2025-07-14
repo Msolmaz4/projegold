@@ -61,8 +61,8 @@ const Modal: React.FC<ModalProps> = ({
 
     try {
       if (initialData) {
-        const updatedData = {
-          id: initialData.id,
+        const updatedData: User = {
+          ...(initialData as User), // cast machen ,wir lassen definieren.
           name: text,
           imageURL: preview || "",
         };
