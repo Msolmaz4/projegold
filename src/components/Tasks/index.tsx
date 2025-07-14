@@ -17,8 +17,8 @@ import {
   List,
   ListItem,
   ListItemText,
-  Grid,
 } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import { MoreVert, Add } from "@mui/icons-material";
 import { v4 as uuidv4 } from "uuid";
 import type { Category } from "../../types/Categories.types";
@@ -27,7 +27,7 @@ import { useAuthContext } from "../../hooks/auth/useAuthContext";
 import useStyles from "./styles";
 
 const KategorieListe: React.FC = () => {
-  const { classes } = useStyles(); // 🎨 Use styles
+  const { classes } = useStyles();
   const { categories, setCategories } = useUserContext();
   const { userData } = useAuthContext();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -217,7 +217,7 @@ const KategorieListe: React.FC = () => {
                 }
                 action={
                   <>
-                    <IconButton onClick={(e) => openMenu(e, cat.id)}>
+                    <IconButton onClick={(e) => openMenu(e, cat.id.toString())}>
                       <MoreVert />
                     </IconButton>
                     <Menu
@@ -225,10 +225,10 @@ const KategorieListe: React.FC = () => {
                       open={menuId === cat.id}
                       onClose={closeMenu}
                     >
-                      <MenuItem onClick={() => handleEdit(cat.id)}>
+                      <MenuItem onClick={() => handleEdit(cat.id.toString())}>
                         Bearbeiten
                       </MenuItem>
-                      <MenuItem onClick={() => handleDelete(cat.id)}>
+                      <MenuItem onClick={() => handleDelete(cat.id.toString())}>
                         Löschen
                       </MenuItem>
                     </Menu>
@@ -244,7 +244,9 @@ const KategorieListe: React.FC = () => {
                     <ListItem
                       key={sub.id}
                       className={classes.listItem}
-                      onClick={() => handleOpenSubEditDialog(sub.id, sub.name)}
+                      onClick={() =>
+                        handleOpenSubEditDialog(sub.id.toString(), sub.name)
+                      }
                     >
                       <ListItemText
                         primary={`• ${sub.name}`}
@@ -260,7 +262,7 @@ const KategorieListe: React.FC = () => {
                     size="small"
                     startIcon={<Add />}
                     onClick={() => {
-                      setSelectedCatId(cat.id);
+                      setSelectedCatId(cat.id.toString());
                       setSubDialogOpen(true);
                     }}
                   >

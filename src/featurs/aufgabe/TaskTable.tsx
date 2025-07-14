@@ -311,8 +311,8 @@ const TaskTable: React.FC = () => {
             tasks: updatedTasksMilestones,
           };
         }
+        // wenn Task User Firma verandet hat ,hat alteUser weg
 
-        // Eğer task user'ınsa ama firma DEĞİŞTİYSE, task'ı BU kullanıcıdan kaldır
         if (taskInUserAufgabe && taskInUserAufgabe.firma !== editedTask.firma) {
           taskMoved = true;
           const updatedAufgabe = user.aufgabe.filter(
@@ -345,7 +345,7 @@ const TaskTable: React.FC = () => {
         return user;
       });
 
-      // Task taşındıysa, yeni kullanıcıya task'ı ekle
+      // Task umziehen , new User wird Task hinzufugen
       if (taskMoved) {
         const targetIndex = updatedUsers.findIndex(
           (u) => u.company?.name === editedTask.firma
@@ -676,7 +676,7 @@ const TaskTable: React.FC = () => {
           </Select>
         </FormControl>
 
-        {userData.admin && (
+        {userData?.admin && (
           <Button variant="contained" onClick={() => setOpenDialog(true)}>
             + Aufgabe hinzufügen
           </Button>

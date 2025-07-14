@@ -3,7 +3,7 @@ import type { KategorieListe, Subkategorie } from "./Categories.types";
 export interface Task {
   id: number | string;
   category?: KategorieListe | string | undefined | "";
-  subcategory?: string | Subkategorie | "";
+  subcategory?: string | Subkategorie | "" | number;
   name: string;
   vorarbeit?: number;
   umsetzung?: number;

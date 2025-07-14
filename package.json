@@ -27,7 +27,7 @@
     "@fullcalendar/timegrid": "^6.1.18",
     "@lexical/react": "^0.33.0",
     "@mui/icons-material": "^7.1.2",
-    "@mui/material": "^7.1.2",
+    "@mui/material": "^7.2.0",
     "@mui/system": "^7.2.0",
     "@mui/x-date-pickers": "^8.7.0",
     "@reduxjs/toolkit": "^2.8.2",
