@@ -71,7 +71,6 @@ const TaskTable: React.FC = () => {
         if (user.company?.name === newTask.firma) {
           const newTaskId = newTask.id || new Date().getTime();
           const newAufgabe = user.aufgabe ? [...user.aufgabe] : [];
-
           // Task'i Aufgabe'ye dönüştür ve id ata
           const aufgabeToAdd = ConvertTaskToAufgabe({
             ...newTask,
@@ -79,7 +78,6 @@ const TaskTable: React.FC = () => {
           });
 
           newAufgabe.push(aufgabeToAdd);
-
           let updatedTasks = user.tasks ? [...user.tasks] : [];
 
           const categoryIndex = updatedTasks.findIndex(
