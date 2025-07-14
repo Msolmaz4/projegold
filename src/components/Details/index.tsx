@@ -148,7 +148,7 @@ const Details = ({ user, imageUrl, onDelete, onUpdate }: Props) => {
           </Typography>
           <Grid container spacing={2} mb={4}>
             {filteredTasks.map((aufgabe, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
+              <Grid size={{ xs: 12, md: 4, sm: 6 }} key={index}>
                 <Card
                   onClick={() => setSelectedAufgabe(index)}
                   className={

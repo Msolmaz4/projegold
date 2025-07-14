@@ -10,9 +10,9 @@ import {
   Backdrop,
   Fade,
 } from "@mui/material";
-import type { User } from "../../types";
+import type { User } from "types";
+import { Newuser } from "core";
 
-import NewUser from "../../core/newUser";
 type ModalProps = {
   open: boolean;
   onClose: () => void;
@@ -57,7 +57,7 @@ const Modal: React.FC<ModalProps> = ({
   }, [initialData, open]);
 
   const handleSave = () => {
-    console.log("ddddddd");
+    //   console.log("ddddddd");
 
     try {
       if (initialData) {
@@ -70,7 +70,7 @@ const Modal: React.FC<ModalProps> = ({
       } else {
         //console.log(preview, "dddddddddd");
         const name = text;
-        const newUserModal = NewUser({
+        const newUserModal = Newuser({
           name: name || "",
           email: "",
           hashedPassword: "",
