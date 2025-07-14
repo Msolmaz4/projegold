@@ -13,7 +13,6 @@ import { Hinzufugen } from "core";
 import { useUserContext } from "hooks";
 import { Modal } from "utils";
 
-
 function Unternehmen() {
   const [modal, setModal] = useState<boolean>(false);
   const { users, setUsers } = useUserContext();

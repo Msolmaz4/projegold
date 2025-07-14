@@ -58,6 +58,10 @@ const KategorieListe: React.FC = () => {
       alert("Name darf nicht leer sein");
       return;
     }
+    if (trimmedName.length > 20) {
+      alert("Max 20 Karakter");
+      return;
+    }
 
     if (
       !editId &&
@@ -206,73 +210,79 @@ const KategorieListe: React.FC = () => {
           </Typography>
         )}
 
-        {categories.map((cat) => (
-          <Grid item xs={12} md={6} lg={4} key={cat.id}>
-            <Card>
-              <CardHeader
-                title={
-                  <Typography className={classes.cardHeaderTitle}>
-                    📁 {cat.name}
+        <Grid container spacing={{ xs: 12, md: 6, lg: 4 }}>
+          {categories.map((cat) => (
+            <Grid key={cat.id}>
+              <Card>
+                <CardHeader
+                  title={
+                    <Typography className={classes.cardHeaderTitle}>
+                      s 📁 {cat.name}
+                    </Typography>
+                  }
+                  action={
+                    <>
+                      <IconButton
+                        onClick={(e) => openMenu(e, cat.id.toString())}
+                      >
+                        <MoreVert />
+                      </IconButton>
+                      <Menu
+                        anchorEl={anchorEl}
+                        open={menuId === cat.id}
+                        onClose={closeMenu}
+                      >
+                        <MenuItem onClick={() => handleEdit(cat.id.toString())}>
+                          Bearbeiten
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => handleDelete(cat.id.toString())}
+                        >
+                          Löschen
+                        </MenuItem>
+                      </Menu>
+                    </>
+                  }
+                />
+                <CardContent>
+                  <Typography fontWeight="bold" mb={1}>
+                    Unterkategorien:
                   </Typography>
-                }
-                action={
-                  <>
-                    <IconButton onClick={(e) => openMenu(e, cat.id.toString())}>
-                      <MoreVert />
-                    </IconButton>
-                    <Menu
-                      anchorEl={anchorEl}
-                      open={menuId === cat.id}
-                      onClose={closeMenu}
+                  <List dense>
+                    {cat.subcategories.map((sub) => (
+                      <ListItem
+                        key={sub.id}
+                        className={classes.listItem}
+                        onClick={() =>
+                          handleOpenSubEditDialog(sub.id.toString(), sub.name)
+                        }
+                      >
+                        <ListItemText
+                          primary={`• ${sub.name}`}
+                          primaryTypographyProps={{
+                            className: classes.listItemText,
+                          }}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                  <Box className={classes.addSubButton}>
+                    <Button
+                      size="small"
+                      startIcon={<Add />}
+                      onClick={() => {
+                        setSelectedCatId(cat.id.toString());
+                        setSubDialogOpen(true);
+                      }}
                     >
-                      <MenuItem onClick={() => handleEdit(cat.id.toString())}>
-                        Bearbeiten
-                      </MenuItem>
-                      <MenuItem onClick={() => handleDelete(cat.id.toString())}>
-                        Löschen
-                      </MenuItem>
-                    </Menu>
-                  </>
-                }
-              />
-              <CardContent>
-                <Typography fontWeight="bold" mb={1}>
-                  Unterkategorien:
-                </Typography>
-                <List dense>
-                  {cat.subcategories.map((sub) => (
-                    <ListItem
-                      key={sub.id}
-                      className={classes.listItem}
-                      onClick={() =>
-                        handleOpenSubEditDialog(sub.id.toString(), sub.name)
-                      }
-                    >
-                      <ListItemText
-                        primary={`• ${sub.name}`}
-                        primaryTypographyProps={{
-                          className: classes.listItemText,
-                        }}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-                <Box className={classes.addSubButton}>
-                  <Button
-                    size="small"
-                    startIcon={<Add />}
-                    onClick={() => {
-                      setSelectedCatId(cat.id.toString());
-                      setSubDialogOpen(true);
-                    }}
-                  >
-                    Unterkategorie hinzufügen
-                  </Button>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
+                      Unterkategorie hinzufügen
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
       </Grid>
 
       {/* Kategorie Dialog */}

@@ -15,11 +15,12 @@ import {
 import { useState } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import BusinessIcon from "@mui/icons-material/Business";
-import type { User } from "../../types/User.types";
+import type { User } from "types";
 import dayjs from "dayjs";
 import "dayjs/locale/de";
-import EditUserModal from "../../utils/EditModal";
+
 import useStyles from "./styles";
+import EditUserModal from "utils/EditModal";
 
 dayjs.locale("de");
 
