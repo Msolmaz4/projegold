@@ -35,6 +35,7 @@ import type { Task } from "types";
 import { useUserContext } from "hooks";
 import { SendEmailToUser } from "core";
 
+// Helper function to extract tasks from users
 const extractTasksFromUsers = (users: any[]): Task[] => {
   let idCounter = 1;
   return users
@@ -42,13 +43,297 @@ const extractTasksFromUsers = (users: any[]): Task[] => {
       (user) =>
         user?.aufgabe?.map((task: any) => ({
           ...task,
-          // ID'yi her zaman string olarak garanti altına al
           id: (task.id || `task-${idCounter++}`).toString(),
           email: user.email,
         })) || []
     )
     .filter((task) => task !== null);
 };
+
+// Helper function to get Chip color based on task status
+const getStatusChipColor = (status: string) => {
+  switch (status) {
+    case "offen":
+      return "warning";
+    case "erledigt":
+      return "success";
+    case "in Bearbeitung":
+      return "info";
+    default:
+      return "default";
+  }
+};
+
+// Helper function to get category and subcategory details
+const getCategoryAndSubcategoryDetails = (task: Task, categories: any[]) => {
+  const catObj = categories.find(
+    (c) => c.id?.toString() === task.categoryId || c.name === task.category
+  );
+  const subObj = catObj?.subcategories.find(
+    (s: any) => s.id === task.subcategoryId || s.name === task.subcategory
+  );
+  const catName = catObj?.name || task.category;
+  const subName = subObj?.name || task.subcategory;
+  return { catObj, subObj, catName, subName };
+};
+
+// Helper function to update user's aufgabe and tasks (milestones)
+const updateUserAufgabeAndTasks = (
+  prevUsers: any[],
+  task: Task,
+  action: "add" | "update" | "delete" | "drag",
+  categories: any[],
+  oldFirm?: string,
+  activeId?: string | number,
+  overId?: string | number,
+  oldCategoryName?: string,
+  oldSubcategoryName?: string,
+  newCategoryName?: string,
+  newSubcategoryName?: string
+) => {
+  return prevUsers.map((user) => {
+    const isOwner = user.company?.name === task.firma;
+    const isOldFirm = oldFirm && user.company?.name === oldFirm;
+
+    let updatedAufgabe = user.aufgabe ? [...user.aufgabe] : [];
+    let updatedTasksMilestones = user.tasks ? [...user.tasks] : [];
+
+    if (
+      action === "delete" &&
+      user.aufgabe?.some((t: any) => t.id === task.id)
+    ) {
+      updatedAufgabe = updatedAufgabe.filter((t: any) => t.id !== task.id);
+      updatedTasksMilestones = updatedTasksMilestones
+        .map((taskCategory: any) => ({
+          ...taskCategory,
+          milestones: taskCategory.milestones?.filter(
+            (m: any) => m.id !== task.id
+          ),
+        }))
+        .filter((taskCategory: any) => taskCategory.milestones?.length > 0);
+      SendEmailToUser(
+        user.email,
+        "Aufgabe gelöscht",
+        `Aufgabe gelöscht: ${task.name} (${task.category})`
+      );
+    } else if (action === "add" && isOwner) {
+      updatedAufgabe.push({ ...task, id: task.id });
+      const newMilestone = {
+        title: task.name,
+        fallig: task.milestoneDate,
+        meilenstein: task.milestoneDate,
+        id: task.id,
+        completed: false,
+        status: task.status,
+        category: task.category,
+        firma: task.firma,
+      };
+      const categoryIndex = updatedTasksMilestones.findIndex(
+        (taskCategory: any) => taskCategory.name === task.category
+      );
+      if (categoryIndex !== -1) {
+        const milestones =
+          updatedTasksMilestones[categoryIndex].milestones || [];
+        const exists = milestones.some(
+          (m: any) =>
+            m.title === newMilestone.title && m.fallig === newMilestone.fallig
+        );
+        if (!exists) {
+          milestones.push(newMilestone);
+        }
+        updatedTasksMilestones[categoryIndex] = {
+          ...updatedTasksMilestones[categoryIndex],
+          milestones,
+        };
+      } else {
+        updatedTasksMilestones.push({
+          name: task.category,
+          milestones: [newMilestone],
+        });
+      }
+      SendEmailToUser(
+        user.email,
+        "Neue Aufgabe zugewiesen",
+        `Neue Mission: ${task.name} (${task.category})`
+      );
+    } else if (action === "update") {
+      if (isOldFirm) {
+        updatedAufgabe = updatedAufgabe.filter((t: any) => t.id !== task.id);
+        updatedTasksMilestones = updatedTasksMilestones
+          .map((taskCategory: any) => ({
+            ...taskCategory,
+            milestones: taskCategory.milestones?.filter(
+              (m: any) => m.id !== task.id
+            ),
+          }))
+          .filter((taskCategory: any) => taskCategory.milestones?.length > 0);
+      }
+      if (isOwner) {
+        updatedAufgabe.push(task);
+        const newMilestone = {
+          title: task.name,
+          fallig: task.milestoneDate,
+          meilenstein: task.milestoneDate,
+          id: task.id,
+          completed: task.status === "erledigt",
+          status: task.status,
+          category: task.category,
+          firma: task.firma,
+        };
+        const categoryIndex = updatedTasksMilestones.findIndex(
+          (taskCategory: any) => taskCategory.name === task.category
+        );
+        if (categoryIndex !== -1) {
+          const milestones =
+            updatedTasksMilestones[categoryIndex].milestones || [];
+          const exists = milestones.some(
+            (m: any) =>
+              m.title === newMilestone.title && m.fallig === newMilestone.fallig
+          );
+          if (!exists) {
+            milestones.push(newMilestone);
+          }
+          updatedTasksMilestones[categoryIndex] = {
+            ...updatedTasksMilestones[categoryIndex],
+            milestones,
+          };
+        } else {
+          updatedTasksMilestones.push({
+            name: task.category,
+            milestones: [newMilestone],
+          });
+        }
+        SendEmailToUser(
+          user.email,
+          "Aufgabe aktualisieren",
+          `Aktualisierte Mission: ${task.name} (${task.category})`
+        );
+      }
+    } else if (action === "drag" && isOwner && activeId && overId) {
+      const taskIndexInAufgabe = updatedAufgabe.findIndex(
+        (t: any) => t.id === activeId
+      );
+      if (taskIndexInAufgabe !== -1) {
+        const movedTask = { ...updatedAufgabe[taskIndexInAufgabe] };
+
+        if (
+          `${oldCategoryName}>${oldSubcategoryName}` ===
+          `${newCategoryName}>${newSubcategoryName}`
+        ) {
+          const groupTasksInUser = updatedAufgabe.filter((t) => {
+            const { catName, subName } = getCategoryAndSubcategoryDetails(
+              t,
+              categories
+            );
+            return (
+              catName === oldCategoryName && subName === oldSubcategoryName
+            );
+          });
+
+          const oldIndexInGroup = groupTasksInUser.findIndex(
+            (t: any) => t.id === activeId
+          );
+          const newIndexInGroup = groupTasksInUser.findIndex(
+            (t: any) => t.id === overId
+          );
+          const reorderedGroup = arrayMove(
+            groupTasksInUser,
+            oldIndexInGroup,
+            newIndexInGroup
+          );
+          const otherTasks = updatedAufgabe.filter((t) => {
+            const { catName, subName } = getCategoryAndSubcategoryDetails(
+              t,
+              categories
+            );
+            return !(
+              catName === oldCategoryName && subName === oldSubcategoryName
+            );
+          });
+          updatedAufgabe = [...otherTasks, ...reorderedGroup];
+        } else {
+          if (
+            newCategoryName &&
+            ["Marketing", "Development", "Design", "Fulfillment"].includes(
+              newCategoryName
+            )
+          ) {
+            movedTask.category = newCategoryName as typeof movedTask.category;
+          }
+          if (
+            typeof newSubcategoryName === "string" &&
+            [
+              "SEO",
+              "Google Ads",
+              "Social Media",
+              "PDF Programmierung",
+              "Webformula",
+              "Backend",
+              "UX/UI",
+            ].includes(newSubcategoryName)
+          ) {
+            movedTask.subcategory =
+              newSubcategoryName as typeof movedTask.subcategory;
+          }
+          const { catObj: overCatObj, subObj: overSubObj } =
+            getCategoryAndSubcategoryDetails(task, categories);
+          movedTask.categoryId = overCatObj?.id?.toString();
+          movedTask.subcategoryId = overSubObj?.id;
+          movedTask.status = "in Bearbeitung"; // Status changed to "in Bearbeitung" on drag
+
+          updatedAufgabe.splice(taskIndexInAufgabe, 1);
+          updatedAufgabe.push(movedTask);
+        }
+
+        updatedTasksMilestones = updatedTasksMilestones
+          .map((taskCategory: any) => ({
+            ...taskCategory,
+            milestones: taskCategory.milestones?.filter(
+              (m: any) => m.id !== activeId
+            ),
+          }))
+          .filter((taskCategory: any) => taskCategory.milestones?.length > 0);
+
+        const updatedMilestone = {
+          title: movedTask.name,
+          fallig: movedTask.milestoneDate,
+          meilenstein: movedTask.milestoneDate,
+          id: movedTask.id,
+          completed: movedTask.status === "erledigt",
+          status: movedTask.status,
+          category: movedTask.category,
+          firma: movedTask.firma,
+        };
+
+        const targetCategoryIndex = updatedTasksMilestones.findIndex(
+          (taskCategory: any) => taskCategory.name === updatedMilestone.category
+        );
+
+        if (targetCategoryIndex !== -1) {
+          updatedTasksMilestones[targetCategoryIndex] = {
+            ...updatedTasksMilestones[targetCategoryIndex],
+            milestones: [
+              ...updatedTasksMilestones[targetCategoryIndex].milestones,
+              updatedMilestone,
+            ],
+          };
+        } else {
+          updatedTasksMilestones.push({
+            name: updatedMilestone.category,
+            milestones: [updatedMilestone],
+          });
+        }
+      }
+    }
+
+    return {
+      ...user,
+      aufgabe: updatedAufgabe,
+      tasks: updatedTasksMilestones,
+    };
+  });
+};
+
 function SortableRow({
   task,
   onEdit,
@@ -106,15 +391,7 @@ function SortableRow({
         <Chip
           size="small"
           label={task.status}
-          color={
-            task.status === "offen"
-              ? "warning"
-              : task.status === "erledigt"
-                ? "success"
-                : task.status === "in Bearbeitung"
-                  ? "info"
-                  : "default"
-          }
+          color={getStatusChipColor(task.status)}
         />
       </TableCell>
       <TableCell>
@@ -159,9 +436,6 @@ const TaskTable: React.FC = () => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
-  //const resend = new Resend(import.meta.env.VITE_APP_NAME);
-  //const resend = new Resend('re_DbgWj3qs_HgnY42PviabuFemxKybsLU9z');
-
   useEffect(() => {
     const userTasks = extractTasksFromUsers(users);
     setTasks(userTasks);
@@ -175,62 +449,7 @@ const TaskTable: React.FC = () => {
 
   const handleAddTask = (newTask: Task) => {
     setUsers((prevUsers) =>
-      prevUsers.map((user) => {
-        if (user.company?.name === newTask.firma) {
-          // newTask.id artık AddTaskModal'dan string olarak geliyor, doğrudan kullanabiliriz.
-          const newTaskId = newTask.id;
-          const newAufgabe = user.aufgabe ? [...user.aufgabe] : [];
-          newAufgabe.push({ ...newTask, id: newTaskId });
-
-          let updatedTasks = user.tasks ? [...user.tasks] : [];
-          const categoryIndex = updatedTasks.findIndex(
-            (taskCategory: any) => taskCategory.name === newTask.category
-          );
-          const newMilestone = {
-            title: newTask.name,
-            fallig: newTask.milestoneDate,
-            meilenstein: newTask.milestoneDate,
-            id: newTaskId,
-            completed: false,
-            status: newTask.status,
-            category: newTask.category,
-            firma: newTask.firma,
-          };
-
-          if (categoryIndex !== -1) {
-            const milestones = updatedTasks[categoryIndex].milestones || [];
-            const exists = milestones.some(
-              (m: any) =>
-                m.title === newMilestone.title &&
-                m.fallig === newMilestone.fallig
-            );
-            if (!exists) {
-              milestones.push(newMilestone);
-            }
-            updatedTasks[categoryIndex] = {
-              ...updatedTasks[categoryIndex],
-              milestones,
-            };
-          } else {
-            updatedTasks.push({
-              name: newTask.category,
-              milestones: [newMilestone],
-            });
-          }
-          SendEmailToUser(
-            user.email,
-            "Neue Aufgabe zugewiesen",
-            `Neue Mission: ${newTask.name} (${newTask.category})`
-          );
-
-          return {
-            ...user,
-            aufgabe: newAufgabe,
-            tasks: updatedTasks,
-          };
-        }
-        return user;
-      })
+      updateUserAufgabeAndTasks(prevUsers, newTask, "add", categories)
     );
   };
 
@@ -238,9 +457,9 @@ const TaskTable: React.FC = () => {
     setSelectedTask(taskToEdit);
     setEditDialogOpen(true);
   };
+
   const handleSaveEdit = (editedTask: Task) => {
     setUsers((prevUsers) => {
-      // Eski görevi (id ile) bul ve hangi firma olduğunu öğren
       let oldFirm = "";
       for (const user of prevUsers) {
         if (user.aufgabe?.some((t: any) => t.id === editedTask.id)) {
@@ -248,142 +467,21 @@ const TaskTable: React.FC = () => {
           break;
         }
       }
-
-      return prevUsers
-        .map((user) => {
-          // Eğer kullanıcı eski firmadaysa, görev silinecek
-          if (user.company?.name === oldFirm) {
-            const updatedAufgabe = user.aufgabe?.filter(
-              (t: any) => t.id !== editedTask.id
-            );
-            let updatedTasksMilestones = user.tasks ? [...user.tasks] : [];
-            updatedTasksMilestones = updatedTasksMilestones
-              .map((taskCategory: any) => {
-                if (taskCategory.milestones) {
-                  return {
-                    ...taskCategory,
-                    milestones: taskCategory.milestones.filter(
-                      (m: any) => m.id !== editedTask.id
-                    ),
-                  };
-                }
-                return taskCategory;
-              })
-              .filter(
-                (taskCategory: any) =>
-                  taskCategory.milestones && taskCategory.milestones.length > 0
-              );
-
-            return {
-              ...user,
-              aufgabe: updatedAufgabe,
-              tasks: updatedTasksMilestones,
-            };
-          }
-          return user;
-        })
-        .map((user) => {
-          // Eğer kullanıcı yeni firmadaysa, görev eklenecek / güncellenecek
-          if (user.company?.name === editedTask.firma) {
-            const newAufgabe = user.aufgabe ? [...user.aufgabe] : [];
-            newAufgabe.push(editedTask);
-
-            let updatedTasks = user.tasks ? [...user.tasks] : [];
-            const categoryIndex = updatedTasks.findIndex(
-              (taskCategory: any) => taskCategory.name === editedTask.category
-            );
-            const newMilestone = {
-              title: editedTask.name,
-              fallig: editedTask.milestoneDate,
-              meilenstein: editedTask.milestoneDate,
-              id: editedTask.id,
-              completed: editedTask.status === "erledigt",
-              status: editedTask.status,
-              category: editedTask.category,
-              firma: editedTask.firma,
-            };
-
-            if (categoryIndex !== -1) {
-              const milestones = updatedTasks[categoryIndex].milestones || [];
-              const exists = milestones.some(
-                (m: any) =>
-                  m.title === newMilestone.title &&
-                  m.fallig === newMilestone.fallig
-              );
-              if (!exists) {
-                milestones.push(newMilestone);
-              }
-              updatedTasks[categoryIndex] = {
-                ...updatedTasks[categoryIndex],
-                milestones,
-              };
-            } else {
-              updatedTasks.push({
-                name: editedTask.category,
-                milestones: [newMilestone],
-              });
-            }
-            SendEmailToUser(
-              user.email,
-              "Aufgabe aktualisieren",
-              `Aktualisierte Mission: ${editedTask.name} (${editedTask.category})`
-            );
-
-            return {
-              ...user,
-              aufgabe: newAufgabe,
-              tasks: updatedTasks,
-            };
-          }
-          return user;
-        });
+      return updateUserAufgabeAndTasks(
+        prevUsers,
+        editedTask,
+        "update",
+        categories,
+        oldFirm
+      );
     });
-
     setEditDialogOpen(false);
     setSelectedTask(null);
   };
 
   const handleDeleteTask = (taskToDelete: Task) => {
     setUsers((prevUsers) =>
-      prevUsers.map((user) => {
-        const taskInUserAufgabe = user.aufgabe?.find(
-          (t: any) => t.id === taskToDelete.id
-        );
-        if (taskInUserAufgabe) {
-          const updatedAufgabe = user.aufgabe?.filter(
-            (t: any) => t.id !== taskToDelete.id
-          );
-          let updatedTasksMilestones = user.tasks ? [...user.tasks] : [];
-          updatedTasksMilestones = updatedTasksMilestones
-            .map((taskCategory: any) => {
-              if (taskCategory.milestones) {
-                return {
-                  ...taskCategory,
-                  milestones: taskCategory.milestones.filter(
-                    (m: any) => m.id !== taskToDelete.id
-                  ),
-                };
-              }
-              return taskCategory;
-            })
-            .filter(
-              (taskCategory: any) =>
-                taskCategory.milestones && taskCategory.milestones.length > 0
-            );
-          SendEmailToUser(
-            user.email,
-            "Aufgabe lösen",
-            `Aufgabe gelöscht: ${taskToDelete.name} (${taskToDelete.category})`
-          );
-
-          return {
-            ...user,
-            aufgabe: updatedAufgabe,
-            tasks: updatedTasksMilestones,
-          };
-        }
-        return user;
-      })
+      updateUserAufgabeAndTasks(prevUsers, taskToDelete, "delete", categories)
     );
   };
 
@@ -396,15 +494,10 @@ const TaskTable: React.FC = () => {
 
   const grouped = filteredTasks.reduce(
     (acc, task) => {
-      const catObj = categories.find(
-        (c) => c.id.toString() === task.categoryId || c.name === task.category
+      const { catName, subName } = getCategoryAndSubcategoryDetails(
+        task,
+        categories
       );
-      const subObj = catObj?.subcategories.find(
-        (s) => s.id === task.subcategoryId || s.name === task.subcategory
-      );
-      const catName = catObj?.name || task.category;
-      const subName = subObj?.name || task.subcategory;
-
       const key = `${catName} > ${subName}`;
       if (!acc[key]) acc[key] = [];
       acc[key].push(task);
@@ -427,177 +520,25 @@ const TaskTable: React.FC = () => {
 
     if (!activeTask || !overTask) return;
 
-    const activeCatObj = categories.find((c) => c.name === activeTask.category);
-    const activeSubObj = activeCatObj?.subcategories.find(
-      (s) => s.name === activeTask.subcategory
-    );
-    const overCatObj = categories.find((c) => c.name === overTask.category);
-    const overSubObj = overCatObj?.subcategories.find(
-      (s) => s.name === overTask.subcategory
-    );
-    const oldCategoryName = activeCatObj?.name || activeTask.category;
-    const oldSubcategoryName = activeSubObj?.name || activeTask.subcategory;
-    const newCategoryName = overCatObj?.name || overTask.category;
-    const newSubcategoryName = overSubObj?.name || overTask.subcategory;
+    const { catName: oldCategoryName, subName: oldSubcategoryName } =
+      getCategoryAndSubcategoryDetails(activeTask, categories);
+    const { catName: newCategoryName, subName: newSubcategoryName } =
+      getCategoryAndSubcategoryDetails(overTask, categories);
 
     setUsers((prevUsers) =>
-      prevUsers.map((user) => {
-        const isOwner = user.company?.name === activeTask.firma;
-
-        if (isOwner) {
-          const taskIndexInAufgabe = user.aufgabe?.findIndex(
-            (t: any) => t.id === active.id
-          );
-
-          if (taskIndexInAufgabe !== -1 && user.aufgabe) {
-            const updatedAufgabe = [...user.aufgabe];
-            const movedTask = { ...updatedAufgabe[taskIndexInAufgabe] };
-
-            if (
-              `${oldCategoryName}>${oldSubcategoryName}` ===
-              `${newCategoryName}>${newSubcategoryName}`
-            ) {
-              const groupTasksInUser = updatedAufgabe.filter(
-                (t) =>
-                  (categories.find(
-                    (c) =>
-                      c.id.toString() === t.categoryId || c.name === t.category
-                  )?.name || t.category) === oldCategoryName &&
-                  (categories
-                    .flatMap((c) => c.subcategories)
-                    .find(
-                      (s) =>
-                        s.id === t.subcategoryId || s.name === t.subcategory
-                    )?.name || t.subcategory) === oldSubcategoryName
-              );
-
-              const oldIndexInGroup = groupTasksInUser.findIndex(
-                (t: any) => t.id === active.id
-              );
-              const newIndexInGroup = groupTasksInUser.findIndex(
-                (t: any) => t.id === over.id
-              );
-              const reorderedGroup = arrayMove(
-                groupTasksInUser,
-                oldIndexInGroup,
-                newIndexInGroup
-              );
-              const otherTasks = updatedAufgabe.filter(
-                (t) =>
-                  !(
-                    (categories.find(
-                      (c) =>
-                        c.id.toString() === t.categoryId ||
-                        c.name === t.category
-                    )?.name || t.category) === oldCategoryName &&
-                    (categories
-                      .flatMap((c) => c.subcategories)
-                      .find(
-                        (s) =>
-                          s.id === t.subcategoryId || s.name === t.subcategory
-                      )?.name || t.subcategory) === oldSubcategoryName
-                  )
-              );
-              user.aufgabe = [...otherTasks, ...reorderedGroup];
-            } else {
-              // category ve subcategory enum/union tipine uygun atanıyor
-              if (
-                newCategoryName &&
-                ["Marketing", "Development", "Design", "Fulfillment"].includes(
-                  newCategoryName
-                )
-              ) {
-                movedTask.category =
-                  newCategoryName as typeof movedTask.category;
-              }
-              if (
-                typeof newSubcategoryName === "string" &&
-                [
-                  "SEO",
-                  "Google Ads",
-                  "Social Media",
-                  "PDF Programmierung",
-                  "Webformula",
-                  "Backend",
-                  "UX/UI",
-                ].includes(newSubcategoryName)
-              ) {
-                movedTask.subcategory =
-                  newSubcategoryName as typeof movedTask.subcategory;
-              }
-              movedTask.categoryId = overCatObj?.id?.toString();
-              movedTask.subcategoryId = overSubObj?.id;
-              movedTask.status = "Bearbeitung";
-
-              if (
-                typeof taskIndexInAufgabe === "number" &&
-                taskIndexInAufgabe >= 0
-              ) {
-                updatedAufgabe.splice(taskIndexInAufgabe, 1);
-              }
-
-              updatedAufgabe.push(movedTask);
-              user.aufgabe = updatedAufgabe;
-            }
-
-            let updatedTasksMilestones = user.tasks ? [...user.tasks] : [];
-            updatedTasksMilestones = updatedTasksMilestones
-              .map((taskCategory: any) => {
-                if (taskCategory.milestones) {
-                  return {
-                    ...taskCategory,
-                    milestones: taskCategory.milestones.filter(
-                      (m: any) => m.id !== active.id
-                    ),
-                  };
-                }
-                return taskCategory;
-              })
-              .filter(
-                (taskCategory: any) =>
-                  taskCategory.milestones && taskCategory.milestones.length > 0
-              );
-
-            const updatedMilestone = {
-              title: movedTask.name,
-              fallig: movedTask.milestoneDate,
-              meilenstein: movedTask.milestoneDate,
-              id: movedTask.id,
-              completed: movedTask.status === "erledigt",
-              status: movedTask.status,
-              category: movedTask.category,
-              firma: movedTask.firma,
-            };
-
-            const targetCategoryIndex = updatedTasksMilestones.findIndex(
-              (taskCategory: any) =>
-                taskCategory.name === updatedMilestone.category
-            );
-
-            if (targetCategoryIndex !== -1) {
-              updatedTasksMilestones[targetCategoryIndex] = {
-                ...updatedTasksMilestones[targetCategoryIndex],
-                milestones: [
-                  ...updatedTasksMilestones[targetCategoryIndex].milestones,
-                  updatedMilestone,
-                ],
-              };
-            } else {
-              updatedTasksMilestones.push({
-                name: updatedMilestone.category,
-                milestones: [updatedMilestone],
-              });
-            }
-
-            return {
-              ...user,
-              aufgabe: user.aufgabe,
-              tasks: updatedTasksMilestones,
-            };
-          }
-        }
-        return user;
-      })
+      updateUserAufgabeAndTasks(
+        prevUsers,
+        activeTask,
+        "drag",
+        categories,
+        undefined, // oldFirm is not relevant for drag
+        active.id,
+        over.id,
+        oldCategoryName,
+        oldSubcategoryName,
+        newCategoryName,
+        newSubcategoryName
+      )
     );
   };
 

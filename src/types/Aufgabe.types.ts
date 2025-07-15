@@ -19,7 +19,7 @@ export interface Aufgabe {
   firma: string;
   fallig?: string;
   meilenstein?: string;
-  id: number;
+  id?: number;
   categoryId?: string | number;
   subcategoryId?: string | number;
 }
