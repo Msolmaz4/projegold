@@ -1,6 +1,6 @@
 import type { KategorieListe, Subkategorie } from "./Categories.types";
 export interface Milestone {
-  title?: string;
+  title: string;
   date?: string;
   fallig?: string;
   meilenstein?: string;
@@ -24,4 +24,4 @@ export interface Task {
   tasks?: string[] | undefined;
   milestoneDate?: string | undefined;
   milestones: Milestone[];
-}
+}                     

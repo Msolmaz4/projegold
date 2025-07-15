@@ -110,8 +110,12 @@ const TaskTable: React.FC = () => {
               milestones,
             };
           } else {
+            // Kategori adı bulunuyor (id ise adını bul)
+            const categoryObj = categories.find(cat => cat.id.toString() === newTask.category || cat.name === newTask.category);
+            const categoryName = categoryObj?.name ?? String(newTask.category ?? "Unbekannte Kategorie");
             updatedTasks.push({
-              name: newTask.category,
+              id: newTaskId,
+              name: categoryName,
               milestones: [newMilestone],
             });
           }
@@ -192,8 +196,12 @@ const TaskTable: React.FC = () => {
               ],
             };
           } else {
+            // Kategori adı bulunuyor (id ise adını bul)
+            const categoryObj = categories.find(cat => cat.id.toString() === editedTask.category || cat.name === editedTask.category);
+            const categoryName = categoryObj?.name ?? String(editedTask.category ?? "Unbekannte Kategorie");
             updatedTasksMilestones.push({
-              name: editedTask.category,
+              id: editedTask.id,
+              name: categoryName,
               milestones: [newMilestone],
             });
           }
@@ -279,8 +287,12 @@ const TaskTable: React.FC = () => {
               ],
             };
           } else {
+            // Kategori adı bulunuyor (id ise adını bul)
+            const categoryObj = categories.find(cat => cat.id.toString() === editedTask.category || cat.name === editedTask.category);
+            const categoryName = categoryObj?.name ?? String(editedTask.category ?? "Unbekannte Kategorie");
             updatedTasksMilestones.push({
-              name: editedTask.category,
+              id: editedTask.id,
+              name: categoryName,
               milestones: [newMilestone],
             });
           }
@@ -415,7 +427,11 @@ const TaskTable: React.FC = () => {
 
           if (taskIndexInAufgabe !== -1 && user.aufgabe) {
             const updatedAufgabe = [...user.aufgabe];
-            const movedTask = { ...updatedAufgabe[taskIndexInAufgabe] };
+            let movedTask = undefined;
+            if (typeof taskIndexInAufgabe === "number" && taskIndexInAufgabe >= 0 && taskIndexInAufgabe < updatedAufgabe.length) {
+              movedTask = { ...updatedAufgabe[taskIndexInAufgabe] };
+            }
+            if (!movedTask) return user;
 
             if (
               `${oldCategoryName}>${oldSubcategoryName}` ===
@@ -464,11 +480,18 @@ const TaskTable: React.FC = () => {
               );
               user.aufgabe = [...otherTasks, ...reorderedGroup];
             } else {
-              movedTask.category = newCategoryName;
-              movedTask.subcategory = newSubcategoryName;
-              movedTask.categoryId = overCatObj?.id.toString();
+              // category ve subcategory enum/union tipine uygun atanıyor
+              if (newCategoryName && ["Marketing", "Development", "Design", "Fulfillment"].includes(newCategoryName)) {
+                movedTask.category = newCategoryName as typeof movedTask.category;
+              }
+              if (typeof newSubcategoryName === "string" && [
+                "SEO", "Google Ads", "Social Media", "PDF Programmierung", "Webformula", "Backend", "UX/UI"
+              ].includes(newSubcategoryName)) {
+                movedTask.subcategory = newSubcategoryName as typeof movedTask.subcategory;
+              }
+              movedTask.categoryId = overCatObj?.id?.toString();
               movedTask.subcategoryId = overSubObj?.id;
-              movedTask.status = "in Bearbeitung";
+              movedTask.status = "Bearbeitung";
 
               if (
                 typeof taskIndexInAufgabe === "number" &&
@@ -499,10 +522,12 @@ const TaskTable: React.FC = () => {
                   taskCategory.milestones && taskCategory.milestones.length > 0
               );
 
+            // milestoneDate yoksa fallig veya meilenstein kullan
+            const milestoneDate = (movedTask as any).milestoneDate || (movedTask as any).fallig || (movedTask as any).meilenstein || "";
             const updatedMilestone = {
               title: movedTask.name,
-              fallig: movedTask.milestoneDate,
-              meilenstein: movedTask.milestoneDate,
+              fallig: milestoneDate,
+              meilenstein: milestoneDate,
               id: movedTask.id,
               completed: movedTask.status === "erledigt",
               status: movedTask.status,
@@ -527,7 +552,7 @@ const TaskTable: React.FC = () => {
               const newId = new Date().getTime().toString();
               updatedTasksMilestones.push({
                 id: newId,
-                name: updatedMilestone.category,
+                name: updatedMilestone.category || "Unbekannte Kategorie",
                 milestones: [updatedMilestone],
               });
             }
