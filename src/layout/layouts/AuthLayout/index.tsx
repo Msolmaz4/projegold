@@ -1,4 +1,3 @@
-import React from "react";
 import useStyles from "./styles";
 
 type LayoutProps = {

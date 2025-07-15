@@ -1,3 +1,4 @@
+// vite.config.ts
 import { defineConfig } from "vitest/config";
 
 import react from "@vitejs/plugin-react";
@@ -5,6 +6,7 @@ import { resolve } from "path";
 
 export default defineConfig({
   plugins: [react()],
+
   test: {
     globals: true,
     environment: "jsdom",
@@ -18,6 +20,9 @@ export default defineConfig({
 
   build: {
     sourcemap: true,
+    rollupOptions: {
+      external: ["clsx", "@sentry/browser", "prop-types", "react-is", "react-transition-group", "swiper/react", "uuid", "@mui/icons-material"], // run build hinzufugen
+    },
   },
   resolve: {
     alias: [

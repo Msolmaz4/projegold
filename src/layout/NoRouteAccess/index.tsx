@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import  { useCallback, useEffect, useState } from "react";
 import * as Sentry from "@sentry/react";
 import { getUserRoleName } from "../../modules/usermanagement/roles/api"
 import { useAuthContext } from "../../hooks/auth/useAuthContext";
