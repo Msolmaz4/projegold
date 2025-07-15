@@ -1,4 +1,4 @@
-import  { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Table,
@@ -9,23 +9,31 @@ import {
   TableRow,
   Typography,
   Paper,
+  Chip,
+  IconButton,
   MenuItem,
+  Menu,
   TextField,
   Select,
   FormControl,
   InputLabel,
   Button,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import AddTaskModal from "./AdTaskModal";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
+  useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import type { Task } from "types";
-import { useUserContext, useAuthContext } from "hooks";
-import { ConvertTaskToAufgabe, SendEmailToUser, SortableRow } from "core";
-import AddTaskModal from "./AdTaskModal";
+import { useUserContext } from "hooks";
+import { SendEmailToUser } from "core";
 
 const extractTasksFromUsers = (users: any[]): Task[] => {
   let idCounter = 1;
@@ -34,12 +42,112 @@ const extractTasksFromUsers = (users: any[]): Task[] => {
       (user) =>
         user?.aufgabe?.map((task: any) => ({
           ...task,
-          id: task.id || `task-${idCounter++}`,
+          // ID'yi her zaman string olarak garanti altına al
+          id: (task.id || `task-${idCounter++}`).toString(),
           email: user.email,
         })) || []
     )
     .filter((task) => task !== null);
 };
+function SortableRow({
+  task,
+  onEdit,
+  onDelete,
+}: {
+  task: Task;
+  onEdit: (task: Task) => void;
+  onDelete: (task: Task) => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: task.id });
+  const [menuDialogOpen, setMenuDialogOpen] = useState(false);
+  const anchorRef = React.useRef<HTMLButtonElement | null>(null);
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  const handleMenuOpen = () => setMenuDialogOpen(true);
+  const handleMenuClose = () => setMenuDialogOpen(false);
+
+  const handleDeleteClick = () => {
+    if (task.status !== "erledigt") {
+      alert("Nur Aufgaben mit Status 'erledigt' können gelöscht werden!");
+    } else if (
+      window.confirm(`Möchten Sie die Aufgabe "${task.name}" wirklich löschen?`)
+    ) {
+      onDelete(task);
+    }
+    handleMenuClose();
+  };
+
+  return (
+    <TableRow ref={setNodeRef} style={style} hover>
+      <TableCell sx={{ width: 40 }}>
+        <IconButton {...attributes} {...listeners}>
+          <DragIndicatorIcon fontSize="small" />
+        </IconButton>
+      </TableCell>
+      <TableCell
+        sx={{ maxWidth: 140, whiteSpace: "normal", wordWrap: "break-word" }}
+      >
+        {task.name}
+      </TableCell>
+      <TableCell>{task.vorarbeit} min</TableCell>
+      <TableCell>{task.umsetzung} min</TableCell>
+      <TableCell>{task.kontrolle} min</TableCell>
+      <TableCell>{task.kosten} €</TableCell>
+      <TableCell>
+        {task.dueDate
+          ? new Date(task.dueDate).toLocaleDateString("de-DE")
+          : "—"}
+      </TableCell>
+      <TableCell>
+        <Chip
+          size="small"
+          label={task.status}
+          color={
+            task.status === "offen"
+              ? "warning"
+              : task.status === "erledigt"
+                ? "success"
+                : task.status === "in Bearbeitung"
+                  ? "info"
+                  : "default"
+          }
+        />
+      </TableCell>
+      <TableCell>
+        {task.milestoneDate
+          ? new Date(task.milestoneDate).toLocaleDateString("de-DE")
+          : "—"}
+      </TableCell>
+      <TableCell align="right">
+        <IconButton size="small" onClick={() => onEdit(task)}>
+          <EditIcon />
+        </IconButton>
+        <IconButton size="small" ref={anchorRef} onClick={handleMenuOpen}>
+          <MoreVertIcon />
+        </IconButton>
+        <Menu
+          anchorEl={anchorRef.current}
+          open={menuDialogOpen}
+          onClose={handleMenuClose}
+        >
+          <MenuItem
+            onClick={() => {
+              onEdit(task);
+              handleMenuClose();
+            }}
+          >
+            Bearbeiten
+          </MenuItem>
+          <MenuItem onClick={handleDeleteClick}>Löschen</MenuItem>
+        </Menu>
+      </TableCell>
+    </TableRow>
+  );
+}
 
 const TaskTable: React.FC = () => {
   const { categories, users, setUsers } = useUserContext();
@@ -50,7 +158,7 @@ const TaskTable: React.FC = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const { userData } = useAuthContext();
+
   //const resend = new Resend(import.meta.env.VITE_APP_NAME);
   //const resend = new Resend('re_DbgWj3qs_HgnY42PviabuFemxKybsLU9z');
 
@@ -66,35 +174,29 @@ const TaskTable: React.FC = () => {
   }, [users]);
 
   const handleAddTask = (newTask: Task) => {
-    console.log("Type:", typeof newTask, "| Value:", newTask);
     setUsers((prevUsers) =>
       prevUsers.map((user) => {
         if (user.company?.name === newTask.firma) {
-          const newTaskId = newTask.id || new Date().getTime();
+          // newTask.id artık AddTaskModal'dan string olarak geliyor, doğrudan kullanabiliriz.
+          const newTaskId = newTask.id;
           const newAufgabe = user.aufgabe ? [...user.aufgabe] : [];
-          // Task'i Aufgabe'ye dönüştür ve id ata
-          const aufgabeToAdd = ConvertTaskToAufgabe({
-            ...newTask,
-            id: newTaskId,
-          });
+          newAufgabe.push({ ...newTask, id: newTaskId });
 
-          newAufgabe.push(aufgabeToAdd);
           let updatedTasks = user.tasks ? [...user.tasks] : [];
-
           const categoryIndex = updatedTasks.findIndex(
             (taskCategory: any) => taskCategory.name === newTask.category
           );
-
           const newMilestone = {
-            title: newTask.name ?? "Unbenannte Aufgabe",
-            fallig: newTask.milestoneDate ?? "",
-            meilenstein: newTask.milestoneDate ?? "",
+            title: newTask.name,
+            fallig: newTask.milestoneDate,
+            meilenstein: newTask.milestoneDate,
             id: newTaskId,
             completed: false,
-            status: newTask.status ?? "offen",
-            category: newTask.category ?? "Unbekannte Kategorie",
-            firma: newTask.firma ?? "Unbekannt",
+            status: newTask.status,
+            category: newTask.category,
+            firma: newTask.firma,
           };
+
           if (categoryIndex !== -1) {
             const milestones = updatedTasks[categoryIndex].milestones || [];
             const exists = milestones.some(
@@ -110,16 +212,11 @@ const TaskTable: React.FC = () => {
               milestones,
             };
           } else {
-            // Kategori adı bulunuyor (id ise adını bul)
-            const categoryObj = categories.find(cat => cat.id.toString() === newTask.category || cat.name === newTask.category);
-            const categoryName = categoryObj?.name ?? String(newTask.category ?? "Unbekannte Kategorie");
             updatedTasks.push({
-              id: newTaskId,
-              name: categoryName,
+              name: newTask.category,
               milestones: [newMilestone],
             });
           }
-
           SendEmailToUser(
             user.email,
             "Neue Aufgabe zugewiesen",
@@ -141,177 +238,105 @@ const TaskTable: React.FC = () => {
     setSelectedTask(taskToEdit);
     setEditDialogOpen(true);
   };
-
   const handleSaveEdit = (editedTask: Task) => {
     setUsers((prevUsers) => {
-      let taskMoved = false;
-      const updatedUsers = prevUsers.map((user) => {
-        const taskInUserAufgabe = user.aufgabe?.find(
-          (t: any) => t.id === editedTask.id
-        );
-
-        if (taskInUserAufgabe && taskInUserAufgabe.firma === editedTask.firma) {
-          const updatedAufgabe = user.aufgabe?.map((t: any) =>
-            t.id === editedTask.id ? editedTask : t
-          );
-          let updatedTasksMilestones = user.tasks ? [...user.tasks] : [];
-          updatedTasksMilestones = updatedTasksMilestones
-            .map((taskCategory: any) => {
-              if (taskCategory.milestones) {
-                return {
-                  ...taskCategory,
-                  milestones: taskCategory.milestones.filter(
-                    (m: any) => m.id !== editedTask.id
-                  ),
-                };
-              }
-              return taskCategory;
-            })
-            .filter(
-              (taskCategory: any) =>
-                taskCategory.milestones && taskCategory.milestones.length > 0
-            );
-
-          const newMilestone = {
-            title: editedTask.name,
-            fallig: editedTask.milestoneDate,
-            meilenstein: editedTask.milestoneDate,
-            id: editedTask.id,
-            completed: editedTask.status === "erledigt",
-            status: editedTask.status,
-            category: editedTask.category,
-            firma: editedTask.firma,
-          };
-
-          const categoryIndex = updatedTasksMilestones.findIndex(
-            (taskCategory: any) => taskCategory.name === editedTask.category
-          );
-
-          if (categoryIndex !== -1) {
-            updatedTasksMilestones[categoryIndex] = {
-              ...updatedTasksMilestones[categoryIndex],
-              milestones: [
-                ...updatedTasksMilestones[categoryIndex].milestones,
-                newMilestone,
-              ],
-            };
-          } else {
-            // Kategori adı bulunuyor (id ise adını bul)
-            const categoryObj = categories.find(cat => cat.id.toString() === editedTask.category || cat.name === editedTask.category);
-            const categoryName = categoryObj?.name ?? String(editedTask.category ?? "Unbekannte Kategorie");
-            updatedTasksMilestones.push({
-              id: editedTask.id,
-              name: categoryName,
-              milestones: [newMilestone],
-            });
-          }
-
-          SendEmailToUser(
-            user.email,
-            "Aufgabe aktualisieren",
-            `Aktualisierte Mission: ${editedTask.name} (${editedTask.category})`
-          );
-
-          return {
-            ...user,
-            aufgabe: updatedAufgabe,
-            tasks: updatedTasksMilestones,
-          };
-        }
-        // wenn Task User Firma verandet hat ,hat alteUser weg
-
-        if (taskInUserAufgabe && taskInUserAufgabe.firma !== editedTask.firma) {
-          taskMoved = true;
-          const updatedAufgabe = user.aufgabe?.filter(
-            (t: any) => t.id !== editedTask.id
-          );
-          const updatedTasksMilestones = (user.tasks || [])
-            .map((taskCategory: any) => {
-              if (taskCategory.milestones) {
-                return {
-                  ...taskCategory,
-                  milestones: taskCategory.milestones.filter(
-                    (m: any) => m.id !== editedTask.id
-                  ),
-                };
-              }
-              return taskCategory;
-            })
-            .filter(
-              (taskCategory: any) =>
-                taskCategory.milestones && taskCategory.milestones.length > 0
-            );
-
-          return {
-            ...user,
-            aufgabe: updatedAufgabe,
-            tasks: updatedTasksMilestones,
-          };
-        }
-
-        return user;
-      });
-
-      // Task umziehen , new User wird Task hinzufugen
-      if (taskMoved) {
-        const targetIndex = updatedUsers.findIndex(
-          (u) => u.company?.name === editedTask.firma
-        );
-        if (targetIndex !== -1) {
-          const user = updatedUsers[targetIndex];
-          const updatedAufgabe = [...(user.aufgabe || []), editedTask];
-
-          let updatedTasksMilestones = user.tasks ? [...user.tasks] : [];
-
-          const newMilestone = {
-            title: editedTask.name,
-            fallig: editedTask.milestoneDate,
-            meilenstein: editedTask.milestoneDate,
-            id: editedTask.id,
-            completed: editedTask.status === "erledigt",
-            status: editedTask.status,
-            category: editedTask.category,
-            firma: editedTask.firma,
-          };
-
-          const categoryIndex = updatedTasksMilestones.findIndex(
-            (taskCategory: any) => taskCategory.name === editedTask.category
-          );
-
-          if (categoryIndex !== -1) {
-            updatedTasksMilestones[categoryIndex] = {
-              ...updatedTasksMilestones[categoryIndex],
-              milestones: [
-                ...updatedTasksMilestones[categoryIndex].milestones,
-                newMilestone,
-              ],
-            };
-          } else {
-            // Kategori adı bulunuyor (id ise adını bul)
-            const categoryObj = categories.find(cat => cat.id.toString() === editedTask.category || cat.name === editedTask.category);
-            const categoryName = categoryObj?.name ?? String(editedTask.category ?? "Unbekannte Kategorie");
-            updatedTasksMilestones.push({
-              id: editedTask.id,
-              name: categoryName,
-              milestones: [newMilestone],
-            });
-          }
-
-          SendEmailToUser(
-            user.email,
-            "Neue Aufgabe zugewiesen",
-            `Neue Aufgabe: ${editedTask.name} (${editedTask.category})`
-          );
-
-          updatedUsers[targetIndex] = {
-            ...user,
-            aufgabe: updatedAufgabe,
-            tasks: updatedTasksMilestones,
-          };
+      // Eski görevi (id ile) bul ve hangi firma olduğunu öğren
+      let oldFirm = "";
+      for (const user of prevUsers) {
+        if (user.aufgabe?.some((t: any) => t.id === editedTask.id)) {
+          oldFirm = user.company?.name || "";
+          break;
         }
       }
 
-      return updatedUsers;
+      return prevUsers
+        .map((user) => {
+          // Eğer kullanıcı eski firmadaysa, görev silinecek
+          if (user.company?.name === oldFirm) {
+            const updatedAufgabe = user.aufgabe?.filter(
+              (t: any) => t.id !== editedTask.id
+            );
+            let updatedTasksMilestones = user.tasks ? [...user.tasks] : [];
+            updatedTasksMilestones = updatedTasksMilestones
+              .map((taskCategory: any) => {
+                if (taskCategory.milestones) {
+                  return {
+                    ...taskCategory,
+                    milestones: taskCategory.milestones.filter(
+                      (m: any) => m.id !== editedTask.id
+                    ),
+                  };
+                }
+                return taskCategory;
+              })
+              .filter(
+                (taskCategory: any) =>
+                  taskCategory.milestones && taskCategory.milestones.length > 0
+              );
+
+            return {
+              ...user,
+              aufgabe: updatedAufgabe,
+              tasks: updatedTasksMilestones,
+            };
+          }
+          return user;
+        })
+        .map((user) => {
+          // Eğer kullanıcı yeni firmadaysa, görev eklenecek / güncellenecek
+          if (user.company?.name === editedTask.firma) {
+            const newAufgabe = user.aufgabe ? [...user.aufgabe] : [];
+            newAufgabe.push(editedTask);
+
+            let updatedTasks = user.tasks ? [...user.tasks] : [];
+            const categoryIndex = updatedTasks.findIndex(
+              (taskCategory: any) => taskCategory.name === editedTask.category
+            );
+            const newMilestone = {
+              title: editedTask.name,
+              fallig: editedTask.milestoneDate,
+              meilenstein: editedTask.milestoneDate,
+              id: editedTask.id,
+              completed: editedTask.status === "erledigt",
+              status: editedTask.status,
+              category: editedTask.category,
+              firma: editedTask.firma,
+            };
+
+            if (categoryIndex !== -1) {
+              const milestones = updatedTasks[categoryIndex].milestones || [];
+              const exists = milestones.some(
+                (m: any) =>
+                  m.title === newMilestone.title &&
+                  m.fallig === newMilestone.fallig
+              );
+              if (!exists) {
+                milestones.push(newMilestone);
+              }
+              updatedTasks[categoryIndex] = {
+                ...updatedTasks[categoryIndex],
+                milestones,
+              };
+            } else {
+              updatedTasks.push({
+                name: editedTask.category,
+                milestones: [newMilestone],
+              });
+            }
+            SendEmailToUser(
+              user.email,
+              "Aufgabe aktualisieren",
+              `Aktualisierte Mission: ${editedTask.name} (${editedTask.category})`
+            );
+
+            return {
+              ...user,
+              aufgabe: newAufgabe,
+              tasks: updatedTasks,
+            };
+          }
+          return user;
+        });
     });
 
     setEditDialogOpen(false);
@@ -345,7 +370,6 @@ const TaskTable: React.FC = () => {
               (taskCategory: any) =>
                 taskCategory.milestones && taskCategory.milestones.length > 0
             );
-
           SendEmailToUser(
             user.email,
             "Aufgabe lösen",
@@ -427,11 +451,7 @@ const TaskTable: React.FC = () => {
 
           if (taskIndexInAufgabe !== -1 && user.aufgabe) {
             const updatedAufgabe = [...user.aufgabe];
-            let movedTask = undefined;
-            if (typeof taskIndexInAufgabe === "number" && taskIndexInAufgabe >= 0 && taskIndexInAufgabe < updatedAufgabe.length) {
-              movedTask = { ...updatedAufgabe[taskIndexInAufgabe] };
-            }
-            if (!movedTask) return user;
+            const movedTask = { ...updatedAufgabe[taskIndexInAufgabe] };
 
             if (
               `${oldCategoryName}>${oldSubcategoryName}` ===
@@ -481,13 +501,29 @@ const TaskTable: React.FC = () => {
               user.aufgabe = [...otherTasks, ...reorderedGroup];
             } else {
               // category ve subcategory enum/union tipine uygun atanıyor
-              if (newCategoryName && ["Marketing", "Development", "Design", "Fulfillment"].includes(newCategoryName)) {
-                movedTask.category = newCategoryName as typeof movedTask.category;
+              if (
+                newCategoryName &&
+                ["Marketing", "Development", "Design", "Fulfillment"].includes(
+                  newCategoryName
+                )
+              ) {
+                movedTask.category =
+                  newCategoryName as typeof movedTask.category;
               }
-              if (typeof newSubcategoryName === "string" && [
-                "SEO", "Google Ads", "Social Media", "PDF Programmierung", "Webformula", "Backend", "UX/UI"
-              ].includes(newSubcategoryName)) {
-                movedTask.subcategory = newSubcategoryName as typeof movedTask.subcategory;
+              if (
+                typeof newSubcategoryName === "string" &&
+                [
+                  "SEO",
+                  "Google Ads",
+                  "Social Media",
+                  "PDF Programmierung",
+                  "Webformula",
+                  "Backend",
+                  "UX/UI",
+                ].includes(newSubcategoryName)
+              ) {
+                movedTask.subcategory =
+                  newSubcategoryName as typeof movedTask.subcategory;
               }
               movedTask.categoryId = overCatObj?.id?.toString();
               movedTask.subcategoryId = overSubObj?.id;
@@ -522,12 +558,10 @@ const TaskTable: React.FC = () => {
                   taskCategory.milestones && taskCategory.milestones.length > 0
               );
 
-            // milestoneDate yoksa fallig veya meilenstein kullan
-            const milestoneDate = (movedTask as any).milestoneDate || (movedTask as any).fallig || (movedTask as any).meilenstein || "";
             const updatedMilestone = {
               title: movedTask.name,
-              fallig: milestoneDate,
-              meilenstein: milestoneDate,
+              fallig: movedTask.milestoneDate,
+              meilenstein: movedTask.milestoneDate,
               id: movedTask.id,
               completed: movedTask.status === "erledigt",
               status: movedTask.status,
@@ -549,10 +583,8 @@ const TaskTable: React.FC = () => {
                 ],
               };
             } else {
-              const newId = new Date().getTime().toString();
               updatedTasksMilestones.push({
-                id: newId,
-                name: updatedMilestone.category || "Unbekannte Kategorie",
+                name: updatedMilestone.category,
                 milestones: [updatedMilestone],
               });
             }
@@ -609,11 +641,9 @@ const TaskTable: React.FC = () => {
           </Select>
         </FormControl>
 
-        {userData?.admin && (
-          <Button variant="contained" onClick={() => setOpenDialog(true)}>
-            + Aufgabe hinzufügen
-          </Button>
-        )}
+        <Button variant="contained" onClick={() => setOpenDialog(true)}>
+          + Aufgabe hinzufügen
+        </Button>
       </Box>
 
       <AddTaskModal

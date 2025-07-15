@@ -31,29 +31,38 @@ const AddTaskModal: React.FC<ModalProps> = ({
   firmOptions = [],
 }) => {
   const { categories, users } = useUserContext();
-  // console.log(users, "adtask");
   const [task, setTask] = useState<Task>({ ...TaskTemplate });
 
   useEffect(() => {
+    if (!open) return;
+
     if (existingTask) {
-      const categoryObj = categories.find(
-        (cat) => cat.name === existingTask.category
+      const selectedCategory = categories.find(
+        (cat) =>
+          cat.name === existingTask.category ||
+          cat.id.toString() === existingTask.categoryId
       );
-      const subcategoryObj = categoryObj?.subcategories.find(
-        (sub) => sub.name === existingTask.subcategory
+
+      const selectedSubcategory = selectedCategory?.subcategories.find(
+        (sub) =>
+          sub.name === existingTask.subcategory ||
+          sub.id.toString() === existingTask.subcategoryId?.toString()
       );
 
       setTask({
-        ...TaskTemplate,
         ...existingTask,
-        category: categoryObj ? categoryObj.id.toString() : "",
-        subcategory: subcategoryObj ? subcategoryObj.id : "",
+        id: existingTask.id.toString(),
+        categoryId: selectedCategory?.id.toString() || "",
+        category: selectedCategory?.name || existingTask.category,
+        subcategoryId: selectedSubcategory?.id.toString() || "",
+        subcategory: selectedSubcategory?.name || existingTask.subcategory,
         milestoneDate:
           existingTask.milestoneDate || new Date().toISOString().split("T")[0],
       });
     } else {
       setTask({
         ...TaskTemplate,
+        id: new Date().getTime().toString(),
         milestoneDate: new Date().toISOString().split("T")[0],
       });
     }
@@ -72,11 +81,34 @@ const AddTaskModal: React.FC<ModalProps> = ({
     }
   };
   const handleCategoryChange = (categoryId: string) => {
-    setTask((prev) => ({ ...prev, category: categoryId, subcategory: "" }));
+    const selectedCat = categories.find(
+      (cat) => cat.id.toString() === categoryId
+    );
+    setTask((prev) => ({
+      ...prev,
+      category: selectedCat ? selectedCat.name : "", // Kategori adını kaydet
+      categoryId: categoryId, // Kategori ID'sini kaydet
+      subcategory: "",
+      subcategoryId: "", // Alt kategori seçimi sıfırla
+    }));
+  };
+
+  const handleSubcategoryChange = (subcategoryId: string) => {
+    const selectedCat = categories.find(
+      (cat) => cat.id.toString() === task.categoryId
+    );
+    const selectedSub = selectedCat?.subcategories.find(
+      (sub) => sub.id.toString() === subcategoryId
+    );
+    setTask((prev) => ({
+      ...prev,
+      subcategory: selectedSub ? selectedSub.name : "", // Alt kategori adını kaydet
+      subcategoryId: subcategoryId, // Alt kategori ID'sini kaydet
+    }));
   };
 
   const selectedCategory = categories.find(
-    (cat) => cat.id.toString() === task.category
+    (cat) => cat.id.toString() === task.categoryId
   );
 
   return (
@@ -103,9 +135,9 @@ const AddTaskModal: React.FC<ModalProps> = ({
         <FormControl size="small" fullWidth margin="normal">
           <InputLabel>Kategorie *</InputLabel>
           <Select
-            value={task.category}
+            value={task.categoryId} // ID'yi kullan
             label="Kategorie"
-            onChange={(e) => handleCategoryChange(e.target.value)}
+            onChange={(e) => handleCategoryChange(e.target.value.toString())}
           >
             {categories.map((cat) => (
               <MenuItem key={cat.id} value={cat.id.toString()}>
@@ -119,13 +151,13 @@ const AddTaskModal: React.FC<ModalProps> = ({
           size="small"
           fullWidth
           margin="normal"
-          disabled={!task.category}
+          disabled={!task.categoryId} // ID'yi kontrol et
         >
           <InputLabel>Subkategorie *</InputLabel>
           <Select
-            value={task.subcategory}
+            value={task.subcategoryId} // ID'yi kullan
             label="Subkategorie"
-            onChange={(e) => handleChange("subcategory", e.target.value)}
+            onChange={(e) => handleSubcategoryChange(e.target.value.toString())}
           >
             {selectedCategory?.subcategories.map((sub) => (
               <MenuItem key={sub.id} value={sub.id}>
@@ -194,11 +226,8 @@ const AddTaskModal: React.FC<ModalProps> = ({
           value={task.dueDate ? task.dueDate.split("T")[0] : ""}
           onChange={(e) => {
             const selectedDate = new Date(e.target.value);
-            const milestoneDateString =
-              task.milestoneDate || new Date().toISOString();
-            const milestone = new Date(milestoneDateString);
-
-            const maxDate = new Date(milestone);
+            const milestone = new Date(task.milestoneDate ?? "");
+            const maxDate = new Date(task.milestoneDate ?? "");
             maxDate.setMonth(maxDate.getMonth() + 1);
 
             if (selectedDate < milestone) {
@@ -257,7 +286,6 @@ const AddTaskModal: React.FC<ModalProps> = ({
           fullWidth
           margin="normal"
           InputLabelProps={{ shrink: true }}
-          InputProps={{ readOnly: true }}
         />
       </DialogContent>
 
@@ -270,11 +298,13 @@ const AddTaskModal: React.FC<ModalProps> = ({
               alert("Bitte wählen Sie eine Firma aus.");
               return;
             }
-            if (!task.category) {
+            if (!task.categoryId) {
+              // ID'yi kontrol et
               alert("Bitte wählen Sie eine Kategorie aus.");
               return;
             }
-            if (!task.subcategory) {
+            if (!task.subcategoryId) {
+              // ID'yi kontrol et
               alert("Bitte wählen Sie eine Subkategorie aus.");
               return;
             }
@@ -297,13 +327,14 @@ const AddTaskModal: React.FC<ModalProps> = ({
               return;
             }
 
+            // Kategori ve alt kategori isimlerini ve ID'lerini doğru şekilde ayarla
             const selectedCategory = categories.find(
-              (cat) => cat.id.toString() === task.category
+              (cat) => cat.id.toString() === task.categoryId
             );
             const categoryName = selectedCategory ? selectedCategory.name : "";
 
             const selectedSubcategory = selectedCategory?.subcategories.find(
-              (sub) => sub.id === task.subcategory
+              (sub) => sub.id.toString() === task.subcategoryId
             );
             const subcategoryName = selectedSubcategory
               ? selectedSubcategory.name
@@ -311,9 +342,9 @@ const AddTaskModal: React.FC<ModalProps> = ({
 
             const taskWithNames = {
               ...task,
-              categoryId: task.category,
+              categoryId: task.categoryId,
               category: categoryName,
-              subcategoryId: task.subcategory,
+              subcategoryId: task.subcategoryId,
               subcategory: subcategoryName,
             };
 

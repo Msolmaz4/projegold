@@ -32,7 +32,7 @@ const Modal: React.FC<ModalProps> = ({
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [showWarning, setShowWarning] = useState<boolean>(false);
-
+  console.log(image)
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles && acceptedFiles[0]) {
       const file = acceptedFiles[0];

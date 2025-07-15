@@ -21,6 +21,7 @@ import { useAuthContext, useUserContext } from "hooks";
 const MilestoneOverview: React.FC = () => {
   const { users } = useUserContext();
   const { userData } = useAuthContext();
+
   const [expandedCompanies, setExpandedCompanies] = useState<Set<number>>(
     new Set()
   );

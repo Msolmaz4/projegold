@@ -7,7 +7,7 @@ export interface Milestone {
 }
 export interface Task {
   id: number | string;
-  category?: KategorieListe | string | "Unbekannte Kategorie";
+  category?: KategorieListe | string | "Unbekannte Kategorie" ;
   subcategory?: string | Subkategorie | "" | number;
   categoryId?: string | number;
   subcategoryId?: string | number;
@@ -20,8 +20,8 @@ export interface Task {
   milestone?: string;
   email?: string;
   dueDate?: string;
-  firma?: string;
+  firma: string;
   tasks?: string[] | undefined;
   milestoneDate?: string | undefined;
   milestones: Milestone[];
-}                     
+}

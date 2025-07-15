@@ -3,7 +3,7 @@ export interface Aufgabe {
   umsetzung?: number | undefined;
   kontrolle?: number | undefined;
   kosten?: number | undefined;
-  status?: "offen" | "Bearbeitung" | "erledigt" | "geplant" | undefined;
+  status?: "offen" | "erledigt" | "geplant" | "Bearbeitung" | "in Bearbeitung";
   dueDate?: string | undefined;
   category: "Marketing" | "Development" | "Design" | "Fulfillment" | undefined;
   subcategory?:
@@ -19,7 +19,7 @@ export interface Aufgabe {
   firma: string;
   fallig?: string;
   meilenstein?: string;
-  id?: number;
+  id: number;
   categoryId?: string | number;
   subcategoryId?: string | number;
 }

@@ -1,9 +1,11 @@
 import type { Task } from "../../types/Task.types";
 
 const TaskTemplate: Task = {
-  id: new Date().getTime(),
+  id: new Date().getTime().toString(),
   category: "",
+  categoryId: "",
   subcategory: "",
+  subcategoryId: "",
   name: "",
   vorarbeit: 0,
   umsetzung: 0,
@@ -15,6 +17,7 @@ const TaskTemplate: Task = {
   dueDate: "",
   firma: "",
   milestones: [],
+  email: "",
 };
 
 export default TaskTemplate;

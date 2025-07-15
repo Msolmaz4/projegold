@@ -5,4 +5,4 @@ export { default as AnmeldungButton } from "./button/AnmeldungButton";
 export { default as Hinzufugen } from "./button/HinzufugenButton";
 export { default as Newuser } from "./newUser";
 export { default as TaskTemplate } from "./task";
-export { default as SortableRow } from "./Sortablerow";
+
