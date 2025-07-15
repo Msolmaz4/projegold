@@ -54,6 +54,12 @@ const useStyles = makeStyles()((theme) => ({
       backgroundColor: "#eee",
     },
   },
+  avatar: {
+  width: 30,
+  height: 30,
+  borderRadius: "50%",
+  objectFit: "cover",
+}
 }));
 
 export default useStyles;

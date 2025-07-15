@@ -14,10 +14,9 @@ import {
   IconButton,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import type { Aufgabe, User } from "../../types";
-import { useAuthContext } from "../../hooks/auth/useAuthContext";
-import { useUserContext } from "../../hooks/user/useUserContext";
+import type { Aufgabe, User } from "types";
 import useStyles from "./styles";
+import { useAuthContext, useUserContext } from "hooks";
 
 const MilestoneOverview: React.FC = () => {
   const { users } = useUserContext();
@@ -106,7 +105,12 @@ const MilestoneOverview: React.FC = () => {
           >
             <Stack direction="row" spacing={2} alignItems="center">
               <Box className={classes.companyHeader}>
-                <img src={user.imageURL} alt={user.name} width={30} />
+                <img
+                  src={user.imageURL}
+                  alt={user.name}
+                  className={classes.avatar}
+                />
+
                 <Typography fontWeight="bold">{user.company.name}</Typography>
               </Box>
               <Box sx={{ flexGrow: 1 }}>
@@ -189,7 +193,12 @@ const MilestoneOverview: React.FC = () => {
               onClick={() => handleUserSelect(user.id)}
             >
               <Stack direction="row" spacing={1} alignItems="center">
-                <img src={user.imageURL} alt={user.name} width={30} />
+                <img
+                  src={user.imageURL}
+                  alt={user.name}
+                  className={classes.avatar}
+                />
+
                 <Typography>{user.company.name}</Typography>
               </Stack>
             </Box>

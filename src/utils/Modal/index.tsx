@@ -1,4 +1,4 @@
-import  { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import {
   Box,
@@ -9,6 +9,8 @@ import {
   Modal as MuiModal,
   Backdrop,
   Fade,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import type { User } from "types";
 import { Newuser } from "core";
@@ -29,14 +31,12 @@ const Modal: React.FC<ModalProps> = ({
   const [text, setText] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-
-  // console.log(image,users, 'modaldayiz')
+  const [showWarning, setShowWarning] = useState<boolean>(false);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles && acceptedFiles[0]) {
       const file = acceptedFiles[0];
       setImage(file);
-      console.log(image);
       const reader = new FileReader();
       reader.onloadend = () => setPreview(reader.result as string);
       reader.readAsDataURL(file);
@@ -57,115 +57,138 @@ const Modal: React.FC<ModalProps> = ({
   }, [initialData, open]);
 
   const handleSave = () => {
-    //   console.log("ddddddd");
-
     try {
+      if (!text.trim()) {
+        setShowWarning(true);
+        return;
+      }
+
       if (initialData) {
         const updatedData: User = {
-          ...(initialData as User), // cast machen ,wir lassen definieren.
+          ...(initialData as User),
           name: text,
           imageURL: preview || "",
         };
         onSave(updatedData);
       } else {
-        //console.log(preview, "dddddddddd");
-        const name = text;
         const newUserModal = Newuser({
-          name: name || "",
+          name: text,
           email: "",
           hashedPassword: "",
           imageURL: preview || "",
         });
-
         onSave(newUserModal);
       }
-    } catch (error) {
-      console.error("Speichern fehlgeschlagen:", error);
-    } finally {
+
       onClose();
       setText("");
       setImage(null);
       setPreview(null);
+    } catch (error) {
+      console.error("Speichern fehlgeschlagen:", error);
     }
   };
-  return (
-    <MuiModal
-      open={open}
-      onClose={onClose}
-      closeAfterTransition
-      BackdropComponent={Backdrop}
-      BackdropProps={{ timeout: 300 }}
-    >
-      <Fade in={open}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            borderRadius: 2,
-            p: 4,
-            width: 500,
-            maxWidth: "90%",
-          }}
-        >
-          <TextField
-            fullWidth
-            label="Geben Sie den Firmennamen ein"
-            variant="outlined"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-          />
-          <Paper
-            variant="outlined"
-            sx={{
-              mt: 2,
-              height: 200,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderStyle: "dashed",
-              bgcolor: isDragActive ? "#f0f0f0" : "#fafafa",
-              cursor: "pointer",
-              textAlign: "center",
-            }}
-            {...getRootProps()}
-          >
-            <input {...getInputProps()} />
-            {preview ? (
-              <img
-                src={preview}
-                alt="Preview"
-                style={{
-                  maxHeight: "100%",
-                  maxWidth: "100%",
-                  objectFit: "contain",
-                }}
-              />
-            ) : (
-              <Typography variant="body2" color="textSecondary">
-                {isDragActive
-                  ? "Lass es los 🫴"
-                  : "Bild per Drag & Drop oder Klick hochladen"}
-              </Typography>
-            )}
-          </Paper>
 
+  return (
+    <>
+      <MuiModal
+        open={open}
+        onClose={onClose}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{ timeout: 300 }}
+      >
+        <Fade in={open}>
           <Box
-            sx={{ mt: 3, display: "flex", justifyContent: "flex-end", gap: 2 }}
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "background.paper",
+              boxShadow: 24,
+              borderRadius: 2,
+              p: 4,
+              width: 500,
+              maxWidth: "90%",
+            }}
           >
-            <Button variant="outlined" onClick={onClose}>
-              Abbrechen
-            </Button>
-            <Button variant="contained" onClick={handleSave}>
-              Speichern
-            </Button>
+            <TextField
+              fullWidth
+              label="Geben Sie den Firmennamen ein"
+              variant="outlined"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+            />
+            <Paper
+              variant="outlined"
+              sx={{
+                mt: 2,
+                height: 200,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderStyle: "dashed",
+                bgcolor: isDragActive ? "#f0f0f0" : "#fafafa",
+                cursor: "pointer",
+                textAlign: "center",
+              }}
+              {...getRootProps()}
+            >
+              <input {...getInputProps()} />
+              {preview ? (
+                <img
+                  src={preview}
+                  alt="Preview"
+                  style={{
+                    maxHeight: "100%",
+                    maxWidth: "100%",
+                    objectFit: "contain",
+                  }}
+                />
+              ) : (
+                <Typography variant="body2" color="textSecondary">
+                  {isDragActive
+                    ? "Lass es los 🫴"
+                    : "Bild per Drag & Drop oder Klick hochladen"}
+                </Typography>
+              )}
+            </Paper>
+
+            <Box
+              sx={{
+                mt: 3,
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: 2,
+              }}
+            >
+              <Button variant="outlined" onClick={onClose}>
+                Abbrechen
+              </Button>
+              <Button variant="contained" onClick={handleSave}>
+                Speichern
+              </Button>
+            </Box>
           </Box>
-        </Box>
-      </Fade>
-    </MuiModal>
+        </Fade>
+      </MuiModal>
+
+      <Snackbar
+        open={showWarning}
+        autoHideDuration={4000}
+        onClose={() => setShowWarning(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          severity="warning"
+          onClose={() => setShowWarning(false)}
+          sx={{ width: "100%" }}
+        >
+          Bitte geben Sie einen Firmennamen ein.
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 
